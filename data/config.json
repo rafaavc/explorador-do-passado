@@ -1,0 +1,14 @@
+{
+    "domain": {
+        "time": {
+            "start": "20150101000000",
+            "end": "20200101000000"
+        },
+        "entity": {
+            "name": "António Costa"
+        },
+        "journals": [
+            "publico.pt"
+        ]
+    }
+}
