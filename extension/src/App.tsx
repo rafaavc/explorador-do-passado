@@ -1,30 +1,29 @@
 import { useEffect, useState } from 'react';
-import Axios, { AxiosResponse } from 'axios'
+import { Message } from './utils/Message';
+
+interface Data {
+    article: {
+        title: string,
+        authors: Array<string>,
+        text: string
+    }
+}
 
 function App() {
-    const [data, setData] = useState(-1);
+    const [data, setData] = useState<Data|null>(null);
 
     useEffect(() => {
-        Axios.get("http://arquivo.pt/textsearch", { 
-            params: {
-                type: 'html',
-                fields: 'title, originalURL, tstamp, linkToScreenshot, linkToNoFrame, collection, snippet',
-                q: 'António Costa',
-                maxItems: 50
-            }
-        }).then((response: AxiosResponse) => {
-                setData(response.data.estimated_nr_results);
-                console.log(response);
-            }).catch(error => {
-                console.log(error); // send error to content script
-            });
+        const message: Message = { type: "get_ui_data" }
+        chrome.runtime.sendMessage(message, (data) => {
+            setData(data)
+        })
     }, []);
 
     return (
         <>
             <h1>Hello Extensions</h1>
             <p>
-                {data}
+                {data === null ? "nothing" : data.article.title}
             </p>
         </>
     );
