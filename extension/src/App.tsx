@@ -1,14 +1,21 @@
 import { useEffect, useState } from 'react';
 import { Message } from './utils/Message';
-import { AppBar, Toolbar, IconButton, Typography, makeStyles, CircularProgress, Box, Grid, Container } from '@material-ui/core'
-import { GitHub } from '@material-ui/icons'
+import { AppBar, Toolbar, IconButton, Typography, makeStyles, CircularProgress, Box, Container, Chip } from '@material-ui/core'
+import { GitHub, QuestionAnswer } from '@material-ui/icons'
+import FaceIcon from '@material-ui/icons/Face'
+import BusinessIcon from '@material-ui/icons/Business';
+import ExploreIcon from '@material-ui/icons/Explore';
+import HelpIcon from '@material-ui/icons/Help';
 
+interface Identity {
+    text: string,
+    type: string
+}
 interface Data {
-    article: {
-        title: string,
-        authors: Array<string>,
-        text: string
-    }
+    title: string,
+    authors: Array<string>,
+    text: string,
+    entities: Array<Identity>
 }
 
 const useStyles = makeStyles((theme) => {
@@ -29,8 +36,19 @@ const App = () => {
             chrome.runtime.sendMessage(message, (data) => {
                 setData(data)
             })
+        } else {
+            setData({
+                entities: [
+                    {text: "aaa", type: "PER"}
+                ],
+                title: "test",
+                authors: [],
+                text: ""
+            })
         }
     }, []);
+
+    console.log("Here is the data:", data)
 
     return (
         <>
@@ -43,22 +61,22 @@ const App = () => {
                 </Toolbar>
             </AppBar>
             <Container>
-            {data !== null ? 
-                <Box mt={6}>
-                    <Grid container justify="center">
-                        <Grid item><CircularProgress /></Grid>
-                    </Grid>
+            {data === null ? 
+                <Box mt={6} mb={6} display="flex" justifyContent="center">
+                    <CircularProgress />
                 </Box>
                 :
-                <Box my={2}>
-                    <Grid container spacing={2} justify="center">
-                        <Grid item xs={12}>
-                            Test 1
-                        </Grid>
-                        <Grid item xs={12}>
-                            Test 2
-                        </Grid>
-                    </Grid>
+                <Box display="flex" my={2} justifyContent="center" gridGap={5} flexWrap="wrap">
+                    {data.entities.map((entity: Identity, idx: number) => {
+                        const icon = entity.type == "PER" ? <FaceIcon /> : (entity.type == "ORG" ? <BusinessIcon/> : (entity.type == "LOC" ? <ExploreIcon/> : <HelpIcon/>))
+                        return <Chip
+                            key={idx}
+                            icon={icon}
+                            label={entity.text}
+                            clickable
+                            color="primary"
+                        />
+                    })}
                 </Box>
             }
             </Container>
