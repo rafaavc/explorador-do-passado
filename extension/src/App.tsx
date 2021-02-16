@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react'
 import { Message } from './utils/Message'
-import { AppBar, Toolbar, IconButton, Typography, makeStyles, CircularProgress, Box, Container, Chip } from '@material-ui/core'
+import { AppBar, Toolbar, IconButton, Typography, makeStyles, CircularProgress, Box, Container, Chip, Fade } from '@material-ui/core'
 import { GitHub } from '@material-ui/icons'
 import FaceIcon from '@material-ui/icons/Face'
 import BusinessIcon from '@material-ui/icons/Business'
 import LocationOnIcon from '@material-ui/icons/LocationOn'
-import { logEvent } from './utils/Logger'
+import { logEvent, logReceived } from './utils/Logger'
 
 interface Identity {
     text: string,
@@ -18,13 +18,11 @@ interface Data {
     entities: Array<Identity>
 }
 
-const useStyles = makeStyles((theme) => {
-    console.log(theme)
-    return ({
-    grow: {
-        flexGrow: 1,
-    }
-})})
+const useStyles = makeStyles(() => ({
+        grow: {
+            flexGrow: 1,
+        }
+    }))
 
 const App = () => {
     const [data, setData] = useState<Data|null|number>(null)
@@ -33,16 +31,12 @@ const App = () => {
     useEffect(() => {
         if (process.env.NODE_ENV == "production") {
             const message: Message = { type: "get_ui_data" }
-            const interval = setInterval(() => {
-                logEvent("Looking for UI data")
-                chrome.runtime.sendMessage(message, (data) => {
-                    if (data !== "waiting") {
-                        clearInterval(interval)
-                        if (data === "invalid_tab") setData(-1)
-                        else setData(data)
-                    }
-                })
-            }, 700)
+            chrome.runtime.sendMessage(message, (data) => {
+                if (data === "invalid_tab") setData(-1)
+                else setData(data)
+
+                logEvent("Received data:", data)
+            })
         } else {
             setData({
                 entities: [
@@ -54,8 +48,6 @@ const App = () => {
             })
         }
     }, [])
-
-    console.log("Here is the data:", data)
 
     return (
         <>
@@ -78,19 +70,21 @@ const App = () => {
                         Invalid Page
                     </Box>
                     :
-                    <Box display="flex" my={2} justifyContent="center" gridGap={5} flexWrap="wrap">
-                        {data.entities.map((entity: Identity, idx: number) => {
-                            console.log(entity)
-                            const icon = entity.type == "PER" ? <FaceIcon /> : (entity.type == "ORG" ? <BusinessIcon/> : <LocationOnIcon/>)
-                            return <Chip
-                                key={idx}
-                                icon={icon}
-                                label={entity.text}
-                                clickable
-                                color="primary"
-                            />
-                        })}
-                    </Box>)
+                    <Fade in={true}>
+                        <Box display="flex" my={2} justifyContent="center" gridGap={5} flexWrap="wrap">
+                            {data.entities.map((entity: Identity, idx: number) => {
+                                console.log(entity)
+                                const icon = entity.type == "PER" ? <FaceIcon /> : (entity.type == "ORG" ? <BusinessIcon/> : <LocationOnIcon/>)
+                                return <Chip
+                                    key={idx}
+                                    icon={icon}
+                                    label={entity.text}
+                                    clickable
+                                    color="primary"
+                                />
+                            })}
+                        </Box>
+                    </Fade>)
             }
             </Container>
         </>

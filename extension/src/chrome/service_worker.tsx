@@ -4,13 +4,7 @@ import { Message } from "../utils/Message";
 const LIFE_EXPECTANCY_MINS = 20
 const REAPER_INTERVAL_SECS = 30
 
-chrome.runtime.onInstalled.addListener(() => {
-    console.log("Service worker installed.")
-});
-
-const getCurrentTab = (callback: Function) => {
-    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => { callback(tabs[0]) })
-}
+// TODO speed improvements by saving the current tab (by having a tabs.onActivated event listener)
 
 interface TabData {
     id: number,
@@ -19,6 +13,14 @@ interface TabData {
 }
 
 const tabs: Array<TabData> = []
+
+chrome.runtime.onInstalled.addListener(() => {
+    console.log("Service worker installed.")
+});
+
+const getCurrentTab = (callback: Function) => {
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => { callback(tabs[0]) })
+}
 
 /**
  * Returns the data associated with the tab. If an entry doesn't exist, returns undefined.
@@ -47,7 +49,7 @@ const addTabData = (id: number, data: any): void => {
 
 const clearCache = () => {
     const now = performance.now()
-    for (let i = tabs.length; i >= 0; i--) {
+    for (let i = tabs.length - 1; i >= 0; i--) {
         const tabData = tabs[i]
         if (now - tabData.timestamp > LIFE_EXPECTANCY_MINS*1000*60) {
             tabs.splice(i, 1)
@@ -58,31 +60,40 @@ const clearCache = () => {
 
 setInterval(clearCache, REAPER_INTERVAL_SECS*1000)
 
-chrome.runtime.onMessage.addListener((message: Message, sender: chrome.runtime.MessageSender, sendResponse) => {
-    logReceived(message, sender)
-    if (message.type === "page_info") {
-
-        fetch(`${process.env.REACT_APP_SERVER_URL}/extension/api`, {
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            method: 'POST',
-            body: JSON.stringify(message.content)
+const processTabContentData = (content: any, tabId: number, extender?: Function) => {
+    fetch(`${process.env.REACT_APP_SERVER_URL}/extension/api`, {
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        method: 'POST',
+        body: JSON.stringify(content)
+    })
+        .then((response: Response) => response.json())
+        .then(data => {
+            addTabData(tabId, data)
+            if (extender) extender(data)
+            logEvent("Received from API:", data)
         })
-            .then((response: Response) => response.json())
-            .then(data => {
-                getCurrentTab((tab: chrome.tabs.Tab) => {
-                    if (tab.id == undefined) return
-                    addTabData(tab.id, data)
-                })
-                console.log("Received from API:", data)
-            })
+}
+
+chrome.runtime.onMessage.addListener((message: Message, sender: chrome.runtime.MessageSender, sendResponse) => {
+    
+    if (message.type === "page_info") {
+        if (sender.tab == undefined || sender.tab.id == undefined) {
+            logEvent("Received 'page_info' message from invalid place.")
+            return
+        }
+        processTabContentData(message.content, sender.tab.id)
+
+        logReceived(message, sender)
         sendResponse("OK")
 
     } else if (message.type === "get_ui_data") {
 
+        logReceived(message, sender, "Current tabs:", tabs)
+
         // check what is the active page and retrieve the info that corresponds to it
-        // if none is found, request info from the content script and send a message to the ui
+        // if none is found, request info from the content script
         getCurrentTab((tab: chrome.tabs.Tab) => {
             if (tab.id == undefined) {
                 sendResponse("invalid_tab")
@@ -90,15 +101,23 @@ chrome.runtime.onMessage.addListener((message: Message, sender: chrome.runtime.M
             }
             const data = getTabData(tab.id)
 
-            if (data === "waiting") sendResponse("waiting")
-            else if (data) sendResponse(data)
+            logEvent("get_ui_data:", tab, tab.id, data)
+
+            if (data) {
+                logEvent("sent data", data)
+                sendResponse(data)
+            }
             else {
-                chrome.runtime.sendMessage({ type: "get_page_info" })
-                addTabData(tab.id, "waiting")
-                sendResponse("waiting")
+                logEvent("going to get the data")
+                chrome.tabs.sendMessage(tab.id, { type: "get_page_info" }, (message: any) => {
+                    if (!tab.id) return
+                    processTabContentData(message, tab.id, (processed: any) => { sendResponse(processed) })
+                })
             }
 
         })
+
+        return true    // keeps the port open until response is sent - VERY IMPORTANT!
     }
 });
 
