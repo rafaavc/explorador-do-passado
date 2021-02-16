@@ -1,11 +1,11 @@
-import { useEffect, useState } from 'react';
-import { Message } from './utils/Message';
+import { useEffect, useState } from 'react'
+import { Message } from './utils/Message'
 import { AppBar, Toolbar, IconButton, Typography, makeStyles, CircularProgress, Box, Container, Chip } from '@material-ui/core'
-import { GitHub, QuestionAnswer } from '@material-ui/icons'
+import { GitHub } from '@material-ui/icons'
 import FaceIcon from '@material-ui/icons/Face'
-import BusinessIcon from '@material-ui/icons/Business';
-import ExploreIcon from '@material-ui/icons/Explore';
-import HelpIcon from '@material-ui/icons/Help';
+import BusinessIcon from '@material-ui/icons/Business'
+import LocationOnIcon from '@material-ui/icons/LocationOn'
+import { logEvent } from './utils/Logger'
 
 interface Identity {
     text: string,
@@ -27,15 +27,22 @@ const useStyles = makeStyles((theme) => {
 })})
 
 const App = () => {
-    const [data, setData] = useState<Data|null>(null)
+    const [data, setData] = useState<Data|null|number>(null)
     const classes = useStyles()
 
     useEffect(() => {
         if (process.env.NODE_ENV == "production") {
             const message: Message = { type: "get_ui_data" }
-            chrome.runtime.sendMessage(message, (data) => {
-                setData(data)
-            })
+            const interval = setInterval(() => {
+                logEvent("Looking for UI data")
+                chrome.runtime.sendMessage(message, (data) => {
+                    if (data !== "waiting") {
+                        clearInterval(interval)
+                        if (data === "invalid_tab") setData(-1)
+                        else setData(data)
+                    }
+                })
+            }, 700)
         } else {
             setData({
                 entities: [
@@ -46,7 +53,7 @@ const App = () => {
                 text: ""
             })
         }
-    }, []);
+    }, [])
 
     console.log("Here is the data:", data)
 
@@ -66,22 +73,28 @@ const App = () => {
                     <CircularProgress />
                 </Box>
                 :
-                <Box display="flex" my={2} justifyContent="center" gridGap={5} flexWrap="wrap">
-                    {data.entities.map((entity: Identity, idx: number) => {
-                        const icon = entity.type == "PER" ? <FaceIcon /> : (entity.type == "ORG" ? <BusinessIcon/> : (entity.type == "LOC" ? <ExploreIcon/> : <HelpIcon/>))
-                        return <Chip
-                            key={idx}
-                            icon={icon}
-                            label={entity.text}
-                            clickable
-                            color="primary"
-                        />
-                    })}
-                </Box>
+                (typeof data === "number" ?
+                    <Box mt={6} mb={6} display="flex" justifyContent="center">
+                        Invalid Page
+                    </Box>
+                    :
+                    <Box display="flex" my={2} justifyContent="center" gridGap={5} flexWrap="wrap">
+                        {data.entities.map((entity: Identity, idx: number) => {
+                            console.log(entity)
+                            const icon = entity.type == "PER" ? <FaceIcon /> : (entity.type == "ORG" ? <BusinessIcon/> : <LocationOnIcon/>)
+                            return <Chip
+                                key={idx}
+                                icon={icon}
+                                label={entity.text}
+                                clickable
+                                color="primary"
+                            />
+                        })}
+                    </Box>)
             }
             </Container>
         </>
-    );
+    )
 }
 
 export default App

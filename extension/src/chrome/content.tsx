@@ -14,11 +14,18 @@ const pageInfoMessage: Message = {
     }
 };
 
-chrome.runtime.sendMessage(pageInfoMessage, (response) => {
-    logResponse(response)
-});
-logSent(pageInfoMessage)
+const sendPageInfo = () => {
+    chrome.runtime.sendMessage(pageInfoMessage, (response) => {
+        logResponse(response)
+    });
+    logSent(pageInfoMessage)
+}
 
-// chrome.runtime.onMessage.addListener((message: Message, sender: chrome.runtime.MessageSender, sendResponse) => {
-//     logReceived(message, sender)
-// });
+sendPageInfo()
+
+chrome.runtime.onMessage.addListener((message: Message, sender: chrome.runtime.MessageSender, sendResponse) => {
+    if (message.type === "get_page_info") {
+        logReceived(message, sender)
+        sendPageInfo()
+    }
+});

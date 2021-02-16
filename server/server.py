@@ -24,6 +24,8 @@ def extensionApi():
 
     entities = list()
     for entity in doc.ents:
+        if entity.label_ != "PER" and entity.label_ != "LOC" and entity.label_ != "ORG": continue
+
         text = entity.text
 
         alreadyExists = False

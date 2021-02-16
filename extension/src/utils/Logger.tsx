@@ -12,3 +12,7 @@ export const logResponse = (response: any) => {
     console.log("Just received the response:", response)
 }
 
+export const logEvent = (event: string) => {
+    console.log("- " + event)
+}
+
