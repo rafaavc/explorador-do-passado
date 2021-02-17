@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react'
 import { Message } from './utils/Message'
-import { AppBar, Toolbar, IconButton, Typography, makeStyles, CircularProgress, Box, Container, Chip, Fade } from '@material-ui/core'
+import { AppBar, Toolbar, IconButton, Typography, makeStyles, CircularProgress, Box, Container, Chip, Fade, Tooltip } from '@material-ui/core'
 import { GitHub } from '@material-ui/icons'
 import FaceIcon from '@material-ui/icons/Face'
 import BusinessIcon from '@material-ui/icons/Business'
 import LocationOnIcon from '@material-ui/icons/LocationOn'
-import { logEvent, logReceived } from './utils/Logger'
+import { logEvent } from './utils/Logger'
+import dev_data from './dev_data.json'
+
 
 interface Identity {
     text: string,
@@ -26,6 +28,9 @@ const useStyles = makeStyles(() => ({
 
 const App = () => {
     const [data, setData] = useState<Data|null|number>(null)
+
+    const [collector, setCollector] = useState<string|null>(null)
+
     const classes = useStyles()
 
     useEffect(() => {
@@ -36,17 +41,9 @@ const App = () => {
                 else setData(data)
 
                 logEvent("Received data:", data)
+                setCollector(JSON.stringify(data))
             })
-        } else {
-            setData({
-                entities: [
-                    {text: "aaa", type: "PER"}
-                ],
-                title: "test",
-                authors: [],
-                text: ""
-            })
-        }
+        } else setData(dev_data)
     }, [])
 
     return (
@@ -54,9 +51,11 @@ const App = () => {
             <AppBar position="static">
                 <Toolbar>
                     <Typography variant="h6" className={classes.grow}>Arquivo.pt</Typography>
-                    <IconButton edge="start" color="inherit" aria-label="menu">
-                        <GitHub />
-                    </IconButton>
+                    <Tooltip title="GitHub Repository">
+                        <IconButton edge="start" color="inherit" aria-label="menu">
+                            <GitHub />
+                        </IconButton>
+                    </Tooltip>
                 </Toolbar>
             </AppBar>
             <Container>
@@ -87,6 +86,9 @@ const App = () => {
                     </Fade>)
             }
             </Container>
+            <div style={{display: 'none'}}>
+                {collector}
+            </div>
         </>
     )
 }

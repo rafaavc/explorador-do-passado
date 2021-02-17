@@ -7,3 +7,4 @@ __pycache__
 reminder.txt
 .vscode
 *.lock
+dev_data.json

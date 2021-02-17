@@ -99,6 +99,7 @@ const processTabContentData = (content: any, tabId: number, extender?: Function)
 chrome.runtime.onMessage.addListener((message: Message, sender: chrome.runtime.MessageSender, sendResponse) => {
     
     if (message.type === "page_info") {
+        
         if (sender.tab == undefined || sender.tab.id == undefined) {
             logEvent("Received 'page_info' message from invalid place.")
             return
@@ -120,8 +121,8 @@ chrome.runtime.onMessage.addListener((message: Message, sender: chrome.runtime.M
             if (data) {
                 logEvent("sent data", data)
                 sendResponse(data)
-            }
-            else {
+            } else {
+                // need to make something for when the data is requested while the page is still loading
                 logEvent("going to get the data")
                 chrome.tabs.sendMessage(tabId, { type: "get_page_info" }, (message: any) => {
                     processTabContentData(message, tabId, (processed: any) => { sendResponse(processed) })
