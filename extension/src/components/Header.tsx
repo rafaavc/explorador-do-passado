@@ -3,6 +3,7 @@ import LanguageIcon from '@material-ui/icons/Language'
 import TuneIcon from '@material-ui/icons/Tune'
 import InfoIcon from '@material-ui/icons/Info';
 import { useState } from 'react'
+import { SettingsDialog } from './Settings'
 
 const useStyles = makeStyles(() => ({
     grow: {
@@ -32,6 +33,7 @@ const Header = () => {
     const classes = useStyles()
 
     const [ infoOpen, setInfoOpen ] = useState(false)
+    const [ settingsOpen, setSettingsOpen ] = useState(false)
 
     return <>
         <AppBar position="static">
@@ -48,13 +50,14 @@ const Header = () => {
                     </IconButton>
                 </Tooltip>
                 <Tooltip title="Definições">
-                    <IconButton edge="start" color="inherit" aria-label="menu">
+                    <IconButton edge="start" color="inherit" onClick={() => setSettingsOpen(true)} aria-label="menu">
                         <TuneIcon />
                     </IconButton>
                 </Tooltip>
             </Toolbar>
         </AppBar>
         <InfoDialog open={infoOpen} onCloseFn={() => setInfoOpen(false)} />
+        <SettingsDialog open={settingsOpen} onCloseFn={() => setSettingsOpen(false)} />
     </>
 
 }

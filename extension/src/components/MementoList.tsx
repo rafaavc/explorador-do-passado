@@ -1,4 +1,4 @@
-import { ListItem, ListItemText, Fade, List, Collapse, Typography } from '@material-ui/core'
+import { ListItem, ListItemText, Fade, List, Collapse, Typography, Box } from '@material-ui/core'
 import { ExpandLess, ExpandMore } from '@material-ui/icons'
 import { ArquivoMemento, PageMemento } from '../utils/ArquivoData'
 import { FixedSizeList, ListChildComponentProps } from 'react-window';
@@ -62,9 +62,9 @@ const MementoList = (props: MementoListProps) => {
         year.setOpen(!year.open)
     }
     
-    return <>
+    return <Box mb={3} mt={2}>
         <Typography variant="subtitle2">Versões antigas</Typography>
-        { memento.list.length === 0 ? <Typography variant="body1">Não foram encontradas versões antigas.</Typography> : 
+        { memento.list.length === 0 ? <Typography variant="body2">Não foram encontradas versões antigas.</Typography> : 
         <List>
             {years.map((year: YearState) => {
                 const mementos = memento.list.filter((memento) => memento.date.getFullYear() == year.year)
@@ -79,7 +79,7 @@ const MementoList = (props: MementoListProps) => {
                 </React.Fragment>
             })}
         </List>}
-    </>
+    </Box>
 }
 
 
