@@ -32,7 +32,7 @@ const App = () => {
                 for (const memento of mementoList) {
                     if (validData.memento) {
                         const date = arquivoDateToDate(memento.timestamp)
-                        validData.memento.list.push({ timestamp: date })
+                        validData.memento.list.push({ date, timestamp: memento.timestamp })
                         if (date.getFullYear() != previousYear) {
                             validData.memento.years.push(date.getFullYear())
                             previousYear = date.getFullYear()
@@ -45,7 +45,7 @@ const App = () => {
             })
         } else {
             const validMementoList: PageMemento[] = []
-            dev_data.memento.list.forEach((memento) => { validMementoList.push({ timestamp: arquivoDateToDate(memento.timestamp) }) })
+            dev_data.memento.list.forEach((memento) => { validMementoList.push({ timestamp: memento.timestamp, date: arquivoDateToDate(memento.timestamp) }) })
 
             const validDevData: ArquivoData = {
                 url: dev_data.url,

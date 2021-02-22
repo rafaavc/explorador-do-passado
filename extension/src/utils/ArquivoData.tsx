@@ -1,6 +1,7 @@
 
 interface PageMemento {
-    timestamp: Date
+    timestamp: string,
+    date: Date
 }
 
 interface ArquivoEntity {
