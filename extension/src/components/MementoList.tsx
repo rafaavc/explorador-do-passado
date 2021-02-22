@@ -1,17 +1,24 @@
-import { ListItem, ListItemText, Fade } from '@material-ui/core'
-import { PageMemento } from '../utils/ArquivoData'
-import { arquivoDateToDate } from '../utils/ArquivoDate'
+import { ListItem, ListItemText, Fade, List, Collapse, ListItemIcon } from '@material-ui/core'
+import { ExpandLess, ExpandMore } from '@material-ui/icons'
+import { ArquivoMemento, PageMemento } from '../utils/ArquivoData'
 import { FixedSizeList, ListChildComponentProps } from 'react-window';
+import { useState } from 'react';
 
 interface MementoListProps {
-    memento: Array<PageMemento>,
+    memento: ArquivoMemento,
     url: string
 }
 
-const renderRow = (memento: PageMemento[], props: ListChildComponentProps) => {
+interface YearState{
+    year: number,
+    open: boolean,
+    setOpen: Function
+}
+
+const renderRow = (mementoList: PageMemento[], props: ListChildComponentProps) => {
     const { index, style } = props;
-    const date = arquivoDateToDate(memento[index].timestamp)
-  
+    const date = mementoList[index].timestamp
+    console.log(date)
     return (
         <Fade in={true}>
             <ListItem button style={style} key={index}>
@@ -23,10 +30,36 @@ const renderRow = (memento: PageMemento[], props: ListChildComponentProps) => {
 
 const MementoList = (props: MementoListProps) => {
     const { memento } = props;
+
+    const years: Array<YearState> = []
+    memento.years.forEach((year) => {
+        const [open, setOpen] = useState(false)
+        years.push({ year, open, setOpen })
+    })
+
+    const open = (year: YearState) => {
+        if (!year.open) {
+            years.forEach((y) => { y.year != year.year && y.setOpen(false) })
+        }
+        year.setOpen(!year.open)
+    }
     
-    return <FixedSizeList height={400} itemCount={memento.length} itemSize={46} width={"100%"}>
-        {renderRow.bind(undefined, memento)}
-    </FixedSizeList>
+    return <List>
+        {years.map((year: YearState) => {
+            const mementos = memento.list.filter((memento) => memento.timestamp.getFullYear() == year.year)
+            return <>
+                <ListItem button onClick={open.bind(undefined, year)}>
+                    <ListItemText primary={year.year} />
+                    {year.open ? <ExpandLess /> : <ExpandMore />}
+                </ListItem>
+                <Collapse in={year.open} timeout="auto" unmountOnExit>
+                    <FixedSizeList height={400} itemCount={mementos.length} itemSize={46} width={"100%"}>
+                        {renderRow.bind(undefined, mementos)}
+                    </FixedSizeList>
+                </Collapse>
+            </>
+        })}
+    </List>
 }
 
 

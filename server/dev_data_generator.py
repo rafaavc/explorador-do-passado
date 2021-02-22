@@ -1,4 +1,4 @@
-import sys, json, spacy, requests
+import sys, json, spacy, requests, math
 from process import inFlightWebsiteProcess
 
 if (len(sys.argv) != 2): raise Exception("This script receives exactly one argument, the url of the article.")
@@ -19,7 +19,19 @@ res = ", ".join(res)
 res = '{ "data": [%s] }' % res
 res = json.loads(res)
 
-data['memento'] = res['data']
+years = []
+pageMementos = []
+
+for memento in res['data']:
+    timestamp = memento['timestamp']
+    pageMementos.append({ 'timestamp': timestamp })
+    years.append(math.floor(float(timestamp) / math.pow(10, 10)))
+
+
+data['memento'] = {
+    'list': pageMementos,
+    'years': years
+}
 
 
 with open('../extension/src/dev_data.json', 'w') as f:

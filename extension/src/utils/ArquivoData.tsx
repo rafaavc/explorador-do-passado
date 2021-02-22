@@ -1,6 +1,6 @@
 
 interface PageMemento {
-    timestamp: string
+    timestamp: Date
 }
 
 interface ArquivoEntity {
@@ -16,11 +16,16 @@ interface ArquivoArticle {
     entities: Array<ArquivoEntity>
 }
 
+interface ArquivoMemento {
+    list: Array<PageMemento>,
+    years: Array<number>
+}
+
 interface ArquivoData {
-    memento?: Array<PageMemento>,
+    memento?: ArquivoMemento,
     article?: ArquivoArticle,
     url: string
 }
 
 
-export type { ArquivoData, PageMemento, ArquivoArticle, ArquivoEntity }
+export type { ArquivoMemento, ArquivoData, PageMemento, ArquivoArticle, ArquivoEntity }

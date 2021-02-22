@@ -1,4 +1,5 @@
-import { ArquivoData } from "../utils/ArquivoData";
+import { ArquivoData, ArquivoMemento } from "../utils/ArquivoData";
+import { arquivoDateToDate } from "../utils/ArquivoDate";
 import { logEvent, logReceived } from "../utils/Logger";
 import { Message } from "../utils/Message";
 import { PageInfo } from "./content";
@@ -122,8 +123,13 @@ const processTabContentData = (content: PageInfo, tabId: number, extender?: Func
             splitted.splice(splitted.length-1, 1) // last member is empty string
             const validJSON = `{ "data": [${splitted.join(",")}] }`
             const validData = JSON.parse(validJSON)
-            compileData(validData.data, "memento")
-            logEvent("Received from memento:", validData.data)
+
+            const finalData: Array<{timestamp: string}> = []
+
+            validData.data.forEach((memento: { timestamp: string }) => finalData.push({ timestamp: memento.timestamp }))
+
+            compileData(finalData, "memento")
+            logEvent("Received from memento:", finalData)
         })
 }
 
