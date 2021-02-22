@@ -1,11 +1,8 @@
+import requests, json, math, time
 from datetime import datetime, timedelta
-import requests
-import json
 from progress.bar import Bar
-import math
 from pymongo import MongoClient
 from newspaper import Article, ArticleException
-import time
 
 db = MongoClient()['arquivoMVP']
 articlesCollection = db['articles']
@@ -32,7 +29,7 @@ def makeSearch(site, query, fromTime=1996, toTime=2021):
     }
     while True:
         try:
-            res = makeRequest(params)
+            res = makeRequest(params, "https://arquivo.pt/textsearch")
             return res['response_items']
         except Exception as ex:
             print("\n!! Received status code", ex.args[0])
@@ -42,7 +39,7 @@ def makeSearch(site, query, fromTime=1996, toTime=2021):
             else: return []
 
 
-def makeRequest(payload, url="https://arquivo.pt/textsearch", json=True):
+def makeRequest(payload, url, json=True):
     req = requests.get(url, payload)
 
     if req.status_code != 200:

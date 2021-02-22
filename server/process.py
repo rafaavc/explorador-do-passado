@@ -1,5 +1,11 @@
 from newspaper import Article
 
+def getTypeScore(type):
+    if type == "PER": return 0
+    elif type == "ORG": return 1
+    elif type == "LOC": return 2
+    else: return 3
+
 def inFlightWebsiteProcess(url, nlp, html=None):
     a = Article(url)
 
@@ -25,6 +31,8 @@ def inFlightWebsiteProcess(url, nlp, html=None):
         if alreadyExists: continue
 
         entities.append({ 'text': text, 'type': entity.label_ })
+
+    entities.sort(key=lambda entity : getTypeScore(entity['type']))
 
     return {
         'title': a.title,

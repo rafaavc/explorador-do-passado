@@ -1,17 +1,26 @@
 
 interface PageMemento {
-    noFrame: String,
-    timestamp: String
+    timestamp: string
 }
 
 interface ArquivoEntity {
-    name: String,
-    link: String
+    text: string,
+    type: string
 }
 
-interface ArquivoData {
-    memento: Array<PageMemento>,
+interface ArquivoArticle {
+    title: string,
+    authors: Array<string>,
+    text: string,
+    top_image: string,
     entities: Array<ArquivoEntity>
 }
 
-export type { ArquivoData }
+interface ArquivoData {
+    memento?: Array<PageMemento>,
+    article?: ArquivoArticle,
+    url: string
+}
+
+
+export type { ArquivoData, PageMemento, ArquivoArticle, ArquivoEntity }

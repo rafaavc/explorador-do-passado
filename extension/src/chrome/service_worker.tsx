@@ -1,5 +1,7 @@
+import { ArquivoData } from "../utils/ArquivoData";
 import { logEvent, logReceived } from "../utils/Logger";
 import { Message } from "../utils/Message";
+import { PageInfo } from "./content";
 
 const LIFE_EXPECTANCY_MINS = 20
 const REAPER_INTERVAL_SECS = 30
@@ -17,6 +19,11 @@ chrome.runtime.onInstalled.addListener(() => {
 });
 
 let currentTabId: number = -1
+
+
+let counter: number = 0
+
+const logAndUpdateCounter = () => { counter++; logEvent("Testing:", counter)}
 
 const getCurrentTab = (callback: Function) => {
     if (currentTabId === -1) {
@@ -80,7 +87,21 @@ chrome.tabs.onActivated.addListener((activeInfo: chrome.tabs.TabActiveInfo) => {
                                        // this makes it very fast to retrieve the data related to the tab
 })
 
-const processTabContentData = (content: any, tabId: number, extender?: Function) => {
+const processTabContentData = (content: PageInfo, tabId: number, extender?: Function) => {
+    let flag = false    // neither have finished
+    let processedData: ArquivoData = { url: content.url }
+
+    const compileData = (data: any, source: "pyserver" | "memento") => {
+        if (source === "memento") processedData.memento = data
+        else if (source === "pyserver") processedData.article = data
+        
+        if (flag === false) flag = true
+        else {
+            addTabData(tabId, processedData)
+            if (extender) extender(processedData)
+        }
+    }
+
     fetch(`${process.env.REACT_APP_SERVER_URL}/extension/api`, {
         headers: {
             'Content-Type': 'application/json'
@@ -90,9 +111,19 @@ const processTabContentData = (content: any, tabId: number, extender?: Function)
     })
         .then((response: Response) => response.json())
         .then(data => {
-            addTabData(tabId, data)
-            if (extender) extender(data)
-            logEvent("Received from API:", data)
+            compileData(data, "pyserver")
+            logEvent("Received from pyserver:", data)
+        })
+
+    fetch(`https://arquivo.pt/wayback/cdx?url=${encodeURIComponent(content.url)}&output=json&fl=timestamp`)
+        .then((response: Response) => response.text())
+        .then(textData => {
+            const splitted = textData.split("\n")
+            splitted.splice(splitted.length-1, 1) // last member is empty string
+            const validJSON = `{ "data": [${splitted.join(",")}] }`
+            const validData = JSON.parse(validJSON)
+            compileData(validData.data, "memento")
+            logEvent("Received from memento:", validData.data)
         })
 }
 
@@ -110,6 +141,7 @@ chrome.runtime.onMessage.addListener((message: Message, sender: chrome.runtime.M
         sendResponse("OK")
 
     } else if (message.type === "get_ui_data") {
+        logAndUpdateCounter()
 
         logReceived(message, sender, "Current tabs:", tabs)
 
@@ -123,8 +155,9 @@ chrome.runtime.onMessage.addListener((message: Message, sender: chrome.runtime.M
                 sendResponse(data)
             } else {
                 // need to make something for when the data is requested while the page is still loading
+                // need to delete tab info on tab close
                 logEvent("going to get the data")
-                chrome.tabs.sendMessage(tabId, { type: "get_page_info" }, (message: any) => {
+                chrome.tabs.sendMessage(tabId, { type: "get_page_info" }, (message: PageInfo) => {
                     processTabContentData(message, tabId, (processed: any) => { sendResponse(processed) })
                 })
             }

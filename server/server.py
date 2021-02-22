@@ -7,7 +7,7 @@ nlp = spacy.load("pt_core_news_md")
 
 @app.route('/')
 def home():
-    return "Hello stranger:)"
+    return "Hello stranger :)"
 
 @app.route('/extension/api', methods=['POST'])
 def extensionApi():

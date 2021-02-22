@@ -1,6 +1,6 @@
-interface Message {
+interface Message<T=any> {
     type: string,
-    content?: any
+    content?: T
 }
 
 export type { Message }

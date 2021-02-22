@@ -1,94 +1,40 @@
 import { useEffect, useState } from 'react'
 import { Message } from './utils/Message'
-import { AppBar, Toolbar, IconButton, Typography, makeStyles, CircularProgress, Box, Container, Chip, Fade, Tooltip } from '@material-ui/core'
-import { GitHub } from '@material-ui/icons'
-import FaceIcon from '@material-ui/icons/Face'
-import BusinessIcon from '@material-ui/icons/Business'
-import LocationOnIcon from '@material-ui/icons/LocationOn'
+import { Container, Fade } from '@material-ui/core'
 import { logEvent } from './utils/Logger'
 import dev_data from './dev_data.json'
+import { ArquivoData } from './utils/ArquivoData'
+import { Header } from './components/Header'
+import { Loading } from './components/Loading'
+import { AppContent } from './components/AppContent'
 
-
-interface Identity {
-    text: string,
-    type: string
-}
-interface Data {
-    title: string,
-    authors: Array<string>,
-    text: string,
-    entities: Array<Identity>
-}
-
-const useStyles = makeStyles(() => ({
-        grow: {
-            flexGrow: 1,
-        }
-    }))
 
 const App = () => {
-    const [data, setData] = useState<Data|null|number>(null)
-
-    const [collector, setCollector] = useState<string|null>(null)
-
-    const classes = useStyles()
+    const [data, setData] = useState<ArquivoData|null>(null)
 
     useEffect(() => {
         if (process.env.NODE_ENV == "production") {
             const message: Message = { type: "get_ui_data" }
-            chrome.runtime.sendMessage(message, (data) => {
-                if (data === "invalid_tab") setData(-1)
-                else setData(data)
-
+            chrome.runtime.sendMessage(message, (data: ArquivoData) => {
+                setData(data)
                 logEvent("Received data:", data)
-                setCollector(JSON.stringify(data))
             })
         } else setData(dev_data)
     }, [])
 
+    const pageContent = () => {
+        if (data === null) return <Loading />
+        else return <AppContent data={data} />
+    }
+
     return (
         <>
-            <AppBar position="static">
-                <Toolbar>
-                    <Typography variant="h6" className={classes.grow}>Arquivo.pt</Typography>
-                    <Tooltip title="GitHub Repository">
-                        <IconButton edge="start" color="inherit" aria-label="menu">
-                            <GitHub />
-                        </IconButton>
-                    </Tooltip>
-                </Toolbar>
-            </AppBar>
+            <Header />
             <Container>
-            {data === null ? 
-                <Box mt={6} mb={6} display="flex" justifyContent="center">
-                    <CircularProgress />
-                </Box>
-                :
-                (typeof data === "number" ?
-                    <Box mt={6} mb={6} display="flex" justifyContent="center">
-                        Invalid Page
-                    </Box>
-                    :
-                    <Fade in={true}>
-                        <Box display="flex" my={2} justifyContent="center" gridGap={5} flexWrap="wrap">
-                            {data.entities.map((entity: Identity, idx: number) => {
-                                console.log(entity)
-                                const icon = entity.type == "PER" ? <FaceIcon /> : (entity.type == "ORG" ? <BusinessIcon/> : <LocationOnIcon/>)
-                                return <Chip
-                                    key={idx}
-                                    icon={icon}
-                                    label={entity.text}
-                                    clickable
-                                    color="primary"
-                                />
-                            })}
-                        </Box>
-                    </Fade>)
-            }
+                <Fade in={true}>
+                    {pageContent()}
+                </Fade>
             </Container>
-            <div style={{display: 'none'}}>
-                {collector}
-            </div>
         </>
     )
 }
