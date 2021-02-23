@@ -1,0 +1,38 @@
+{
+    "extensionTitle": "Arquivo Handbook",
+    "website": {
+        "tooltip": "Website",
+        "url": ""
+    },
+    "info": {
+        "tooltip": "Informação",
+        "titleBeginning": "Sobre o ",
+        "content": "Esta ferramenta foi desenvolvida com base na informação disponibilizada pelo serviço Arquivo.pt, uma infraestrutura de investigação que permite pesquisar e aceder a páginas da web portuguesa arquivadas desde 1996."
+    },
+    "settings": {
+        "title": "Definições",
+        "tooltip": "Definições",
+        "content": "Bem-vindo à página de definições vazia."
+    },
+    "mementoList": {
+        "versionLabel": {
+            "prefix": "vers",
+            "suffixSingular": "ão",
+            "suffixPlural": "ões"
+        },
+        "title": "Versões antigas",
+        "notFoundMessage": "Não foram encontradas versões antigas."
+    },
+    "dates": {
+        "months": {
+            "long": [ "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro" ],
+            "short": [ "Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez" ]
+        },
+        "weekdays": {
+            "long": [ "Domingo", "Segunda-feira", "Terça-feira", "Quarta-feira", "Quinta-feira", "Sexta-feira", "Sábado" ]
+        },
+        "dayLabel": "dia",
+        "locale": "pt"
+    }
+
+}

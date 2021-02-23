@@ -4,6 +4,7 @@ import TuneIcon from '@material-ui/icons/Tune'
 import InfoIcon from '@material-ui/icons/Info';
 import { useState } from 'react'
 import { SettingsDialog } from './Settings'
+import contentText from '../text/pt.json'
 
 const useStyles = makeStyles(() => ({
     grow: {
@@ -20,10 +21,10 @@ function InfoDialog(props: InfoDialogProps) {
     const { open, onCloseFn } = props;
   
     return <Dialog onClose={onCloseFn} aria-labelledby="info-dialog-title" open={open}>
-            <DialogTitle id="simple-dialog-title">Sobre o Arquivo Handbook</DialogTitle>
+            <DialogTitle id="simple-dialog-title">{contentText.info.titleBeginning + contentText.extensionTitle}</DialogTitle>
             <DialogContent>
                 <DialogContentText id="alert-dialog-description">
-                    Esta ferramenta foi desenvolvida com base na informação disponibilizada pelo serviço Arquivo.pt, que preserva as páginas web do passado.
+                    {contentText.info.content}
                 </DialogContentText>
             </DialogContent>
         </Dialog>
@@ -38,18 +39,18 @@ const Header = () => {
     return <>
         <AppBar position="static">
             <Toolbar>
-                <Typography variant="h6" className={classes.grow}>Arquivo Handbook</Typography>
-                <Tooltip title="Website">
+                <Typography variant="h6" className={classes.grow}>{contentText.extensionTitle}</Typography>
+                <Tooltip title={contentText.website.tooltip}>
                     <IconButton edge="start" color="inherit" aria-label="menu">
                         <LanguageIcon />
                     </IconButton>
                 </Tooltip>
-                <Tooltip title="Informação">
+                <Tooltip title={contentText.info.tooltip}>
                     <IconButton edge="start" color="inherit" onClick={() => setInfoOpen(true)} aria-label="menu">
                         <InfoIcon />
                     </IconButton>
                 </Tooltip>
-                <Tooltip title="Definições">
+                <Tooltip title={contentText.settings.tooltip}>
                     <IconButton edge="start" color="inherit" onClick={() => setSettingsOpen(true)} aria-label="menu">
                         <TuneIcon />
                     </IconButton>

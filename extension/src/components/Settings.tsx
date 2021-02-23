@@ -2,6 +2,7 @@ import { Dialog, AppBar, Toolbar, IconButton, Typography, Slide, DialogContent, 
 import CloseIcon from '@material-ui/icons/Close'
 import React from 'react'
 import { TransitionProps } from '@material-ui/core/transitions'
+import contentText from '../text/pt.json'
 
 interface SettingsDialogProps {
     open: boolean,
@@ -22,13 +23,13 @@ const SettingsDialog = (props: SettingsDialogProps) => {
                         <CloseIcon />
                     </IconButton>
                     <Typography variant="h6">
-                        Settings
+                        {contentText.settings.title}
                     </Typography>
                 </Toolbar>
             </AppBar>
             <DialogContent>
                 <DialogContentText id="alert-dialog-description">
-                    Welcome to the empty settings page.
+                    {contentText.settings.content}
                 </DialogContentText>
             </DialogContent>
         </Dialog>    

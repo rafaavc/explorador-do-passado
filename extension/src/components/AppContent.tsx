@@ -10,7 +10,7 @@ interface AppContentProps {
 const AppContent = (props: AppContentProps) => {
     const url = new URL(props.data.url)
     return <>
-        <Box mt={3} mb={3}>
+        <Box mt={1.5} mb={3}>
             <Typography variant="subtitle1">{props.data.article?.title}</Typography>
             <Typography variant="caption">{url.hostname}</Typography>
         </Box>
