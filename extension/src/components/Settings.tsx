@@ -2,7 +2,7 @@ import { Dialog, AppBar, Toolbar, IconButton, Typography, Slide, DialogContent, 
 import CloseIcon from '@material-ui/icons/Close'
 import React from 'react'
 import { TransitionProps } from '@material-ui/core/transitions'
-import contentText from '../text/pt.json'
+import contentText from '../text/en.json'
 
 interface SettingsDialogProps {
     open: boolean,

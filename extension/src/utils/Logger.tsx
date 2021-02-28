@@ -16,3 +16,7 @@ export const logEvent = (event: string, ...others: Array<any>) => {
     console.log("- " + event, ...others)
 }
 
+export const logError = (error: string, ...others: Array<any>) => {
+    console.error(error, ...others)
+}
+

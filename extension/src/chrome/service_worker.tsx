@@ -3,6 +3,7 @@ import { arquivoDateToDate } from "../utils/ArquivoDate";
 import { logEvent, logReceived } from "../utils/Logger";
 import { Message } from "../utils/Message";
 import { PageInfo } from "./content";
+import { queryCurrentTab } from "./utils";
 
 const LIFE_EXPECTANCY_MINS = 20
 const REAPER_INTERVAL_SECS = 30
@@ -28,10 +29,7 @@ const logAndUpdateCounter = () => { counter++; logEvent("Testing:", counter)}
 
 const getCurrentTab = (callback: Function) => {
     if (currentTabId === -1) {
-        chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => { 
-            if (tabs[0].id) callback(tabs[0].id) 
-            else logEvent("Tried to query for active tab but received tab without id. Tabs:", tabs)
-        })
+        queryCurrentTab(callback)
     } else callback(currentTabId)
 }
 

@@ -4,6 +4,10 @@
   "description": "Base Level Extension",
   "version": "1.0",
   "manifest_version": 3,
+  "permissions": [
+    "storage",
+    "tabs"
+  ],
   "action": {
     "default_popup": "index.html",
     "default_title": "Open the popup"

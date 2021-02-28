@@ -1,0 +1,57 @@
+{
+    "extensionTitle": "Arquivo Handbook",
+    "website": {
+        "tooltip": "Website",
+        "url": ""
+    },
+    "general": {
+        "closeButtonText": "Close"
+    },
+    "info": {
+        "tooltip": "Information",
+        "titleBeginning": "About ",
+        "content": "This tool was developed with the information made available by the Arquivo.pt service, an investigation infrastructure that allows people to search and access portuguese web pages archived since 1996.",
+        "arquivoURL": "https://arquivo.pt",
+        "arquivoButtonText": "Arquivo.pt"
+    },
+    "settings": {
+        "title": "Settings",
+        "tooltip": "Settings",
+        "content": "Welcome to the empty settings page"
+    },
+    "mementoList": {
+        "versionLabel": {
+            "singular": "version",
+            "plural": "versions"
+        },
+        "title": "Old versions",
+        "notFoundMessage": "No old versions of this page were found.",
+        "entryActions": {
+            "title": "Actions",
+            "newTab": {
+                "primary": "New Separator",
+                "secondary": "Open this version in a new separator"
+            },
+            "sideBySide": {
+                "primary": "Side By Side",
+                "secondary": "Open this version side by side with the current page"
+            },
+            "textDiff": {
+                "primary": "Text Differences",
+                "secondary": "See text differences between this version and the current page"
+            }
+        }
+    },
+    "dates": {
+        "months": {
+            "long": [ "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" ],
+            "short": [ "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" ]
+        },
+        "weekdays": {
+            "long": [ "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" ]
+        },
+        "dayLabel": "day",
+        "locale": "en"
+    }
+
+}

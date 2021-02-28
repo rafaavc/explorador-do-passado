@@ -4,10 +4,15 @@
         "tooltip": "Website",
         "url": ""
     },
+    "general": {
+        "closeButtonText": "Fechar"
+    },
     "info": {
         "tooltip": "Informação",
         "titleBeginning": "Sobre o ",
-        "content": "Esta ferramenta foi desenvolvida com base na informação disponibilizada pelo serviço Arquivo.pt, uma infraestrutura de investigação que permite pesquisar e aceder a páginas da web portuguesa arquivadas desde 1996."
+        "content": "Esta ferramenta foi desenvolvida com base na informação disponibilizada pelo serviço Arquivo.pt, uma infraestrutura de investigação que permite pesquisar e aceder a páginas da web portuguesa arquivadas desde 1996.",
+        "arquivoURL": "https://arquivo.pt",
+        "arquivoButtonText": "Arquivo.pt"
     },
     "settings": {
         "title": "Definições",
@@ -16,12 +21,26 @@
     },
     "mementoList": {
         "versionLabel": {
-            "prefix": "vers",
-            "suffixSingular": "ão",
-            "suffixPlural": "ões"
+            "singular": "versão",
+            "plural": "versões"
         },
         "title": "Versões antigas",
-        "notFoundMessage": "Não foram encontradas versões antigas."
+        "notFoundMessage": "Não foram encontradas versões antigas desta página.",
+        "entryActions": {
+            "title": "Ações",
+            "newTab": {
+                "primary": "Novo Separador",
+                "secondary": "Abrir esta versão num novo separador"
+            },
+            "sideBySide": {
+                "primary": "Lado a Lado",
+                "secondary": "Abrir esta versão lado a lado com a página atual"
+            },
+            "textDiff": {
+                "primary": "Diferenças de Texto",
+                "secondary": "Ver diferenças do texto entre esta versão e a página atual"
+            }
+        }
     },
     "dates": {
         "months": {

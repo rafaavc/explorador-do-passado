@@ -1,9 +1,18 @@
-import { ListItem, ListItemText, Fade, List, Collapse, Typography, Box, Divider, makeStyles, createStyles, Theme } from '@material-ui/core'
+import { ListItem, ListItemText, Fade, List, Collapse, Typography, Box, Divider, makeStyles, createStyles, Theme, ListItemIcon } from '@material-ui/core'
+import { Dialog, AppBar, Toolbar, IconButton, Slide, DialogContent, DialogContentText, DialogTitle, DialogActions, Button } from '@material-ui/core'
+import CloseIcon from '@material-ui/icons/Close'
+import OpenInNewIcon from '@material-ui/icons/OpenInNew'
+import CompareIcon from '@material-ui/icons/Compare'
+import SubjectIcon from '@material-ui/icons/Subject'
+import { TransitionProps } from '@material-ui/core/transitions'
 import { ExpandLess, ExpandMore } from '@material-ui/icons'
 import { ArquivoMemento, PageMemento } from '../utils/ArquivoData'
 import { FixedSizeList, ListChildComponentProps } from 'react-window'
 import React, { useState } from 'react'
-import contentText from '../text/pt.json'
+import contentText from '../text/en.json'
+import { openMemento, getMementoURL } from '../utils/OpenURL'
+import { Message } from '../utils/Message'
+import { queryCurrentTab } from  '../chrome/utils' 
 
 interface MementoListProps {
     memento: ArquivoMemento,
@@ -23,20 +32,67 @@ interface MonthState {
     mementos: PageMemento[]
 }
 
-const renderRow = (mementoList: PageMemento[], url: string, fade: boolean, itemClassName: string, props: ListChildComponentProps) => {
+interface MementoEntryActionsProps {
+    open: boolean,
+    onCloseFn: any,
+    memento: PageMemento,
+    url: string
+}
+
+const openSideBySide = (url: string, timestamp: string) => {
+    const message: Message = { type: "view_side_by_side", content: { url: getMementoURL(url, timestamp) } }
+    queryCurrentTab((tabId: number) => {
+        chrome.tabs.sendMessage(tabId, message)
+    })
+}
+
+const MementoEntryActions = (props: MementoEntryActionsProps) => {
+    const { open, onCloseFn, memento, url } = props;
+
+    return <Dialog onClose={onCloseFn} aria-labelledby="info-dialog-title" open={open}>
+        <DialogTitle id="simple-dialog-title">{contentText.mementoList.entryActions.title}</DialogTitle>
+        <List>
+            <ListItem button onClick={openMemento.bind(undefined, url, memento.timestamp)}>
+                <ListItemIcon>
+                    <OpenInNewIcon />
+                </ListItemIcon>
+                <ListItemText primary={contentText.mementoList.entryActions.newTab.primary} secondary={contentText.mementoList.entryActions.newTab.secondary} />
+            </ListItem>
+            <ListItem button onClick={openSideBySide.bind(undefined, url, memento.timestamp)}>
+                <ListItemIcon>
+                    <CompareIcon />
+                </ListItemIcon>
+                <ListItemText primary={contentText.mementoList.entryActions.sideBySide.primary} secondary={contentText.mementoList.entryActions.sideBySide.secondary} />
+            </ListItem>
+            <ListItem button>
+                <ListItemIcon>
+                    <SubjectIcon />
+                </ListItemIcon>
+                <ListItemText primary={contentText.mementoList.entryActions.textDiff.primary} secondary={contentText.mementoList.entryActions.textDiff.secondary} />
+            </ListItem>
+        </List>
+        <DialogActions>
+            <Button onClick={onCloseFn} color="primary" autoFocus>
+                {contentText.general.closeButtonText}
+            </Button>
+        </DialogActions>
+    </Dialog>
+}
+
+const renderRow = (mementoList: PageMemento[], url: string, fade: boolean, props: ListChildComponentProps) => {
     const { index, style } = props;
     const date = mementoList[index].date
-    const timestamp = mementoList[index].timestamp
 
-    const openMemento = (url: string, timestamp: string): void => {
-        if (process.env.NODE_ENV === "production") chrome.tabs.create({ url: `https://arquivo.pt/noFrame/replay/${timestamp}/${url}`, active: true })
-    }
+    const [ open, setOpen ] = useState(false)
 
-    return <Fade in={fade}>
-            <ListItem button dense style={style} key={index} className={itemClassName} onClick={openMemento.bind(undefined, url, timestamp)}>
+    return <>
+        <Fade in={fade}>
+            <ListItem button dense style={style} key={index} onClick={setOpen.bind(undefined, true)}>
                 <ListItemText primary={contentText.dates.weekdays.long[date.getDay()] + " " + contentText.dates.dayLabel + " " + date.getDate() + " (" + date.toLocaleTimeString(contentText.dates.locale, {hour: '2-digit', minute:'2-digit'}) + ")"} />
             </ListItem>
         </Fade>
+        <MementoEntryActions memento={mementoList[index]} url={url} open={open} onCloseFn={setOpen.bind(undefined, false)} />
+    </>
 }
 
 interface YearListProps {
@@ -56,6 +112,8 @@ const YearList = (props: YearListProps) => {
     const { mementos, url } = props
     const months: MonthState[] = []
     const classes = useStyles()
+
+    const year = mementos[0].date.getFullYear()
 
     let previousMonth: any = -1
     for (const memento of mementos) {
@@ -80,17 +138,31 @@ const YearList = (props: YearListProps) => {
         month.setOpen(!month.open)
     }
 
+    const Transition = React.forwardRef(
+        (props: TransitionProps & { children?: React.ReactElement }, ref: React.Ref<unknown>) => 
+            <Slide direction="up" ref={ref} {...props} />)
+
     return <List>
         {months.map((month) => <React.Fragment key={month.month}>
             <ListItem dense button onClick={open.bind(undefined, month)} className={classes.nested}>
-                <ListItemText primary={contentText.dates.months.long[month.month]} secondary={month.mementos.length + " " + contentText.mementoList.versionLabel.prefix + (month.mementos.length == 1 ? contentText.mementoList.versionLabel.suffixSingular : contentText.mementoList.versionLabel.suffixPlural)} />
+                <ListItemText primary={contentText.dates.months.long[month.month]} secondary={month.mementos.length + " " + (month.mementos.length == 1 ? contentText.mementoList.versionLabel.singular : contentText.mementoList.versionLabel.plural)} />
                 {month.open ? <ExpandLess /> : <ExpandMore />}
             </ListItem>
-            <Collapse in={month.open} timeout="auto" unmountOnExit>
-                <FixedSizeList height={Math.min(400, month.mementos.length*46)} itemCount={month.mementos.length} itemSize={46} width={"100%"}>
-                    {renderRow.bind(undefined, month.mementos, url, month.open, classes.nested)}
+            {month.open ? <Dialog fullScreen open={true} onClose={open.bind(undefined, month)} TransitionComponent={Transition}>
+                <AppBar position="static">
+                    <Toolbar>
+                        <IconButton edge="start" color="inherit" onClick={open.bind(undefined, month)} aria-label="close">
+                            <CloseIcon />
+                        </IconButton>
+                        <Typography variant="h6">
+                            {contentText.dates.months.long[month.month] + " " + year}
+                        </Typography>
+                    </Toolbar>
+                </AppBar>
+                <FixedSizeList height={window.innerHeight - 56} itemCount={month.mementos.length} itemSize={46} width={"100%"}>
+                    {renderRow.bind(undefined, month.mementos, url, month.open)}
                 </FixedSizeList>
-            </Collapse>
+            </Dialog> : null}
         </React.Fragment>)}
     </List>
 }
@@ -119,7 +191,7 @@ const MementoList = (props: MementoListProps) => {
                 const mementos = memento.list.filter((memento) => memento.date.getFullYear() == year.year)
                 return <React.Fragment key={year.year}>
                     <ListItem button onClick={open.bind(undefined, year)}>
-                        <ListItemText primary={year.year} secondary={mementos.length + " vers" + (mementos.length == 1 ? "ão" : "ões")} />
+                        <ListItemText primary={year.year} secondary={mementos.length + " " + (mementos.length == 1 ? contentText.mementoList.versionLabel.singular : contentText.mementoList.versionLabel.plural)} />
                         {year.open ? <ExpandLess /> : <ExpandMore />}
                     </ListItem>
                     <Collapse in={year.open} timeout="auto" unmountOnExit>

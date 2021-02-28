@@ -1,10 +1,11 @@
-import { DialogContentText, DialogContent, AppBar, Toolbar, Typography, Tooltip, IconButton, makeStyles, Dialog, DialogTitle } from '@material-ui/core'
+import { DialogContentText, DialogContent, AppBar, Toolbar, Typography, Tooltip, IconButton, makeStyles, Dialog, Button, DialogTitle, DialogActions } from '@material-ui/core'
 import LanguageIcon from '@material-ui/icons/Language'
 import TuneIcon from '@material-ui/icons/Tune'
 import InfoIcon from '@material-ui/icons/Info';
 import { useState } from 'react'
 import { SettingsDialog } from './Settings'
-import contentText from '../text/pt.json'
+import contentText from '../text/en.json'
+import { openURL } from '../utils/OpenURL'
 
 const useStyles = makeStyles(() => ({
     grow: {
@@ -17,7 +18,7 @@ interface InfoDialogProps {
     onCloseFn: any
 }
 
-function InfoDialog(props: InfoDialogProps) {
+const InfoDialog = (props: InfoDialogProps) => {
     const { open, onCloseFn } = props;
   
     return <Dialog onClose={onCloseFn} aria-labelledby="info-dialog-title" open={open}>
@@ -27,8 +28,16 @@ function InfoDialog(props: InfoDialogProps) {
                     {contentText.info.content}
                 </DialogContentText>
             </DialogContent>
+            <DialogActions>
+                <Button onClick={openURL.bind(undefined, contentText.info.arquivoURL)} color="primary">
+                    {contentText.info.arquivoButtonText}
+                </Button>
+                <Button onClick={onCloseFn} color="primary" autoFocus>
+                    {contentText.general.closeButtonText}
+                </Button>
+            </DialogActions>
         </Dialog>
-  }
+}
 
 const Header = () => {
     const classes = useStyles()
