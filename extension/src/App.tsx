@@ -3,11 +3,12 @@ import { Message } from './utils/Message'
 import { Container, Fade } from '@material-ui/core'
 import { logEvent } from './utils/Logger'
 import dev_data from './dev_data.json'
-import { ArquivoArticle, ArquivoData, PageMemento } from './utils/ArquivoData'
+import { ArquivoData, PageMemento, PageTimestamp } from './utils/ArquivoData'
 import { Header } from './components/Header'
 import { Loading } from './components/Loading'
 import { AppContent } from './components/AppContent'
 import { arquivoDateToDate } from './utils/ArquivoDate'
+import { queryCurrentTab } from './chrome/utils'
 
 
 const App = () => {
@@ -15,34 +16,32 @@ const App = () => {
 
     useEffect(() => {
         if (process.env.NODE_ENV == "production") {
-            const message: Message = { type: "get_ui_data" }
-            chrome.runtime.sendMessage(message, (data: { article: ArquivoArticle, url: string, memento: Array<{timestamp: string}> }) => {
-                const mementoList = data.memento
-                
-                const validData: ArquivoData = {
-                    url: data.url,
-                    memento: {
-                        list: [],
-                        years: []
-                    },
-                    article: data.article
-                }
-
-                let previousYear = -1
-                for (const memento of mementoList) {
-                    if (validData.memento) {
-                        const date = arquivoDateToDate(memento.timestamp)
-                        validData.memento.list.push({ date, timestamp: memento.timestamp })
-                        if (date.getFullYear() != previousYear) {
-                            validData.memento.years.push(date.getFullYear())
-                            previousYear = date.getFullYear()
+            const message: Message = { type: "get_page_data" }
+            queryCurrentTab()
+                .then((tabId: number) => {
+                    // need to add timeout
+                    chrome.tabs.sendMessage(tabId, message, (data: ArquivoData<PageTimestamp>) => {
+                        const mementoList = data.memento.list
+                        
+                        const validData: ArquivoData = {
+                            url: data.url,
+                            memento: {
+                                list: [],
+                                years: data.memento.years
+                            },
+                            article: data.article
                         }
-                    }
-                }
-
-                setData(validData)
-                logEvent("Received data:", data)
-            })
+    
+                        for (const memento of mementoList) {
+                            const date = arquivoDateToDate(memento.timestamp)
+                            validData.memento.list.push({ date, timestamp: memento.timestamp })
+                        }
+        
+                        setData(validData)
+                        logEvent("Received data:", data)
+                    })
+                })
+            
         } else {
             const validMementoList: PageMemento[] = []
             dev_data.memento.list.forEach((memento) => { validMementoList.push({ timestamp: memento.timestamp, date: arquivoDateToDate(memento.timestamp) }) })

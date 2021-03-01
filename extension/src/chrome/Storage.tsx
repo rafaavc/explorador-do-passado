@@ -1,26 +1,31 @@
 import { logError } from '../utils/Logger'
 import { SettingsOptions } from '../utils/SettingsOptions'
 
-export const getSettingsValue = (setting: SettingsOptions | SettingsOptions[], callback: Function) => {
-    chrome.storage.local.get(setting, (value) => {
+export type Dict = { [index: string]: any }
+
+const setStorage = (obj: Object, place?: string, ...errorInfo: any[]) => {
+    chrome.storage.local.set(obj, () => {
+        const placeStr = place ? ", in >" + place : "<"
+        if (chrome.runtime.lastError && chrome.runtime.lastError.message) logError("ERROR WHILE SETTING CHROME STORAGE: " + chrome.runtime.lastError.message + placeStr, ...errorInfo)
+        else if (chrome.runtime.lastError) logError("ERROR WHILE SETTING CHROME STORAGE", ...errorInfo)
+    })
+}
+
+const getStorage = (keys: string | Object | string[], callback: Function) => {
+    chrome.storage.local.get(keys, (value) => {
         callback(value)
     })
 }
 
-export const setSettingsValue = (setting: SettingsOptions, value: any) => {
-    type Dict = { [index: string]: string }
 
+export const getSettingsValue = (setting: SettingsOptions | SettingsOptions[], callback: Function) => {
+    getStorage(setting, callback)
+}
+
+export const setSettingsValue = (setting: SettingsOptions, value: any) => {
     const obj: Dict = {}
     obj[setting] = value
  
-    chrome.storage.local.set(obj, () => {
-        if (chrome.runtime.lastError && chrome.runtime.lastError.message) logError("ERROR WHILE SETTING SETTINGS VALUE: " + chrome.runtime.lastError.message, setting)
-        else if (chrome.runtime.lastError) logError("ERROR WHILE SETTING SETTINGS VALUE", setting)
-    })
-}
-
-
-export const storeTabState = () => {
-
+    setStorage(obj, "setSettingsValue", setting)
 }
 

@@ -14,3 +14,8 @@ export const arquivoDateToDate = (arquivoDate: string) => {
 
     return date
 }
+
+export const getYearFromTimestamp = (timestamp: string): number => {
+    const timestampNum: number = Number(timestamp)
+    return Math.floor(timestampNum / Math.pow(10, 10))
+}

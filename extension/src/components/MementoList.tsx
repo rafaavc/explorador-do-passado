@@ -10,7 +10,7 @@ import { ArquivoMemento, PageMemento } from '../utils/ArquivoData'
 import { FixedSizeList, ListChildComponentProps } from 'react-window'
 import React, { useState } from 'react'
 import contentText from '../text/en.json'
-import { openMemento, getMementoURL } from '../utils/OpenURL'
+import { openMemento, getMementoURL } from '../utils/URL'
 import { Message } from '../utils/Message'
 import { queryCurrentTab } from  '../chrome/utils' 
 
@@ -41,7 +41,7 @@ interface MementoEntryActionsProps {
 
 const openSideBySide = (url: string, timestamp: string) => {
     const message: Message = { type: "view_side_by_side", content: { url: getMementoURL(url, timestamp) } }
-    queryCurrentTab((tabId: number) => {
+    queryCurrentTab().then((tabId: number) => {
         chrome.tabs.sendMessage(tabId, message)
     })
 }
@@ -80,7 +80,7 @@ const MementoEntryActions = (props: MementoEntryActionsProps) => {
 }
 
 const renderRow = (mementoList: PageMemento[], url: string, fade: boolean, props: ListChildComponentProps) => {
-    const { index, style } = props;
+    const { index, style } = props
     const date = mementoList[index].date
 
     const [ open, setOpen ] = useState(false)

@@ -5,7 +5,7 @@ import InfoIcon from '@material-ui/icons/Info';
 import { useState } from 'react'
 import { SettingsDialog } from './Settings'
 import contentText from '../text/en.json'
-import { openURL } from '../utils/OpenURL'
+import { openURL } from '../utils/URL'
 
 const useStyles = makeStyles(() => ({
     grow: {
