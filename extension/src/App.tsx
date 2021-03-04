@@ -9,10 +9,12 @@ import { Loading } from './components/Loading'
 import { AppContent } from './components/AppContent'
 import { arquivoDateToDate } from './utils/ArquivoDate'
 import { queryCurrentTab } from './chrome/utils'
+import { PageData, PageState, PageStateId } from './utils/Page'
 
 
 const App = () => {
     const [data, setData] = useState<ArquivoData|null>(null)
+    const [state, setState] = useState<PageState|null>(null)
 
     useEffect(() => {
         if (process.env.NODE_ENV == "production") {
@@ -20,24 +22,26 @@ const App = () => {
             queryCurrentTab()
                 .then((tabId: number) => {
                     // need to add timeout
-                    chrome.tabs.sendMessage(tabId, message, (data: ArquivoData<PageTimestamp>) => {
-                        const mementoList = data.memento.list
+                    chrome.tabs.sendMessage(tabId, message, (pageData: PageData<PageTimestamp>) => {
+                        const arquivoData = pageData.arquivoData
+                        const mementoList = arquivoData.memento.list
                         
-                        const validData: ArquivoData = {
-                            url: data.url,
+                        const validArquivoData: ArquivoData = {
+                            url: arquivoData.url,
                             memento: {
                                 list: [],
-                                years: data.memento.years
+                                years: arquivoData.memento.years
                             },
-                            article: data.article
+                            article: arquivoData.article
                         }
     
                         for (const memento of mementoList) {
                             const date = arquivoDateToDate(memento.timestamp)
-                            validData.memento.list.push({ date, timestamp: memento.timestamp })
+                            validArquivoData.memento.list.push({ date, timestamp: memento.timestamp })
                         }
         
-                        setData(validData)
+                        setData(validArquivoData)
+                        setState(pageData.state)
                         logEvent("Received data:", data)
                     })
                 })
@@ -61,6 +65,7 @@ const App = () => {
 
     const pageContent = () => {
         if (data === null) return <Loading />
+        else if (state != null && state.id == PageStateId.SHOWING_SIDE_BY_SIDE) return <h1>Viewing {state.data}!!</h1>
         else return <AppContent data={data} />
     }
 
