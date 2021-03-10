@@ -1,9 +1,10 @@
-import { ListItem, ListItemText, Fade, List, Collapse, Typography, Box, Divider, makeStyles, createStyles, Theme, ListItemIcon } from '@material-ui/core'
+import { ListItem, ListItemText, Fade, List, Collapse, Typography, Box, Divider, makeStyles, createStyles, Theme, ListItemIcon, Snackbar, SnackbarContent } from '@material-ui/core'
 import { Dialog, AppBar, Toolbar, IconButton, Slide, DialogContent, DialogContentText, DialogTitle, DialogActions, Button } from '@material-ui/core'
 import CloseIcon from '@material-ui/icons/Close'
 import OpenInNewIcon from '@material-ui/icons/OpenInNew'
 import CompareIcon from '@material-ui/icons/Compare'
 import SubjectIcon from '@material-ui/icons/Subject'
+import ScreenShareIcon from '@material-ui/icons/ScreenShare'
 import { TransitionProps } from '@material-ui/core/transitions'
 import { ExpandLess, ExpandMore } from '@material-ui/icons'
 import { ArquivoMemento, PageMemento } from '../utils/ArquivoData'
@@ -11,8 +12,7 @@ import { FixedSizeList, ListChildComponentProps } from 'react-window'
 import React, { useState } from 'react'
 import contentText from '../text/en.json'
 import { openMemento, getMementoURL } from '../utils/URL'
-import { Message } from '../utils/Message'
-import { queryCurrentTab } from  '../chrome/utils' 
+import { openSideBySide } from '../utils/ContentActions'
 
 interface MementoListProps {
     memento: ArquivoMemento,
@@ -39,44 +39,64 @@ interface MementoEntryActionsProps {
     url: string
 }
 
-const openSideBySide = (url: string, timestamp: string) => {
-    const message: Message = { type: "view_side_by_side", content: { url: getMementoURL(url, timestamp), timestamp } }
-    queryCurrentTab().then((tabId: number) => {
-        chrome.tabs.sendMessage(tabId, message)
-    })
+const copyToClipboard = (url: string) => {
+    navigator.clipboard.writeText(url)
+            .then(() => {
+                console.log("Copied to clipboard!");
+            })
+            .catch(err => {
+                console.log('Error in copying text: ', err);
+            });
 }
 
 const MementoEntryActions = (props: MementoEntryActionsProps) => {
     const { open, onCloseFn, memento, url } = props;
 
-    return <Dialog onClose={onCloseFn} aria-labelledby="info-dialog-title" open={open}>
-        <DialogTitle id="simple-dialog-title">{contentText.mementoList.entryActions.title}</DialogTitle>
-        <List>
-            <ListItem button onClick={openMemento.bind(undefined, url, memento.timestamp)}>
-                <ListItemIcon>
-                    <OpenInNewIcon />
-                </ListItemIcon>
-                <ListItemText primary={contentText.mementoList.entryActions.newTab.primary} secondary={contentText.mementoList.entryActions.newTab.secondary} />
-            </ListItem>
-            <ListItem button onClick={openSideBySide.bind(undefined, url, memento.timestamp)}>
-                <ListItemIcon>
-                    <CompareIcon />
-                </ListItemIcon>
-                <ListItemText primary={contentText.mementoList.entryActions.sideBySide.primary} secondary={contentText.mementoList.entryActions.sideBySide.secondary} />
-            </ListItem>
-            <ListItem button>
-                <ListItemIcon>
-                    <SubjectIcon />
-                </ListItemIcon>
-                <ListItemText primary={contentText.mementoList.entryActions.textDiff.primary} secondary={contentText.mementoList.entryActions.textDiff.secondary} />
-            </ListItem>
-        </List>
-        <DialogActions>
-            <Button onClick={onCloseFn} color="primary" autoFocus>
-                {contentText.general.closeButtonText}
-            </Button>
-        </DialogActions>
-    </Dialog>
+    const [ feedback, setFeedback ] = useState({ open: false, message: ""})
+
+    return <>
+        <Dialog onClose={onCloseFn} aria-labelledby="info-dialog-title" open={open}>
+            <DialogTitle id="simple-dialog-title">{contentText.mementoList.entryActions.title}</DialogTitle>
+            <List>
+                <ListItem button onClick={openMemento.bind(undefined, url, memento.timestamp)}>
+                    <ListItemIcon>
+                        <OpenInNewIcon />
+                    </ListItemIcon>
+                    <ListItemText primary={contentText.mementoList.entryActions.newTab.primary} secondary={contentText.mementoList.entryActions.newTab.secondary} />
+                </ListItem>
+                <ListItem button onClick={() => { openSideBySide(url, memento.timestamp); onCloseFn(); setFeedback({ open: true, message: contentText.mementoList.entryActions.sideBySide.successMsg });  }}>
+                    <ListItemIcon>
+                        <CompareIcon />
+                    </ListItemIcon>
+                    <ListItemText primary={contentText.mementoList.entryActions.sideBySide.primary} secondary={contentText.mementoList.entryActions.sideBySide.secondary} />
+                </ListItem>
+                <ListItem button>
+                    <ListItemIcon>
+                        <SubjectIcon />
+                    </ListItemIcon>
+                    <ListItemText primary={contentText.mementoList.entryActions.textDiff.primary} secondary={contentText.mementoList.entryActions.textDiff.secondary} />
+                </ListItem>
+                {/* FOR SOME REASON COPY TO CLIPBOARD IS BROKEN (??) */}
+                <ListItem button onClick={() => { copyToClipboard.bind(undefined, getMementoURL(url, memento.timestamp)); onCloseFn(); setFeedback({ open: true, message: contentText.mementoList.entryActions.copy.successMsg }); }}>
+                    <ListItemIcon>
+                        <ScreenShareIcon />
+                    </ListItemIcon>
+                    <ListItemText primary={contentText.mementoList.entryActions.copy.primary} secondary={contentText.mementoList.entryActions.copy.secondary} />
+                </ListItem>
+            </List>
+            <DialogActions>
+                <Button onClick={onCloseFn} color="primary" autoFocus>
+                    {contentText.general.closeButtonText}
+                </Button>
+            </DialogActions>
+        </Dialog>
+        <Snackbar open={feedback.open} autoHideDuration={6000} onClose={() => setFeedback({ open: false, message: "" })}>
+            {/* <Alert onClose={() => setFeedbackOpen(false)} severity="success">  
+                Success!
+            </Alert> */}
+            <SnackbarContent message={feedback.message}/>
+        </Snackbar>
+    </>
 }
 
 const renderRow = (mementoList: PageMemento[], url: string, fade: boolean, props: ListChildComponentProps) => {

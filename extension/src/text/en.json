@@ -34,12 +34,22 @@
             },
             "sideBySide": {
                 "primary": "Side By Side",
-                "secondary": "Open this version side by side with the current page"
+                "secondary": "Open this version side by side with the current page",
+                "successMsg": "Opened side by side view"
             },
             "textDiff": {
                 "primary": "Text Differences",
                 "secondary": "See text differences between this version and the current page"
+            },
+            "copy": {
+                "primary": "Copy URL",
+                "secondary": "Copy the URL of this version to your clipboard",
+                "successMsg": "URL copied to clipboard"
             }
+        },
+        "viewingMementoCard": {
+            "subHeader": "You travelled to",
+            "close": "Stop viewing this memento"
         }
     },
     "dates": {

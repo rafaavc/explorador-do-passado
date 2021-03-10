@@ -23,7 +23,12 @@ let pageState: PageState = {
 
 let retrievingPageData: boolean = false
 
-const openSideBySide = (url: string) => {
+let saved: string | null = null;
+
+const openSideBySide = (url: string, timestamp: string) => {
+    pageState.id = PageStateId.SHOWING_SIDE_BY_SIDE
+    pageState.data = timestamp
+
     const iframe1 = document.createElement('iframe')
     iframe1.srcdoc = document.documentElement.outerHTML
     iframe1.style.width = "50%"
@@ -51,7 +56,16 @@ const openSideBySide = (url: string) => {
     body.appendChild(iframe2)
     newDoc.appendChild(body)
 
+    saved = document.documentElement.innerHTML
     document.documentElement.innerHTML = newDoc.innerHTML
+}
+
+const closeViewing = () => {
+    if (pageState.id != PageStateId.START && saved) {
+        document.documentElement.innerHTML = saved;
+        pageState.id = PageStateId.START;
+        pageState.data = null;
+    }
 }
 
 const retrieveArquivoData = (pageInfo: PageInfo) => new Promise<ArquivoData<PageTimestamp>>((resolve) => {
@@ -85,9 +99,9 @@ chrome.runtime.onMessage.addListener((message: Message, sender, sendResponse) =>
                 .then((arquivoData: ArquivoData<PageTimestamp>) => { sendResponse(buildPageData(arquivoData)) })
         }
     } else if (message.type === "view_side_by_side") {
-        pageState.id = PageStateId.SHOWING_SIDE_BY_SIDE
-        pageState.data = message.content.timestamp
-        openSideBySide(message.content.url)
+        openSideBySide(message.content.url, message.content.timestamp)
+    } else if (message.type === "close_viewing") {
+        closeViewing()
     }
     return true
 });
