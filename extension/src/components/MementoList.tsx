@@ -41,12 +41,12 @@ interface MementoEntryActionsProps {
 
 const copyToClipboard = (url: string) => {
     navigator.clipboard.writeText(url)
-            .then(() => {
-                console.log("Copied to clipboard!");
-            })
-            .catch(err => {
-                console.log('Error in copying text: ', err);
-            });
+        .then(() => {
+            console.log("Copied to clipboard!");
+        })
+        .catch(err => {
+            console.log('Error in copying text: ', err);
+        });
 }
 
 const MementoEntryActions = (props: MementoEntryActionsProps) => {
@@ -77,7 +77,7 @@ const MementoEntryActions = (props: MementoEntryActionsProps) => {
                     <ListItemText primary={contentText.mementoList.entryActions.textDiff.primary} secondary={contentText.mementoList.entryActions.textDiff.secondary} />
                 </ListItem>
                 {/* FOR SOME REASON COPY TO CLIPBOARD IS BROKEN (??) */}
-                <ListItem button onClick={() => { copyToClipboard.bind(undefined, getMementoURL(url, memento.timestamp)); onCloseFn(); setFeedback({ open: true, message: contentText.mementoList.entryActions.copy.successMsg }); }}>
+                <ListItem button onClick={() => { copyToClipboard(getMementoURL(url, memento.timestamp)); onCloseFn(); setFeedback({ open: true, message: contentText.mementoList.entryActions.copy.successMsg }); }}>
                     <ListItemIcon>
                         <ScreenShareIcon />
                     </ListItemIcon>
@@ -90,7 +90,7 @@ const MementoEntryActions = (props: MementoEntryActionsProps) => {
                 </Button>
             </DialogActions>
         </Dialog>
-        <Snackbar open={feedback.open} autoHideDuration={6000} onClose={() => setFeedback({ open: false, message: "" })}>
+        <Snackbar open={feedback.open} autoHideDuration={3000} onClose={() => setFeedback({ open: false, message: "" })}>
             {/* <Alert onClose={() => setFeedbackOpen(false)} severity="success">  
                 Success!
             </Alert> */}
