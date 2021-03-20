@@ -1,5 +1,5 @@
 import { ListItem, ListItemText, Fade, List, Collapse, Typography, Box, Divider, makeStyles, createStyles, Theme, ListItemIcon, Snackbar, SnackbarContent } from '@material-ui/core'
-import { Dialog, AppBar, Toolbar, IconButton, Slide, DialogContent, DialogContentText, DialogTitle, DialogActions, Button } from '@material-ui/core'
+import { Dialog, AppBar, Toolbar, IconButton, Slide, DialogTitle, DialogActions, Button } from '@material-ui/core'
 import CloseIcon from '@material-ui/icons/Close'
 import OpenInNewIcon from '@material-ui/icons/OpenInNew'
 import CompareIcon from '@material-ui/icons/Compare'

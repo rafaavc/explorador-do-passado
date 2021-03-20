@@ -4,6 +4,8 @@ import React, { useState } from 'react'
 import { TransitionProps } from '@material-ui/core/transitions'
 import contentText from '../text/en.json'
 import AutorenewIcon from '@material-ui/icons/Autorenew'
+import { useSelector, useDispatch } from 'react-redux'
+import { selectRetrieveAtLoad, toggleRetrieveAtLoad } from '../store/settingsSlice'
 
 interface SettingsDialogProps {
     open: boolean,
@@ -15,9 +17,9 @@ const Transition = React.forwardRef(
         <Slide direction="up" ref={ref} {...props} />)
 
 const SettingsDialog = (props: SettingsDialogProps) => {
-    const { open, onCloseFn } = props
-
-    const [ active, setActive ] = useState(true)
+    const { open, onCloseFn } = props;
+    const retrieveAtLoad = useSelector(selectRetrieveAtLoad);
+    const dispatch = useDispatch();
   
     return <Dialog fullScreen open={open} onClose={onCloseFn} TransitionComponent={Transition}>
             <AppBar position="static">
@@ -41,8 +43,8 @@ const SettingsDialog = (props: SettingsDialogProps) => {
                             <Switch
                                 edge="end"
                                 color="primary"
-                                onChange={() => setActive(!active)}
-                                checked={active}
+                                onChange={() => dispatch(toggleRetrieveAtLoad())}
+                                checked={retrieveAtLoad}
                                 inputProps={{ 'aria-labelledby': 'switch-list-label-wifi' }}
                             />
                         </ListItemSecondaryAction>
