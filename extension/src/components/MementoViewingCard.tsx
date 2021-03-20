@@ -6,12 +6,13 @@ import ScreenShareIcon from '@material-ui/icons/ScreenShare'
 import SubjectIcon from '@material-ui/icons/Subject'
 import contentText from '../text/en.json'
 import { closeSideBySide } from '../utils/ContentActions'
+import { useDispatch } from 'react-redux'
 
 interface MementoViewingCardProps {
     timestamp: String
 }
 
-export const MementoViewingCard = (props: MementoViewingCardProps) => <Card elevation={2}>
+export const MementoViewingCard = (props: MementoViewingCardProps) => <Card>
         <CardHeader
             avatar={ <CompareIcon/> }
             // action={
@@ -49,7 +50,7 @@ export const MementoViewingCard = (props: MementoViewingCardProps) => <Card elev
                 </IconButton>
             </Tooltip>
             <Tooltip title={contentText.mementoList.viewingMementoCard.close}>
-                <IconButton aria-label={contentText.mementoList.viewingMementoCard.close} onClick={closeSideBySide}>
+                <IconButton aria-label={contentText.mementoList.viewingMementoCard.close} onClick={closeSideBySide.bind(undefined, useDispatch())}>
                     <CloseIcon />
                 </IconButton>
             </Tooltip>

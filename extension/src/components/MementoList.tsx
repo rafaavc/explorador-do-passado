@@ -13,6 +13,7 @@ import React, { useState } from 'react'
 import contentText from '../text/en.json'
 import { openMemento, getMementoURL } from '../utils/URL'
 import { openSideBySide } from '../utils/ContentActions'
+import { useDispatch } from 'react-redux'
 
 interface MementoListProps {
     memento: ArquivoMemento,
@@ -36,7 +37,8 @@ interface MementoEntryActionsProps {
     open: boolean,
     onCloseFn: any,
     memento: PageMemento,
-    url: string
+    url: string,
+    closeAncestors: any
 }
 
 const copyToClipboard = (url: string) => {
@@ -50,9 +52,15 @@ const copyToClipboard = (url: string) => {
 }
 
 const MementoEntryActions = (props: MementoEntryActionsProps) => {
-    const { open, onCloseFn, memento, url } = props;
+    const { open, onCloseFn, closeAncestors, memento, url } = props;
 
     const [ feedback, setFeedback ] = useState({ open: false, message: ""})
+    const dispatch = useDispatch();
+
+    const closeAll = () => {
+        onCloseFn();
+        closeAncestors();
+    }
 
     return <>
         <Dialog onClose={onCloseFn} aria-labelledby="info-dialog-title" open={open}>
@@ -64,7 +72,7 @@ const MementoEntryActions = (props: MementoEntryActionsProps) => {
                     </ListItemIcon>
                     <ListItemText primary={contentText.mementoList.entryActions.newTab.primary} secondary={contentText.mementoList.entryActions.newTab.secondary} />
                 </ListItem>
-                <ListItem button onClick={() => { openSideBySide(url, memento.timestamp); onCloseFn(); setFeedback({ open: true, message: contentText.mementoList.entryActions.sideBySide.successMsg });  }}>
+                <ListItem button onClick={() => { closeAll(); openSideBySide(url, memento.timestamp, dispatch); setFeedback({ open: true, message: contentText.mementoList.entryActions.sideBySide.successMsg });  }}>
                     <ListItemIcon>
                         <CompareIcon />
                     </ListItemIcon>
@@ -99,7 +107,7 @@ const MementoEntryActions = (props: MementoEntryActionsProps) => {
     </>
 }
 
-const renderRow = (mementoList: PageMemento[], url: string, fade: boolean, props: ListChildComponentProps) => {
+const renderRow = (mementoList: PageMemento[], url: string, fade: boolean, closeAncestors: any, props: ListChildComponentProps) => {
     const { index, style } = props
     const date = mementoList[index].date
 
@@ -111,7 +119,7 @@ const renderRow = (mementoList: PageMemento[], url: string, fade: boolean, props
                 <ListItemText primary={contentText.dates.weekdays.long[date.getDay()] + " " + contentText.dates.dayLabel + " " + date.getDate() + " (" + date.toLocaleTimeString(contentText.dates.locale, {hour: '2-digit', minute:'2-digit'}) + ")"} />
             </ListItem>
         </Fade>
-        <MementoEntryActions memento={mementoList[index]} url={url} open={open} onCloseFn={setOpen.bind(undefined, false)} />
+        <MementoEntryActions memento={mementoList[index]} url={url} open={open} closeAncestors={closeAncestors} onCloseFn={setOpen.bind(undefined, false)} />
     </>
 }
 
@@ -180,7 +188,7 @@ const YearList = (props: YearListProps) => {
                     </Toolbar>
                 </AppBar>
                 <FixedSizeList height={window.innerHeight - 56} itemCount={month.mementos.length} itemSize={46} width={"100%"}>
-                    {renderRow.bind(undefined, month.mementos, url, month.open)}
+                    {renderRow.bind(undefined, month.mementos, url, month.open, open.bind(undefined, month))}
                 </FixedSizeList>
             </Dialog> : null}
         </React.Fragment>)}

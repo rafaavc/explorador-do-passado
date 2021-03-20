@@ -43,6 +43,8 @@ export const dataSlice = createSlice({
     }
 });
 
+export const { updateState } = dataSlice.actions;
+
 export const selectArquivoData = (state: RootState) => state.data.arquivoData;
 
 export const selectPageState = (state: RootState) => state.data.pageState;

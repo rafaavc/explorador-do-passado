@@ -18,8 +18,6 @@ const App = () => {
 
     useEffect(() => {
         dispatch(fetchData());
-        // if (process.env.NODE_ENV == "production") getContentData(setData, setState)
-        // else getDevData(setData)
     }, []);
 
     const pageContent = () => {
