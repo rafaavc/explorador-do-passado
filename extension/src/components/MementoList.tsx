@@ -12,7 +12,7 @@ import { FixedSizeList, ListChildComponentProps } from 'react-window'
 import React, { useState } from 'react'
 import contentText from '../text/en.json'
 import { openMemento, getMementoURL } from '../utils/URL'
-import { openSideBySide } from '../utils/ContentActions'
+import { openSideBySide, openTextDiff } from '../utils/ContentActions'
 import { useDispatch } from 'react-redux'
 
 interface MementoListProps {
@@ -78,7 +78,7 @@ const MementoEntryActions = (props: MementoEntryActionsProps) => {
                     </ListItemIcon>
                     <ListItemText primary={contentText.mementoList.entryActions.sideBySide.primary} secondary={contentText.mementoList.entryActions.sideBySide.secondary} />
                 </ListItem>
-                <ListItem button>
+                <ListItem button onClick={() => { closeAll(); openTextDiff(url, memento.timestamp, "testing", dispatch); setFeedback({ open: true, message: contentText.mementoList.entryActions.sideBySide.successMsg });  }}>
                     <ListItemIcon>
                         <SubjectIcon />
                     </ListItemIcon>

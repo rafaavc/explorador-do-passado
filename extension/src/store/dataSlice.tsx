@@ -9,7 +9,7 @@ const initialState: DataState = {
         data: null
     },
     arquivoData: null,
-    status: 'idle',
+    status: ThunkState.Idle,
     error: null    
 }
 

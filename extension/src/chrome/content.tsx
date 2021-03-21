@@ -9,7 +9,6 @@ import { getSettingsValue, Dict } from "./Storage";
 
 if (window.location.href.includes('chrome-extension://')) abort();
 
-
 const pageInfo: PageInfo = {
     url: window.location.href,
     html: document.documentElement.outerHTML
@@ -60,6 +59,30 @@ const openSideBySide = (url: string, timestamp: string) => {
     document.documentElement.innerHTML = newDoc.innerHTML
 }
 
+const openTextDiff = (url: string, timestamp: string, html: string) => {
+    console.log("hey");
+
+    pageState.id = PageStateId.SHOWING_TEXT_DIFF;
+    pageState.data = timestamp;
+
+    const content = document.createElement('p');
+    content.innerHTML = html;
+
+    const newDoc = document.createElement('html');
+    const head = document.createElement('head');
+    const title = document.createElement('title');
+    title.innerText = "Text Diff";
+    head.appendChild(title);
+    newDoc.appendChild(head);
+    const body = document.createElement('body');
+    body.style.margin = '0';
+    body.appendChild(content);
+    newDoc.appendChild(body);
+
+    saved = document.documentElement.innerHTML;
+    document.documentElement.innerHTML = newDoc.innerHTML;
+}
+
 const closeViewing = () => {
     if (pageState.id != PageStateId.START && saved) {
         document.documentElement.innerHTML = saved;
@@ -77,7 +100,7 @@ const retrieveArquivoData = (pageInfo: PageInfo) => new Promise<ArquivoData<Page
     })
 })
 
-getSettingsValue(SettingsOptions.RetrieveAtLoad, (res: Dict) => {
+getSettingsValue(SettingsOptions.RetrieveAtLoad).then((res: Dict) => {
     console.log("Received the value of " + SettingsOptions.RetrieveAtLoad + ":", res)
     const value = SettingsOptions.RetrieveAtLoad in res ? res[SettingsOptions.RetrieveAtLoad] : true
     if (value === true) retrieveArquivoData(pageInfo)
@@ -96,14 +119,16 @@ chrome.runtime.onMessage.addListener((message: Message, sender, sendResponse) =>
         if (arquivoData) sendResponse(buildPageData(arquivoData))
         else if (!retrievingPageData) {
             retrieveArquivoData(pageInfo)
-                .then((arquivoData: ArquivoData<PageTimestamp>) => { sendResponse(buildPageData(arquivoData)) })
+                .then((arquivoData: ArquivoData<PageTimestamp>) => { sendResponse(buildPageData(arquivoData)) });
         }
     } else if (message.type === "view_side_by_side") {
-        openSideBySide(message.content.url, message.content.timestamp)
+        openSideBySide(message.content.url, message.content.timestamp);
+    } else if (message.type === "view_text_diff") {
+        openTextDiff(message.content.url, message.content.timestamp, message.content.html);
     } else if (message.type === "close_viewing") {
-        closeViewing()
+        closeViewing();
     }
-    return true
+    return true;
 });
 
 export type { PageInfo };

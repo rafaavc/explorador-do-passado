@@ -43,7 +43,7 @@ const SettingsDialog = (props: SettingsDialogProps) => {
                             <Switch
                                 edge="end"
                                 color="primary"
-                                onChange={() => dispatch(toggleRetrieveAtLoad())}
+                                onChange={() => dispatch(toggleRetrieveAtLoad(retrieveAtLoad))}
                                 checked={retrieveAtLoad}
                                 inputProps={{ 'aria-labelledby': 'switch-list-label-wifi' }}
                             />

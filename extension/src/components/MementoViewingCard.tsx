@@ -1,11 +1,11 @@
-import { Card, CardHeader, CardContent, Typography, CardActions, IconButton, Tooltip } from '@material-ui/core'
+import { Card, CardHeader, CardActions, IconButton, Tooltip } from '@material-ui/core'
 import CompareIcon from '@material-ui/icons/Compare'
 import CloseIcon from '@material-ui/icons/Close'
 import OpenInNewIcon from '@material-ui/icons/OpenInNew'
 import ScreenShareIcon from '@material-ui/icons/ScreenShare'
 import SubjectIcon from '@material-ui/icons/Subject'
 import contentText from '../text/en.json'
-import { closeSideBySide } from '../utils/ContentActions'
+import { closeMementoViewing } from '../utils/ContentActions'
 import { useDispatch } from 'react-redux'
 
 interface MementoViewingCardProps {
@@ -20,7 +20,7 @@ export const MementoViewingCard = (props: MementoViewingCardProps) => <Card>
             //         <MoreVertIcon />
             //     </IconButton>
             // }
-            title={contentText.mementoList.entryActions.sideBySide.primary}
+            title={contentText.mementoList.viewingMementoCard.header}
             subheader={contentText.mementoList.viewingMementoCard.subHeader + " " + props.timestamp} />
         {/* <CardMedia
             className={classes.media}
@@ -50,7 +50,7 @@ export const MementoViewingCard = (props: MementoViewingCardProps) => <Card>
                 </IconButton>
             </Tooltip>
             <Tooltip title={contentText.mementoList.viewingMementoCard.close}>
-                <IconButton aria-label={contentText.mementoList.viewingMementoCard.close} onClick={closeSideBySide.bind(undefined, useDispatch())}>
+                <IconButton aria-label={contentText.mementoList.viewingMementoCard.close} onClick={closeMementoViewing.bind(undefined, useDispatch())}>
                     <CloseIcon />
                 </IconButton>
             </Tooltip>

@@ -4,7 +4,8 @@ import { PageState } from "../utils/Page";
 export enum ThunkState {
     Waiting = "waiting",
     Success = "success",
-    Failed = "failed"
+    Failed = "failed",
+    Idle = "idle"
 }
 
 export interface DataState {
@@ -16,7 +17,8 @@ export interface DataState {
 
 export interface RootState {
     settings: {
-        retrieveAtLoad: boolean
+        retrieveAtLoad: boolean,
+        status: ThunkState
     },
     data: DataState
 }

@@ -48,6 +48,7 @@
             }
         },
         "viewingMementoCard": {
+            "header": "Viewing Memento",
             "subHeader": "You travelled to",
             "close": "Stop viewing this memento"
         }

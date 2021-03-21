@@ -5,6 +5,8 @@ import { Message } from "./Message"
 import { PageStateId } from "./Page"
 import { getMementoURL } from "./URL"
 
+const Diff = require('text-diff');
+
 export const openSideBySide = (url: string, timestamp: string, dispatch: Dispatch<any>) => {
     if (process.env.NODE_ENV == "production") {
         const message: Message = { type: "view_side_by_side", content: { url: getMementoURL(url, timestamp), timestamp } };
@@ -18,15 +20,32 @@ export const openSideBySide = (url: string, timestamp: string, dispatch: Dispatc
     dispatch(updateState({ id: PageStateId.SHOWING_SIDE_BY_SIDE, data: timestamp }));
 }
 
+export const openTextDiff = (url: string, timestamp: string, original: string, dispatch: Dispatch<any>) => {
+    if (process.env.NODE_ENV == "production") {
+        const diff = new Diff();
+        const diffs = diff.main(original, "test");
+        diff.cleanupSemantic(diffs);
+        const html = diff.prettyHtml(diffs);
+        const message: Message = { type: "view_text_diff", content: { url: getMementoURL(url, timestamp), timestamp, html } };
+        queryCurrentTab().then((tabId: number) => {
+            chrome.tabs.sendMessage(tabId, message);
+        });
+    } else {
+        console.log(`Opened ${timestamp} side by side.`);
+    }
 
-export const closeSideBySide = (dispatch: Dispatch<any>) => {
+    dispatch(updateState({ id: PageStateId.SHOWING_TEXT_DIFF, data: timestamp }));
+}
+
+
+export const closeMementoViewing = (dispatch: Dispatch<any>) => {
     if (process.env.NODE_ENV == "production") {
         const message: Message = { type: "close_viewing" };
         queryCurrentTab().then((tabId: number) => {
             chrome.tabs.sendMessage(tabId, message);
         });
     } else {
-        console.log('Closed side by side viewing mode.');
+        console.log('Closed memento viewing.');
     }
 
     dispatch(updateState({ id: PageStateId.START, data: null }));
