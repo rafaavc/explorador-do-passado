@@ -26,7 +26,7 @@ const processCDXReply = (textData: string): ArquivoMemento<PageTimestamp> => {
 }
 
 const retrievePageData = (content: PageInfo) => new Promise<ArquivoData<PageTimestamp>>((resolve) => {
-    const pyserverPromise = fetch(`${process.env.REACT_APP_SERVER_URL}/extension/api`, {
+    const pyserverPromise = fetch(`${process.env.REACT_APP_SERVER_URL}/extension/api/page`, {
         headers: {
             'Content-Type': 'application/json'
         },

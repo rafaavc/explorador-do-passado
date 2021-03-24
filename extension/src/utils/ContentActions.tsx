@@ -17,6 +17,8 @@ export const openSideBySide = (url: string, timestamp: string, dispatch: Dispatc
         console.log(`Opened ${timestamp} side by side.`);
     }
 
+    setTimeout(() => window.scrollTo(0, 0), 500);
+
     dispatch(updateState({ id: PageStateId.SHOWING_SIDE_BY_SIDE, data: timestamp }));
 }
 
@@ -33,6 +35,8 @@ export const openTextDiff = (url: string, timestamp: string, original: string, d
     } else {
         console.log(`Opened ${timestamp} side by side.`);
     }
+
+    setTimeout(() => window.scrollTo(0, 0), 500);
 
     dispatch(updateState({ id: PageStateId.SHOWING_TEXT_DIFF, data: timestamp }));
 }

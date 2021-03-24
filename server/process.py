@@ -42,3 +42,18 @@ def inFlightWebsiteProcess(url, nlp, html=None):
         'top_image': a.top_image,
         'entities': entities
     }
+
+
+def getBasicArticleInfo(url):
+    a = Article(url)
+
+    a.download()
+    a.parse()
+
+    return {
+        'title': a.title,
+        'authors': a.authors,
+        #'publish_date': a.publish_date.str,
+        'text': a.text,
+        'top_image': a.top_image,
+    }
