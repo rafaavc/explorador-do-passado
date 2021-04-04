@@ -20,5 +20,5 @@ def extensionApiPage():
 @app.route('/extension/api/diff/page', methods=['POST'])
 def extensionApiDiff():
     url = request.json['url']
-
+    print("Received: " + url)
     return getBasicArticleInfo(url)

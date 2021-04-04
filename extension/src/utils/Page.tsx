@@ -25,3 +25,10 @@ export interface PageData<T> {
     state: PageState
 };
 
+export interface DiffPageData {
+    title: string,
+    authors: Array<string>,
+    text: string,
+    top_image: string
+};
+

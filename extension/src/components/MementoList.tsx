@@ -7,13 +7,14 @@ import SubjectIcon from '@material-ui/icons/Subject'
 import ScreenShareIcon from '@material-ui/icons/ScreenShare'
 import { TransitionProps } from '@material-ui/core/transitions'
 import { ExpandLess, ExpandMore } from '@material-ui/icons'
-import { ArquivoMemento, PageMemento } from '../utils/ArquivoData'
+import { ArquivoData, ArquivoMemento, PageMemento } from '../utils/ArquivoData'
 import { FixedSizeList, ListChildComponentProps } from 'react-window'
 import React, { useState } from 'react'
 import contentText from '../text/en.json'
 import { openMemento, getMementoURL } from '../utils/URL'
 import { openSideBySide, openTextDiff } from '../utils/ContentActions'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
+import { selectArquivoData } from '../store/dataSlice'
 
 interface MementoListProps {
     memento: ArquivoMemento,
@@ -62,6 +63,8 @@ const MementoEntryActions = (props: MementoEntryActionsProps) => {
         closeAncestors();
     }
 
+    const arquivoData: ArquivoData<PageMemento> | null = useSelector(selectArquivoData);
+
     return <>
         <Dialog onClose={onCloseFn} aria-labelledby="info-dialog-title" open={open}>
             <DialogTitle id="simple-dialog-title">{contentText.mementoList.entryActions.title}</DialogTitle>
@@ -78,13 +81,12 @@ const MementoEntryActions = (props: MementoEntryActionsProps) => {
                     </ListItemIcon>
                     <ListItemText primary={contentText.mementoList.entryActions.sideBySide.primary} secondary={contentText.mementoList.entryActions.sideBySide.secondary} />
                 </ListItem>
-                <ListItem button onClick={() => { closeAll(); openTextDiff(url, memento.timestamp, "testing", dispatch); setFeedback({ open: true, message: contentText.mementoList.entryActions.sideBySide.successMsg });  }}>
+                <ListItem button onClick={() => { closeAll(); openTextDiff(url, memento.timestamp, arquivoData?.article, dispatch); setFeedback({ open: true, message: contentText.mementoList.entryActions.sideBySide.successMsg });  }}>
                     <ListItemIcon>
                         <SubjectIcon />
                     </ListItemIcon>
                     <ListItemText primary={contentText.mementoList.entryActions.textDiff.primary} secondary={contentText.mementoList.entryActions.textDiff.secondary} />
                 </ListItem>
-                {/* FOR SOME REASON COPY TO CLIPBOARD IS BROKEN (??) */}
                 <ListItem button onClick={() => { copyToClipboard(getMementoURL(url, memento.timestamp)); onCloseFn(); setFeedback({ open: true, message: contentText.mementoList.entryActions.copy.successMsg }); }}>
                     <ListItemIcon>
                         <ScreenShareIcon />

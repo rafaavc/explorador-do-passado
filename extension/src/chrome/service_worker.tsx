@@ -3,6 +3,7 @@ import { PageInfo } from "./content"
 import { ArquivoData, PageTimestamp, ArquivoMemento } from "../utils/ArquivoData"
 import { logEvent, logReceived } from "../utils/Logger"
 import { getYearFromTimestamp } from "../utils/ArquivoDate"
+import { DiffPageData } from "../utils/Page"
 
 
 const processCDXReply = (textData: string): ArquivoMemento<PageTimestamp> => {
@@ -49,7 +50,25 @@ const retrievePageData = (content: PageInfo) => new Promise<ArquivoData<PageTime
 
             resolve(processedData)
         })
+    });
+
+const retrieveDiffPageData = (content: { url: string }) => new Promise<DiffPageData>((resolve, reject) => {
+    fetch(`${process.env.REACT_APP_SERVER_URL}/extension/api/diff/page`, {
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        method: 'POST',
+        body: JSON.stringify(content)
     })
+        .then(async (response: Response) => {
+            return response.json()
+        })
+        .then((data: DiffPageData) => {
+            console.log("Received data: " + data);
+            resolve(data);
+        })
+        .catch((reason: any) => reject(reason))
+});
 
 chrome.runtime.onMessage.addListener((message: Message<PageInfo>, sender, sendResponse) => {
     logReceived(message, sender);
@@ -57,6 +76,11 @@ chrome.runtime.onMessage.addListener((message: Message<PageInfo>, sender, sendRe
         if (message.content != undefined) {
             retrievePageData(message.content)
                 .then((data: ArquivoData<PageTimestamp>) => { sendResponse(data) })
+        }
+    } else if (message.type === "retrieve_diff_page_data") {
+        if (message.content != undefined) {
+            retrieveDiffPageData(message.content)
+                .then((data: DiffPageData) => { sendResponse(data) })
         }
     }
     return true
