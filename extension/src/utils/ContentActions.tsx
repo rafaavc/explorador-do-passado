@@ -31,18 +31,18 @@ const retrieveDiffPageData = (url: string) => new Promise<DiffPageData>((resolve
     });
 });
 
-export const openTextDiff = async (url: string, timestamp: string, original: ArquivoArticle | undefined, dispatch: Dispatch<any>) => {
+export const openTextDiff = async (url: string, timestamp: string, current: ArquivoArticle | undefined, dispatch: Dispatch<any>) => {
     if (process.env.NODE_ENV == "production") {
-        if (original == undefined) {
+        if (current == undefined) {
             console.error("Received null arquivo article in 'openTextDiff'");
             return;
         }
 
-        const data: DiffPageData = await retrieveDiffPageData(url);
+        const data: DiffPageData = await retrieveDiffPageData(getMementoURL(url, timestamp));
         console.log("Received data:", data);
 
         const diff = new Diff();
-        const diffs = diff.main(original.text, data.text);
+        const diffs = diff.main(data.text, current.text);
         diff.cleanupSemantic(diffs);
         console.log("Viewing diffs:", diffs);
         const html = diff.prettyHtml(diffs);
@@ -51,7 +51,7 @@ export const openTextDiff = async (url: string, timestamp: string, original: Arq
             chrome.tabs.sendMessage(tabId, message);
         });
     } else {
-        console.log(`Opened ${timestamp} side by side.`);
+        console.log(`Opened ${timestamp} text diff.`);
     }
 
     setTimeout(() => window.scrollTo(0, 0), 500);
