@@ -1,11 +1,11 @@
 import { abort } from "process";
-import { ArquivoData, ArquivoMemento, PageTimestamp } from "../utils/ArquivoData";
-import { getYearFromTimestamp } from "../utils/ArquivoDate";
-import { logEvent, logReceived } from "../utils/Logger";
+import { ArquivoData, PageTimestamp } from "../utils/ArquivoData";
+import { logReceived } from "../utils/Logger";
 import { Message } from "../utils/Message";
-import { PageData, PageInfo, PageState, PageStateId } from "../utils/Page";
+import { DiffPageData, PageData, PageInfo, PageState, PageStateId } from "../utils/Page";
 import { SettingsOptions } from "../utils/SettingsOptions";
 import { getSettingsValue, Dict } from "./Storage";
+import diff_match_patch from "./diff_match_patch";
 
 if (window.location.href.includes('chrome-extension://')) abort();
 
@@ -59,8 +59,21 @@ const openSideBySide = (url: string, timestamp: string) => {
     document.documentElement.innerHTML = newDoc.innerHTML
 }
 
-const openTextDiff = (url: string, timestamp: string, html: string) => {
-    console.log("hey");
+const retrieveDiffPageData = (url: string) => new Promise<DiffPageData>((resolve, reject) => {
+    chrome.runtime.sendMessage({ type: "retrieve_diff_page_data", content: { url } }, (response: DiffPageData) => {
+        resolve(response);
+    });
+});
+
+const openTextDiff = (data: DiffPageData, currentText: string, timestamp: string) => {
+    console.log("Received data:", data);
+
+    const diff = new diff_match_patch();
+    const diffs = diff.diff_main(data.text, currentText);
+    diff.diff_cleanupSemantic(diffs);
+    console.log("Viewing diffs:", diffs);
+    const html = diff.diff_prettyHtml(diffs);
+    
 
     pageState.id = PageStateId.SHOWING_TEXT_DIFF;
     pageState.data = timestamp;
@@ -124,7 +137,11 @@ chrome.runtime.onMessage.addListener((message: Message, sender, sendResponse) =>
     } else if (message.type === "view_side_by_side") {
         openSideBySide(message.content.url, message.content.timestamp);
     } else if (message.type === "view_text_diff") {
-        openTextDiff(message.content.url, message.content.timestamp, message.content.html);
+        retrieveDiffPageData(message.content.url)
+            .then((data: DiffPageData) => {
+                openTextDiff(data, message.content.currentText, message.content.timestamp);
+            });
+        console.log("Received view_diff");
     } else if (message.type === "close_viewing") {
         closeViewing();
     }
