@@ -14,6 +14,16 @@ const pageInfo: PageInfo = {
     html: document.documentElement.outerHTML
 }
 
+const startLoading = () => {
+    const loadingElement = document.createElement("div");
+    loadingElement.id = "ah-loading";
+    document.body.append(loadingElement);
+}
+
+const stopLoading = () => {
+    document.getElementById("ah-loading")?.remove();
+}
+
 let arquivoData: ArquivoData<PageTimestamp> | null = null
 let pageState: PageState = {
     id: PageStateId.START,
@@ -137,9 +147,11 @@ chrome.runtime.onMessage.addListener((message: Message, sender, sendResponse) =>
     } else if (message.type === "view_side_by_side") {
         openSideBySide(message.content.url, message.content.timestamp);
     } else if (message.type === "view_text_diff") {
+        startLoading();
         retrieveDiffPageData(message.content.url)
             .then((data: DiffPageData) => {
                 openTextDiff(data, message.content.currentText, message.content.timestamp);
+                stopLoading();
             });
         console.log("Received view_diff");
     } else if (message.type === "close_viewing") {
@@ -147,5 +159,3 @@ chrome.runtime.onMessage.addListener((message: Message, sender, sendResponse) =>
     }
     return true;
 });
-
-export type { PageInfo };

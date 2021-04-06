@@ -1,5 +1,5 @@
 import { Message } from "../utils/Message"
-import { PageInfo } from "./content"
+import { PageInfo } from "../utils/Page"
 import { ArquivoData, PageTimestamp, ArquivoMemento } from "../utils/ArquivoData"
 import { logEvent, logReceived } from "../utils/Logger"
 import { getYearFromTimestamp } from "../utils/ArquivoDate"

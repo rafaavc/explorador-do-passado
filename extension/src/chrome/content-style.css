@@ -1,0 +1,19 @@
+
+#ah-loading {
+    height: 2rem;
+    width: 2rem;
+    border-radius: 50%;
+    border: 6px solid #0b4897;
+    border-bottom: 6px solid white;
+    animation: ah-loading-kf 1s linear infinite;
+    z-index: 10000;
+    position: fixed;
+    right: 1rem;
+    bottom: 1rem;
+}
+
+@keyframes ah-loading-kf {
+    0%  { transform: rotate(0deg); }
+    100%  { transform: rotate(360deg); }
+}
+
