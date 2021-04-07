@@ -9,7 +9,7 @@ import { TransitionProps } from '@material-ui/core/transitions'
 import { ExpandLess, ExpandMore } from '@material-ui/icons'
 import { ArquivoData, ArquivoMemento, PageMemento } from '../utils/ArquivoData'
 import { FixedSizeList, ListChildComponentProps } from 'react-window'
-import React, { useState } from 'react'
+import React, { MutableRefObject, useRef, useState } from 'react'
 import contentText from '../text/en.json'
 import { openMemento, getMementoURL } from '../utils/URL'
 import { openSideBySide, openTextDiff } from '../utils/ContentActions'
@@ -208,9 +208,13 @@ const MementoList = (props: MementoListProps) => {
 
     const open = (year: YearState) => {
         if (!year.open) {
-            years.forEach((y) => { y.year != year.year && y.open && y.setOpen(false) })
+            years.forEach((y) => { y.year != year.year && y.open && y.setOpen(false) });
         }
-        year.setOpen(!year.open)
+        year.setOpen(!year.open);
+    }
+
+    const scrollHeaderToTop = (ref: any) => {
+        document.querySelector("#ah-content-wrapper")?.scrollBy(0, ref.current.getBoundingClientRect().top-56);
     }
     
     return <Box mb={3} mt={3}>
@@ -218,13 +222,16 @@ const MementoList = (props: MementoListProps) => {
         { memento.list.length === 0 ? <Typography variant="body2">{contentText.mementoList.notFoundMessage}</Typography> : 
         <List>
             {years.map((year: YearState, idx: number) => {
+                const listItemRef = useRef(null);
                 const mementos = memento.list.filter((memento) => memento.date.getFullYear() == year.year)
                 return <React.Fragment key={year.year}>
-                    <ListItem button onClick={open.bind(undefined, year)}>
-                        <ListItemText primary={year.year} secondary={mementos.length + " " + (mementos.length == 1 ? contentText.mementoList.versionLabel.singular : contentText.mementoList.versionLabel.plural)} />
-                        {year.open ? <ExpandLess /> : <ExpandMore />}
-                    </ListItem>
-                    <Collapse in={year.open} timeout="auto" unmountOnExit>
+                    <div ref={listItemRef}>
+                        <ListItem dense button onClick={open.bind(undefined, year)}>
+                            <ListItemText primary={year.year} secondary={mementos.length + " " + (mementos.length == 1 ? contentText.mementoList.versionLabel.singular : contentText.mementoList.versionLabel.plural)} />
+                            {year.open ? <ExpandLess /> : <ExpandMore />}
+                        </ListItem>
+                    </div>
+                    <Collapse in={year.open} timeout={180} onEntered={scrollHeaderToTop.bind(undefined, listItemRef)} unmountOnExit>
                         <YearList mementos={mementos} url={url} />
                     </Collapse>
                     <Divider/>

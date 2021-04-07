@@ -9,3 +9,9 @@ html, body {
     min-height: 400px;
     scroll-behavior: smooth;
 }
+
+#ah-content-wrapper {
+    max-height: 480px;
+    overflow-y: auto;
+    scroll-behavior: smooth;
+}

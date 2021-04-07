@@ -38,11 +38,13 @@ const App = () => {
     return (
         <>
             <Header />
-            <Container>
-                <Fade in={true}>
-                    {pageContent()}
-                </Fade>
-            </Container>
+            <div id="ah-content-wrapper">
+                <Container>
+                    <Fade in={true}>
+                        {pageContent()}
+                    </Fade>
+                </Container>
+            </div>
         </>
     );
 }
