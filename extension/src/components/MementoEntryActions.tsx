@@ -44,7 +44,7 @@ export const MementoEntryActions = (props: MementoEntryActionsProps) => {
                     </ListItemIcon>
                     <ListItemText primary={contentText.mementoList.entryActions.newTab.primary} secondary={contentText.mementoList.entryActions.newTab.secondary} />
                 </ListItem>
-                <ListItem button onClick={() => { closeAll(); openSideBySide(url, memento.timestamp, dispatch); setFeedback({ open: true, message: contentText.mementoList.entryActions.sideBySide.successMsg });  }}>
+                <ListItem button onClick={() => { closeAll(); openSideBySide(url, memento.timestamp, arquivoData?.article, dispatch); setFeedback({ open: true, message: contentText.mementoList.entryActions.sideBySide.successMsg });  }}>
                     <ListItemIcon>
                         <CompareIcon />
                     </ListItemIcon>

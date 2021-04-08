@@ -41,7 +41,7 @@ const loadExtraCSS = () => {
     document.head.appendChild(icons);
 }
 
-const showFloatingBox = (url: string, timestamp: string) => {
+const showFloatingBox = (url: string, currentText: string, timestamp: string) => {
     loadExtraCSS();  // every time the box will be shown is after changing the whole html tree
 
     const mode = pageState.id == PageStateId.SHOWING_SIDE_BY_SIDE ? textContent.sideBySideTitle : textContent.textDiffTitle;
@@ -58,6 +58,14 @@ const showFloatingBox = (url: string, timestamp: string) => {
                 </button>
                 <div class="ah-tooltip">
                     ${textContent.openInNew}
+                </div>
+            </li>
+            <li>
+                <button class="ah-has-tooltip ah-open-opposite">
+                    <span class="material-icons">${pageState.id == PageStateId.SHOWING_SIDE_BY_SIDE ? "notes" : "compare"}</span>
+                </button>
+                <div class="ah-tooltip">
+                    ${pageState.id == PageStateId.SHOWING_SIDE_BY_SIDE ? textContent.openTextDiff : textContent.openSideBySide}
                 </div>
             </li>
             <li>
@@ -78,6 +86,13 @@ const showFloatingBox = (url: string, timestamp: string) => {
             </li>
         </ul>`;
 
+    box.querySelector(".ah-open-opposite")?.addEventListener('click', () => {
+        if (pageState.id == PageStateId.SHOWING_SIDE_BY_SIDE) {
+            openTextDiffViewing(url, timestamp, currentText);
+        } else {
+            openSideBySideViewing(url, timestamp, currentText);
+        }
+    });
     box.querySelector(".ah-open-in-new")?.addEventListener('click', () => window.open(url));
     box.querySelector(".ah-copy-url")?.addEventListener('click', copyToClipboard.bind(undefined, url));
     box.querySelector(".ah-close")?.addEventListener('click', closeViewing);
@@ -200,6 +215,21 @@ const buildPageData = (arquivoData: ArquivoData<PageTimestamp>): PageData<PageTi
     }
 }
 
+const openSideBySideViewing = (url: string, timestamp: string, currentText: string) => {
+    openSideBySide(url, timestamp);
+    showFloatingBox(url, currentText, timestamp);
+}
+
+const openTextDiffViewing = (url: string, timestamp: string, currentText: string) => {
+    showLoading();
+    retrieveDiffPageData(url)
+        .then((data: DiffPageData) => {
+            hideLoading();
+            openTextDiff(data, currentText, timestamp);
+            showFloatingBox(url, currentText, timestamp);
+        });
+}
+
 chrome.runtime.onMessage.addListener((message: Message, sender, sendResponse) => {
     logReceived(message, sender);
     if (message.type === "get_page_data") {
@@ -209,17 +239,9 @@ chrome.runtime.onMessage.addListener((message: Message, sender, sendResponse) =>
                 .then((arquivoData: ArquivoData<PageTimestamp>) => { sendResponse(buildPageData(arquivoData)) });
         }
     } else if (message.type === "view_side_by_side") {
-        openSideBySide(message.content.url, message.content.timestamp);
-        showFloatingBox(message.content.url, message.content.timestamp);
+        openSideBySideViewing(message.content.url, message.content.timestamp, message.content.currentText);
     } else if (message.type === "view_text_diff") {
-        showLoading();
-        retrieveDiffPageData(message.content.url)
-            .then((data: DiffPageData) => {
-                hideLoading();
-                openTextDiff(data, message.content.currentText, message.content.timestamp);
-                showFloatingBox(message.content.url, message.content.timestamp);
-            });
-        console.log("Received view_diff");
+        openTextDiffViewing(message.content.url, message.content.timestamp, message.content.currentText);
     } else if (message.type === "close_viewing") {
         closeViewing();
     }

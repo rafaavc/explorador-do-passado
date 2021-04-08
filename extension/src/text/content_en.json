@@ -5,6 +5,8 @@
     "textDiffTitle": "text differences",
     "traveledTo": "You traveled to",
     "openInNew": "Open memento in new tab",
+    "openTextDiff": "Open text differences viewing",
+    "openSideBySide": "Open side by side viewing",
     "copyURL": "Copy memento URL",
     "stopViewing": "Stop viewing memento",
     "dates": {

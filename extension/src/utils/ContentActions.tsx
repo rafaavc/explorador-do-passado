@@ -8,9 +8,14 @@ import { ArquivoArticle } from "./ArquivoData"
 
 const Diff = require('text-diff');
 
-export const openSideBySide = (url: string, timestamp: string, dispatch: Dispatch<any>) => {
+export const openSideBySide = (url: string, timestamp: string, current: ArquivoArticle | undefined, dispatch: Dispatch<any>) => {
     if (process.env.NODE_ENV == "production") {
-        const message: Message = { type: "view_side_by_side", content: { url: getMementoURL(url, timestamp), timestamp } };
+        if (current == undefined) {
+            console.error("Received null arquivo article in 'openTextDiff'");
+            return;
+        }
+        
+        const message: Message = { type: "view_side_by_side", content: { url: getMementoURL(url, timestamp), timestamp, currentText: current.text } };
         queryCurrentTab().then((tabId: number) => {
             chrome.tabs.sendMessage(tabId, message);
         });
