@@ -100,16 +100,14 @@ let retrievingPageData: boolean = false
 let saved: string | null = null;
 
 const openSideBySide = (url: string, timestamp: string) => {
-    pageState.id = PageStateId.SHOWING_SIDE_BY_SIDE
-    pageState.data = timestamp
-
     const iframe1 = document.createElement('iframe')
-    iframe1.srcdoc = document.documentElement.outerHTML
+    iframe1.srcdoc = pageState.id != PageStateId.START && saved ? saved : document.documentElement.innerHTML
     iframe1.style.width = "50%"
     iframe1.style.position = "absolute"
     iframe1.style.left = "0"
     iframe1.style.height = window.innerHeight + "px"
     iframe1.style.border = 'none'
+    
     const iframe2 = document.createElement('iframe')
     iframe2.src = url
     iframe2.style.width = "50%"
@@ -130,8 +128,11 @@ const openSideBySide = (url: string, timestamp: string) => {
     body.appendChild(iframe2)
     newDoc.appendChild(body)
 
-    saved = document.documentElement.innerHTML
+    saved = pageState.id != PageStateId.START ? saved : document.documentElement.innerHTML
     document.documentElement.innerHTML = newDoc.innerHTML
+
+    pageState.id = PageStateId.SHOWING_SIDE_BY_SIDE
+    pageState.data = timestamp
 }
 
 const retrieveDiffPageData = (url: string) => new Promise<DiffPageData>((resolve, reject) => {
@@ -141,18 +142,11 @@ const retrieveDiffPageData = (url: string) => new Promise<DiffPageData>((resolve
 });
 
 const openTextDiff = (data: DiffPageData, currentText: string, timestamp: string) => {
-    pageState.id = PageStateId.SHOWING_TEXT_DIFF
-    pageState.data = timestamp
-
     const diff = new diff_match_patch();
     const diffs = diff.diff_main(data.text, currentText);
     diff.diff_cleanupSemantic(diffs);
     console.log("Viewing diffs:", diffs);
     const html = diff.diff_prettyHtml(diffs);
-    
-
-    pageState.id = PageStateId.SHOWING_TEXT_DIFF;
-    pageState.data = timestamp;
 
     const content = document.createElement('p');
     content.innerHTML = html;
@@ -168,8 +162,11 @@ const openTextDiff = (data: DiffPageData, currentText: string, timestamp: string
     body.appendChild(content);
     newDoc.appendChild(body);
 
-    saved = document.documentElement.innerHTML;
+    saved = pageState.id != PageStateId.START ? saved : document.documentElement.innerHTML;
     document.documentElement.innerHTML = newDoc.innerHTML;
+
+    pageState.id = PageStateId.SHOWING_TEXT_DIFF
+    pageState.data = timestamp
 }
 
 const closeViewing = () => {

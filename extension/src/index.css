@@ -10,8 +10,14 @@ html, body {
     scroll-behavior: smooth;
 }
 
+#root {
+    min-height: 100%;
+}
+
 #ah-content-wrapper {
     max-height: 480px;
     overflow-y: auto;
     scroll-behavior: smooth;
 }
+
+

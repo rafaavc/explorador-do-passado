@@ -7,7 +7,7 @@
     border: 6px solid #0b4897;
     border-bottom: 6px solid white;
     animation: ah-loading-kf 1s linear infinite;
-    z-index: 10000;
+    z-index: 500000;
     position: fixed;
     right: 2rem;
     bottom: 2rem;
