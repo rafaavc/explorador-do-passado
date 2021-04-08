@@ -19,12 +19,15 @@
         "tooltip": "Settings",
         "content": "Welcome to the empty settings page"
     },
+    "entities": {
+        "title": "Entities"
+    },
     "mementoList": {
         "versionLabel": {
             "singular": "version",
             "plural": "versions"
         },
-        "title": "Old versions",
+        "title": "Mementos",
         "notFoundMessage": "No old versions of this page were found.",
         "entryActions": {
             "title": "Actions",
@@ -48,8 +51,10 @@
             }
         },
         "viewingMementoCard": {
-            "header": "Viewing Memento",
-            "subHeader": "You travelled to",
+            "header": "Viewing ",
+            "sideBySide": "side by side",
+            "textDiff": "text differences",
+            "subHeader": "You traveled to",
             "close": "Stop viewing this memento"
         }
     },

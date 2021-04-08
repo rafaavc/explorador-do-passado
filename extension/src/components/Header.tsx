@@ -46,7 +46,7 @@ const Header = () => {
     const [ settingsOpen, setSettingsOpen ] = useState(false)
 
     return <>
-        <AppBar position="static">
+        <AppBar position="static" elevation={6}>
             <Toolbar>
                 <Typography variant="h6" className={classes.grow}>{contentText.extensionTitle}</Typography>
                 <Tooltip title={contentText.website.tooltip}>

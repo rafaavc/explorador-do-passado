@@ -38,12 +38,12 @@ const retrievePageData = (content: PageInfo) => new Promise<ArquivoData<PageTime
     const cdxPromise = fetch(`https://arquivo.pt/wayback/cdx?url=${encodeURIComponent(content.url)}&output=json&fl=timestamp`)
     
     Promise.all([ pyserverPromise, cdxPromise ])
-        .then((response: [ Response, Response ]) => Promise.all([ response[0].json(), response[1].text() ]))
-        .then((data: [ any, string ]) => {
+        .then(([pyserver, cdx]: [ Response, Response ]) => Promise.all([ pyserver.json(), cdx.text() ]))
+        .then(([pyserver, cdx]: [ any, string ]) => {
             const processedData: ArquivoData<PageTimestamp> = { 
                 url: content.url,
-                memento: processCDXReply(data[1]),
-                article: data[0]
+                memento: processCDXReply(cdx),
+                article: pyserver
             }
 
             logEvent("Received memento and article data:", processedData)

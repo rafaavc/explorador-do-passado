@@ -14,8 +14,7 @@ const initialState: DataState = {
 }
 
 export const fetchData = createAsyncThunk('data/fetchData', async () => {
-    const data = process.env.NODE_ENV == "production" ? await getContentData() : await getDevData();
-    return data;
+    return process.env.NODE_ENV == "production" ? await getContentData() : await getDevData();
 })
 
 export const dataSlice = createSlice({

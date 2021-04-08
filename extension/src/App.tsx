@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { Container, Fade } from '@material-ui/core'
+import { Container, createMuiTheme, Fade, Paper, ThemeProvider } from '@material-ui/core'
 import { ArquivoData } from './utils/ArquivoData'
 import { Header } from './components/Header'
 import { Loading } from './components/Loading'
@@ -10,6 +10,7 @@ import { fetchData, selectArquivoData, selectPageState } from './store/dataSlice
 import { MementoViewingCard } from './components/MementoViewingCard'
 import { fetchSettings, selectSettingsState } from './store/settingsSlice'
 import { ThunkState } from './store/storeInterfaces'
+import React from 'react'
 
 
 const App = () => {
@@ -24,27 +25,34 @@ const App = () => {
         dispatch(fetchSettings());
     }, []);
 
+    const theme = createMuiTheme({
+        palette: {
+            type: 'light',
+            text: {
+                primary: 'rgba(0, 0, 0, 0.95)',
+                secondary: 'rgba(0, 0, 0, 0.70)',
+                disabled: 'rgba(0, 0, 0, 0.40)'
+            }
+        }
+    });
+
     const pageContent = () => {
         if (data === null || settingsState != ThunkState.Success) return <Loading />;
-        else {
-            let customComponent: JSX.Element | undefined = undefined;
-
-            if (state.id != PageStateId.START) customComponent = <MementoViewingCard timestamp={state.data} />;
-            
-            return <AppContent data={data} customComponent={customComponent} />;
-        }
+        return <AppContent data={data} />;
     }
 
     return (
         <>
-            <Header />
-            <div id="ah-content-wrapper">
-                <Container>
-                    <Fade in={true}>
-                        {pageContent()}
-                    </Fade>
-                </Container>
-            </div>
+            <ThemeProvider theme={theme}>
+                <Header />
+                <div id="ah-content-wrapper">
+                    <Container>
+                        <Fade in={true}>
+                            {pageContent()}
+                        </Fade>
+                    </Container>
+                </div>
+            </ThemeProvider>
         </>
     );
 }

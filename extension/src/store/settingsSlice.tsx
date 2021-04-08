@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
-import { getSettingsValue, setSettingsValue } from '../chrome/Storage';
+import { getSettingsValue, setSettingsValue } from '../chrome/storage';
 import { SettingsOptions } from '../utils/SettingsOptions';
 import { RootState, ThunkState } from './storeInterfaces';
 
@@ -35,6 +35,16 @@ export const settingsSlice = createSlice({
             .addCase(fetchSettings.fulfilled, (state, action: { payload: any }) => {
                 state.retrieveAtLoad = action.payload.retrieveAtLoad;
                 state.status = ThunkState.Success;
+            })
+            .addCase(fetchSettings.rejected, (state, action: { payload: any }) => {
+                if (process.env.NODE_ENV == "development") {
+                    state.retrieveAtLoad = false;
+                    state.status = ThunkState.Success;
+                    console.error(action.payload);
+                    return;
+                }
+                state.status = ThunkState.Failed;
+                console.error(action.payload);
             })
     }
 });

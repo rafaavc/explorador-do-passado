@@ -29,7 +29,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "craco build && cp ./src/chrome/content-style.css ./build/static/css/style.css",
+    "build": "craco build && cp ./src/chrome/content_style.css ./build/static/css/style.css",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },

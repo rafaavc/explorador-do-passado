@@ -4,7 +4,7 @@ import { logReceived } from "../utils/Logger";
 import { Message } from "../utils/Message";
 import { DiffPageData, PageData, PageInfo, PageState, PageStateId } from "../utils/Page";
 import { SettingsOptions } from "../utils/SettingsOptions";
-import { getSettingsValue, Dict } from "./Storage";
+import { getSettingsValue, Dict } from "./storage";
 import diff_match_patch from "./diff_match_patch";
 import textContent from "../text/content_en.json";
 import { arquivoDateToDate, getHumanReadableDate } from "../utils/ArquivoDate";
@@ -169,7 +169,7 @@ const openTextDiff = (data: DiffPageData, currentText: string, timestamp: string
     const newDoc = document.createElement('html');
     const head = document.createElement('head');
     const title = document.createElement('title');
-    title.innerText = "Text Diff";
+    title.innerText = document.title;
     head.appendChild(title);
     newDoc.appendChild(head);
     const body = document.createElement('body');

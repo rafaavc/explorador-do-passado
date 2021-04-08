@@ -59,5 +59,5 @@ export const getDevData = () => new Promise((resolve) => {
         }
     }
 
-    resolve({ arquivoData: validDevData, pageState: { data: null, id: PageStateId.START } });
+    resolve({ arquivoData: validDevData, pageState: { data: "20170420044735", id: PageStateId.SHOWING_SIDE_BY_SIDE } });
 });
