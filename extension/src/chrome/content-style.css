@@ -1,3 +1,4 @@
+/* using @import didn't work :/ */
 
 #ah-loading {
     height: 2rem;
@@ -8,8 +9,106 @@
     animation: ah-loading-kf 1s linear infinite;
     z-index: 10000;
     position: fixed;
-    right: 1rem;
-    bottom: 1rem;
+    right: 2rem;
+    bottom: 2rem;
+}
+
+#ah-floating-box {
+    border-radius: .6rem;
+    border: 1px solid rgb(233, 233, 233);
+    background-color: white;
+    z-index: 10001;
+    position: fixed;
+    right: 2rem;
+    bottom: 2rem;
+    padding: 1rem;
+    font-size: .85rem;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 400;
+
+    -webkit-box-shadow:0px 4px 6px 0px rgba(62,66,66,0.16);
+    -moz-box-shadow: 0px 4px 6px 0px rgba(62,66,66,0.16);
+    box-shadow: 0px 4px 6px 0px rgba(62,66,66,0.16);
+}
+
+#ah-floating-box h3 {
+    font-size: 1.2em;
+    font-weight: 700;
+    margin-top: 0;
+    margin-bottom: .5rem;
+    font-family: inherit;
+}
+
+#ah-floating-box p {
+    margin-top: .5rem;
+    margin-bottom: .5rem;
+    font-family: inherit;
+}
+
+#ah-floating-box ul {
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+    user-select: none;
+}
+
+#ah-floating-box li {
+    display: inline-block;
+}
+
+#ah-floating-box li:not(:first-child) {
+    margin-left: .3rem;
+}
+
+#ah-floating-box button {
+    background: none;
+    border: none;
+    border-radius: 50%;
+    width: 2.5rem;
+    height: 2.5rem;
+    font-size: inherit;
+    padding-top: .3rem;
+    transition: all .3s;
+    outline: none;
+}
+
+#ah-floating-box button > .material-icons {
+    font-size: 1.6em;
+}
+
+#ah-floating-box .ah-tooltip {
+    opacity: 0;
+    transition: all .3s;
+    position: fixed;
+    color: white;
+    font-size: .8rem;
+    background-color: rgb(100, 100, 100);
+    border-radius: .3rem;
+    padding: .2rem .4rem;
+    margin-top: .5rem;
+}
+
+#ah-floating-box .ah-has-tooltip:hover + .ah-tooltip, 
+#ah-floating-box .ah-has-tooltip:focus + .ah-tooltip {
+    opacity: 100;
+}
+
+#ah-floating-box button:hover {
+    background-color:rgb(233, 233, 233);
+    cursor: pointer;
+}
+
+#ah-floating-box button:focus {
+    background-color:rgb(212, 212, 212);
+}
+
+#ah-floating-box .ah-sticker {
+    font-weight: 300;
+    text-transform: uppercase;
+    font-size:.6em; 
+    margin-top: 0;
+    margin-bottom: .2rem;
+    opacity: .6;
 }
 
 @keyframes ah-loading-kf {

@@ -4,7 +4,7 @@ import CloseIcon from '@material-ui/icons/Close'
 import OpenInNewIcon from '@material-ui/icons/OpenInNew'
 import CompareIcon from '@material-ui/icons/Compare'
 import SubjectIcon from '@material-ui/icons/Subject'
-import ScreenShareIcon from '@material-ui/icons/ScreenShare'
+import FileCopyIcon from '@material-ui/icons/FileCopy'
 import { TransitionProps } from '@material-ui/core/transitions'
 import { ExpandLess, ExpandMore } from '@material-ui/icons'
 import { ArquivoData, ArquivoMemento, PageMemento } from '../utils/ArquivoData'
@@ -15,6 +15,8 @@ import { openMemento, getMementoURL } from '../utils/URL'
 import { openSideBySide, openTextDiff } from '../utils/ContentActions'
 import { useDispatch, useSelector } from 'react-redux'
 import { selectArquivoData } from '../store/dataSlice'
+import { getHumanReadableDate } from '../utils/ArquivoDate'
+import { copyToClipboard } from '../utils/Clipboard'
 
 interface MementoListProps {
     memento: ArquivoMemento,
@@ -40,16 +42,6 @@ interface MementoEntryActionsProps {
     memento: PageMemento,
     url: string,
     closeAncestors: any
-}
-
-const copyToClipboard = (url: string) => {
-    navigator.clipboard.writeText(url)
-        .then(() => {
-            console.log("Copied to clipboard!");
-        })
-        .catch(err => {
-            console.log('Error in copying text: ', err);
-        });
 }
 
 const MementoEntryActions = (props: MementoEntryActionsProps) => {
@@ -89,7 +81,7 @@ const MementoEntryActions = (props: MementoEntryActionsProps) => {
                 </ListItem>
                 <ListItem button onClick={() => { copyToClipboard(getMementoURL(url, memento.timestamp)); onCloseFn(); setFeedback({ open: true, message: contentText.mementoList.entryActions.copy.successMsg }); }}>
                     <ListItemIcon>
-                        <ScreenShareIcon />
+                        <FileCopyIcon />
                     </ListItemIcon>
                     <ListItemText primary={contentText.mementoList.entryActions.copy.primary} secondary={contentText.mementoList.entryActions.copy.secondary} />
                 </ListItem>
@@ -118,7 +110,7 @@ const renderRow = (mementoList: PageMemento[], url: string, fade: boolean, close
     return <>
         <Fade in={fade}>
             <ListItem button dense style={style} key={index} onClick={setOpen.bind(undefined, true)}>
-                <ListItemText primary={contentText.dates.weekdays.long[date.getDay()] + " " + contentText.dates.dayLabel + " " + date.getDate() + " (" + date.toLocaleTimeString(contentText.dates.locale, {hour: '2-digit', minute:'2-digit'}) + ")"} />
+                <ListItemText primary={getHumanReadableDate(date, contentText.dates.weekdays.long, contentText.dates.dayLabel, contentText.dates.locale)} />
             </ListItem>
         </Fade>
         <MementoEntryActions memento={mementoList[index]} url={url} open={open} closeAncestors={closeAncestors} onCloseFn={setOpen.bind(undefined, false)} />

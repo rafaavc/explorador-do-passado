@@ -2,7 +2,7 @@ import { Card, CardHeader, CardActions, IconButton, Tooltip } from '@material-ui
 import CompareIcon from '@material-ui/icons/Compare'
 import CloseIcon from '@material-ui/icons/Close'
 import OpenInNewIcon from '@material-ui/icons/OpenInNew'
-import ScreenShareIcon from '@material-ui/icons/ScreenShare'
+import FileCopyIcon from '@material-ui/icons/FileCopy'
 import SubjectIcon from '@material-ui/icons/Subject'
 import contentText from '../text/en.json'
 import { closeMementoViewing } from '../utils/ContentActions'
@@ -46,7 +46,7 @@ export const MementoViewingCard = (props: MementoViewingCardProps) => <Card>
             </Tooltip>
             <Tooltip title={contentText.mementoList.entryActions.copy.primary}>
                 <IconButton aria-label={contentText.mementoList.entryActions.copy.primary}>
-                    <ScreenShareIcon />
+                    <FileCopyIcon />
                 </IconButton>
             </Tooltip>
             <Tooltip title={contentText.mementoList.viewingMementoCard.close}>

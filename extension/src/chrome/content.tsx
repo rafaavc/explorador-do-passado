@@ -6,6 +6,10 @@ import { DiffPageData, PageData, PageInfo, PageState, PageStateId } from "../uti
 import { SettingsOptions } from "../utils/SettingsOptions";
 import { getSettingsValue, Dict } from "./Storage";
 import diff_match_patch from "./diff_match_patch";
+import textContent from "../text/content_en.json";
+import { arquivoDateToDate, getHumanReadableDate } from "../utils/ArquivoDate";
+import { openURL } from "../utils/URL";
+import { copyToClipboard } from "../utils/Clipboard";
 
 if (window.location.href.includes('chrome-extension://')) abort();
 
@@ -14,14 +18,75 @@ const pageInfo: PageInfo = {
     html: document.documentElement.outerHTML
 }
 
-const startLoading = () => {
+const showLoading = () => {
     const loadingElement = document.createElement("div");
     loadingElement.id = "ah-loading";
-    document.body.append(loadingElement);
+    document.body.appendChild(loadingElement);
 }
 
-const stopLoading = () => {
-    document.getElementById("ah-loading")?.remove();
+const hideLoading = () => {
+    document.querySelector("#ah-loading")?.remove();
+}
+
+const loadExtraCSS = () => {
+    const font = document.createElement('link');
+    font.rel = "stylesheet";
+    font.href = "https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap";
+
+    const icons = document.createElement('link');
+    icons.rel = "stylesheet";
+    icons.href = "https://fonts.googleapis.com/icon?family=Material+Icons";
+
+    document.head.appendChild(font);
+    document.head.appendChild(icons);
+}
+
+const showFloatingBox = (url: string, timestamp: string) => {
+    loadExtraCSS();  // every time the box will be shown is after changing the whole html tree
+
+    const mode = pageState.id == PageStateId.SHOWING_SIDE_BY_SIDE ? textContent.sideBySideTitle : textContent.textDiffTitle;
+
+    const box = document.createElement("div");
+    box.id = "ah-floating-box";
+    box.innerHTML = `<p class="ah-sticker">${textContent.serviceName}</p>
+        <h3>${textContent.titlePrefix} ${mode}</h3>
+        <p>${textContent.traveledTo} ${getHumanReadableDate(arquivoDateToDate(timestamp), textContent.dates.weekdays.long, textContent.dates.dayLabel, textContent.dates.locale, textContent.dates.months.long)}.</p>
+        <ul>
+            <li>
+                <button class="ah-has-tooltip ah-open-in-new">
+                    <span class="material-icons">open_in_new</span>
+                </button>
+                <div class="ah-tooltip">
+                    ${textContent.openInNew}
+                </div>
+            </li>
+            <li>
+                <button class="ah-has-tooltip ah-copy-url">
+                    <span class="material-icons">content_copy</span>
+                </button>
+                <div class="ah-tooltip">
+                    ${textContent.copyURL}
+                </div>
+            </li>
+            <li>
+                <button class="ah-has-tooltip ah-close">
+                    <span class="material-icons">close</span>
+                </button>
+                <div class="ah-tooltip">
+                    ${textContent.stopViewing}
+                </div>
+            </li>
+        </ul>`;
+
+    box.querySelector(".ah-open-in-new")?.addEventListener('click', () => window.open(url));
+    box.querySelector(".ah-copy-url")?.addEventListener('click', copyToClipboard.bind(undefined, url));
+    box.querySelector(".ah-close")?.addEventListener('click', closeViewing);
+
+    document.body.appendChild(box);
+}
+
+const hideFloatingBox = () => {
+    document.querySelector("#ah-floating-box")?.remove();
 }
 
 let arquivoData: ArquivoData<PageTimestamp> | null = null
@@ -56,7 +121,7 @@ const openSideBySide = (url: string, timestamp: string) => {
     const newDoc = document.createElement('html')
     const head = document.createElement('head')
     const title = document.createElement('title')
-    title.innerText = "Side by Side"
+    title.innerText = document.title;
     head.appendChild(title)
     newDoc.appendChild(head)
     const body = document.createElement('body')
@@ -76,7 +141,8 @@ const retrieveDiffPageData = (url: string) => new Promise<DiffPageData>((resolve
 });
 
 const openTextDiff = (data: DiffPageData, currentText: string, timestamp: string) => {
-    console.log("Received data:", data);
+    pageState.id = PageStateId.SHOWING_TEXT_DIFF
+    pageState.data = timestamp
 
     const diff = new diff_match_patch();
     const diffs = diff.diff_main(data.text, currentText);
@@ -107,6 +173,7 @@ const openTextDiff = (data: DiffPageData, currentText: string, timestamp: string
 }
 
 const closeViewing = () => {
+    hideFloatingBox();
     if (pageState.id != PageStateId.START && saved) {
         document.documentElement.innerHTML = saved;
         pageState.id = PageStateId.START;
@@ -146,12 +213,14 @@ chrome.runtime.onMessage.addListener((message: Message, sender, sendResponse) =>
         }
     } else if (message.type === "view_side_by_side") {
         openSideBySide(message.content.url, message.content.timestamp);
+        showFloatingBox(message.content.url, message.content.timestamp);
     } else if (message.type === "view_text_diff") {
-        startLoading();
+        showLoading();
         retrieveDiffPageData(message.content.url)
             .then((data: DiffPageData) => {
+                hideLoading();
                 openTextDiff(data, message.content.currentText, message.content.timestamp);
-                stopLoading();
+                showFloatingBox(message.content.url, message.content.timestamp);
             });
         console.log("Received view_diff");
     } else if (message.type === "close_viewing") {
