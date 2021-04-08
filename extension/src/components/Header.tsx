@@ -6,6 +6,7 @@ import { useState } from 'react'
 import { SettingsDialog } from './Settings'
 import contentText from '../text/en.json'
 import { openURL } from '../utils/URL'
+import HistoryIcon from '@material-ui/icons/History'
 
 const useStyles = makeStyles(() => ({
     grow: {
@@ -50,13 +51,18 @@ const Header = () => {
             <Toolbar>
                 <Typography variant="h6" className={classes.grow}>{contentText.extensionTitle}</Typography>
                 <Tooltip title={contentText.website.tooltip}>
-                    <IconButton edge="start" color="inherit" aria-label="menu">
+                    <IconButton edge="start" color="inherit" onClick={openURL.bind(undefined, 'https://rafaelcristino.com/arquivo-handbook')} aria-label="menu">
                         <LanguageIcon />
                     </IconButton>
                 </Tooltip>
                 <Tooltip title={contentText.info.tooltip}>
                     <IconButton edge="start" color="inherit" onClick={() => setInfoOpen(true)} aria-label="menu">
                         <InfoIcon />
+                    </IconButton>
+                </Tooltip>
+                <Tooltip title={contentText.history.tooltip}>
+                    <IconButton edge="start" color="inherit" aria-label="menu">
+                        <HistoryIcon />
                     </IconButton>
                 </Tooltip>
                 <Tooltip title={contentText.settings.tooltip}>
