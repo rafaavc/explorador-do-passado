@@ -20,5 +20,9 @@ export interface RootState {
         retrieveAtLoad: boolean,
         status: ThunkState
     },
+    feedback: {
+        open: boolean,
+        message: string
+    },
     data: DataState
 }

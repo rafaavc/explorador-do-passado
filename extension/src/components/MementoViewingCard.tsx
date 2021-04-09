@@ -2,11 +2,13 @@ import { CardActions, IconButton, Tooltip, Typography, makeStyles, CardContent }
 import CloseIcon from '@material-ui/icons/Close'
 import OpenInNewIcon from '@material-ui/icons/OpenInNew'
 import contentText from '../text/en.json'
-import { closeMementoViewing } from '../utils/ContentActions'
+import { closeMementoViewing, openSideBySide, openTextDiff } from '../utils/ContentActions'
 import { useDispatch, useSelector } from 'react-redux'
 import { arquivoDateToDate, getHumanReadableDate } from '../utils/ArquivoDate'
-import { selectPageState } from '../store/dataSlice'
+import { selectArquivoData, selectPageState } from '../store/dataSlice'
 import { PageStateId } from '../utils/Page'
+import { getMementoURL, openURL } from '../utils/URL'
+import { copyToClipboard } from '../utils/Clipboard'
 
 interface MementoViewingCardProps {
     timestamp: string
@@ -35,6 +37,19 @@ const useStyles = makeStyles((theme) => {
 export const MementoViewingCard = (props: MementoViewingCardProps) => {
     const classes = useStyles();
     const state = useSelector(selectPageState);
+    const arquivoData = useSelector(selectArquivoData);
+    const dispatch = useDispatch();
+
+    const toggleMementoViewingMode = () => {
+        if (state.id == PageStateId.SHOWING_SIDE_BY_SIDE) 
+        {
+            openTextDiff(arquivoData?.url, state.data, arquivoData?.article, dispatch);
+        } 
+        else if (state.id == PageStateId.SHOWING_TEXT_DIFF)
+        {
+            openSideBySide(arquivoData?.url, state.data, arquivoData?.article, dispatch);
+        }
+    }
 
     return <>
         <CardContent className={classes.wrapper}>
@@ -47,17 +62,17 @@ export const MementoViewingCard = (props: MementoViewingCardProps) => {
         </CardContent>
         <CardActions disableSpacing>
             <Tooltip title={contentText.mementoList.entryActions.newTab.primary}>
-                <IconButton aria-label={contentText.mementoList.entryActions.newTab.primary} className={classes.button}>
+                <IconButton aria-label={contentText.mementoList.entryActions.newTab.primary} className={classes.button} onClick={() => openURL(getMementoURL(arquivoData?.url, state.data))}>
                     <OpenInNewIcon />
                 </IconButton>
             </Tooltip>
-            <Tooltip title={contentText.mementoList.entryActions.textDiff.primary}>
-                <IconButton aria-label={contentText.mementoList.entryActions.textDiff.primary} className={classes.button}>
-                    <span className="material-icons">notes</span>
+            <Tooltip title={state.id == PageStateId.SHOWING_TEXT_DIFF ? contentText.mementoList.entryActions.sideBySide.primary : contentText.mementoList.entryActions.textDiff.primary}>
+                <IconButton aria-label={state.id == PageStateId.SHOWING_TEXT_DIFF ? contentText.mementoList.entryActions.sideBySide.primary : contentText.mementoList.entryActions.textDiff.primary} className={classes.button} onClick={toggleMementoViewingMode}>
+                    <span className="material-icons">{state.id == PageStateId.SHOWING_SIDE_BY_SIDE ? "notes" : "compare"}</span>
                 </IconButton>
             </Tooltip>
             <Tooltip title={contentText.mementoList.entryActions.copy.primary}>
-                <IconButton aria-label={contentText.mementoList.entryActions.copy.primary} className={classes.button}>
+                <IconButton aria-label={contentText.mementoList.entryActions.copy.primary} className={classes.button} onClick={() => copyToClipboard(getMementoURL(arquivoData?.url, state.data))}>
                     <span className="material-icons">content_copy</span>
                 </IconButton>
             </Tooltip>

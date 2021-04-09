@@ -7,7 +7,11 @@ const openURL = (url: string) => {
     }
 }
 
-const getMementoURL = (url: string, timestamp: string): string => {
+const getMementoURL = (url: string | undefined, timestamp: string): string => {
+    if (url == undefined) {
+        console.error("Received null arquivo article in 'openTextDiff'");
+        return "";
+    }
     return `https://arquivo.pt/noFrame/replay/${timestamp}/${url}`
 }
 

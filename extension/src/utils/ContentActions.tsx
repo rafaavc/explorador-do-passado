@@ -8,10 +8,13 @@ import { ArquivoArticle } from "./ArquivoData"
 
 const Diff = require('text-diff');
 
-export const openSideBySide = (url: string, timestamp: string, current: ArquivoArticle | undefined, dispatch: Dispatch<any>) => {
+export const openSideBySide = (url: string | undefined, timestamp: string, current: ArquivoArticle | undefined, dispatch: Dispatch<any>) => {
     if (process.env.NODE_ENV == "production") {
         if (current == undefined) {
             console.error("Received null arquivo article in 'openTextDiff'");
+            return;
+        } else if (url == undefined) {
+            console.error("Received null url in 'openTextDiff'");
             return;
         }
         
@@ -28,10 +31,13 @@ export const openSideBySide = (url: string, timestamp: string, current: ArquivoA
     dispatch(updateState({ id: PageStateId.SHOWING_SIDE_BY_SIDE, data: timestamp }));
 }
 
-export const openTextDiff = (url: string, timestamp: string, current: ArquivoArticle | undefined, dispatch: Dispatch<any>) => {
+export const openTextDiff = (url: string | undefined, timestamp: string, current: ArquivoArticle | undefined, dispatch: Dispatch<any>) => {
     if (process.env.NODE_ENV == "production") {
         if (current == undefined) {
             console.error("Received null arquivo article in 'openTextDiff'");
+            return;
+        } else if (url == undefined) {
+            console.error("Received null url in 'openTextDiff'");
             return;
         }
 
