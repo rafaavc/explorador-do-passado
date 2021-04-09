@@ -59,7 +59,13 @@
             "sideBySide": "side by side",
             "textDiff": "text differences",
             "subHeader": "You traveled to",
-            "close": "Stop viewing this memento",
+            "actions": {
+                "close": "Stop viewing this memento",
+                "newTab": "Open memento in new tab",
+                "sideBySide": "Open memento side by side",
+                "textDiff": "Open memento text differences",
+                "copy": "Copy memento URL"
+            },
             "closeFeedback": {
                 "success": "Closed memento viewing"
             }

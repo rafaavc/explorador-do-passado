@@ -62,23 +62,23 @@ export const MementoViewingCard = (props: MementoViewingCardProps) => {
             </Typography>
         </CardContent>
         <CardActions disableSpacing>
-            <Tooltip title={contentText.mementoList.entryActions.newTab.primary}>
-                <IconButton aria-label={contentText.mementoList.entryActions.newTab.primary} className={classes.button} onClick={() => openURL(getMementoURL(arquivoData?.url, state.data))}>
+            <Tooltip title={contentText.mementoList.viewingMementoCard.actions.newTab}>
+                <IconButton aria-label={contentText.mementoList.viewingMementoCard.actions.newTab} className={classes.button} onClick={() => openURL(getMementoURL(arquivoData?.url, state.data))}>
                     <OpenInNewIcon />
                 </IconButton>
             </Tooltip>
-            <Tooltip title={state.id == PageStateId.SHOWING_TEXT_DIFF ? contentText.mementoList.entryActions.sideBySide.primary : contentText.mementoList.entryActions.textDiff.primary}>
-                <IconButton aria-label={state.id == PageStateId.SHOWING_TEXT_DIFF ? contentText.mementoList.entryActions.sideBySide.primary : contentText.mementoList.entryActions.textDiff.primary} className={classes.button} onClick={toggleMementoViewingMode}>
+            <Tooltip title={state.id == PageStateId.SHOWING_TEXT_DIFF ? contentText.mementoList.viewingMementoCard.actions.sideBySide : contentText.mementoList.viewingMementoCard.actions.textDiff}>
+                <IconButton aria-label={state.id == PageStateId.SHOWING_TEXT_DIFF ? contentText.mementoList.viewingMementoCard.actions.sideBySide : contentText.mementoList.viewingMementoCard.actions.textDiff} className={classes.button} onClick={toggleMementoViewingMode}>
                     <span className="material-icons">{state.id == PageStateId.SHOWING_SIDE_BY_SIDE ? "notes" : "compare"}</span>
                 </IconButton>
             </Tooltip>
-            <Tooltip title={contentText.mementoList.entryActions.copy.primary}>
-                <IconButton aria-label={contentText.mementoList.entryActions.copy.primary} className={classes.button} onClick={() => copyMementoURLToClipboard(arquivoData?.url, state.data, dispatch)}>
+            <Tooltip title={contentText.mementoList.viewingMementoCard.actions.copy}>
+                <IconButton aria-label={contentText.mementoList.viewingMementoCard.actions.copy} className={classes.button} onClick={() => copyMementoURLToClipboard(arquivoData?.url, state.data, dispatch)}>
                     <span className="material-icons">content_copy</span>
                 </IconButton>
             </Tooltip>
-            <Tooltip title={contentText.mementoList.viewingMementoCard.close}>
-                <IconButton aria-label={contentText.mementoList.viewingMementoCard.close} className={classes.button} onClick={closeMementoViewing.bind(undefined, useDispatch())}>
+            <Tooltip title={contentText.mementoList.viewingMementoCard.actions.close}>
+                <IconButton aria-label={contentText.mementoList.viewingMementoCard.actions.close} className={classes.button} onClick={closeMementoViewing.bind(undefined, useDispatch())}>
                     <CloseIcon />
                 </IconButton>
             </Tooltip>

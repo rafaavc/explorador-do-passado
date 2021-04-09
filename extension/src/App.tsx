@@ -28,7 +28,7 @@ const App = () => {
             type: 'light',
             text: {
                 primary: 'rgba(0, 0, 0, 0.95)',
-                secondary: 'rgba(0, 0, 0, 0.70)',
+                secondary: 'rgba(0, 0, 0, 0.60)',
                 disabled: 'rgba(0, 0, 0, 0.40)'
             }
         }
