@@ -1,12 +1,10 @@
-import { Button, Dialog, DialogActions, DialogTitle, List, ListItem, ListItemIcon, ListItemText, Snackbar, SnackbarContent } from "@material-ui/core";
-import React, { useState } from "react";
+import { Button, Dialog, DialogActions, DialogTitle, List, ListItem, ListItemIcon, ListItemText } from "@material-ui/core";
 import { useDispatch, useSelector } from "react-redux";
 import { selectArquivoData } from "../store/dataSlice";
 import { ArquivoData, PageMemento } from "../utils/ArquivoData";
 import contentText from "../text/en.json";
-import { getMementoURL, openMemento } from "../utils/URL";
-import { openSideBySide, openTextDiff } from "../utils/ContentActions";
-import { copyToClipboard } from "../utils/Clipboard";
+import { openMemento } from "../utils/URL";
+import { copyMementoURLToClipboard, openSideBySide, openTextDiff } from "../utils/ContentActions";
 import OpenInNewIcon from '@material-ui/icons/OpenInNew'
 import CompareIcon from '@material-ui/icons/Compare'
 import SubjectIcon from '@material-ui/icons/Subject'
@@ -24,7 +22,6 @@ interface MementoEntryActionsProps {
 export const MementoEntryActions = (props: MementoEntryActionsProps) => {
     const { open, onCloseFn, closeAncestors, memento, url } = props;
 
-    const [ feedback, setFeedback ] = useState({ open: false, message: ""})
     const dispatch = useDispatch();
 
     const closeAll = () => {
@@ -44,19 +41,19 @@ export const MementoEntryActions = (props: MementoEntryActionsProps) => {
                     </ListItemIcon>
                     <ListItemText primary={contentText.mementoList.entryActions.newTab.primary} secondary={contentText.mementoList.entryActions.newTab.secondary} />
                 </ListItem>
-                <ListItem button onClick={() => { closeAll(); openSideBySide(url, memento.timestamp, arquivoData?.article, dispatch); setFeedback({ open: true, message: contentText.mementoList.entryActions.sideBySide.successMsg });  }}>
+                <ListItem button onClick={() => { closeAll(); openSideBySide(url, memento.timestamp, arquivoData?.article, dispatch); }}>
                     <ListItemIcon>
                         <CompareIcon />
                     </ListItemIcon>
                     <ListItemText primary={contentText.mementoList.entryActions.sideBySide.primary} secondary={contentText.mementoList.entryActions.sideBySide.secondary} />
                 </ListItem>
-                <ListItem button onClick={() => { closeAll(); openTextDiff(url, memento.timestamp, arquivoData?.article, dispatch); setFeedback({ open: true, message: contentText.mementoList.entryActions.sideBySide.successMsg });  }}>
+                <ListItem button onClick={() => { closeAll(); openTextDiff(url, memento.timestamp, arquivoData?.article, dispatch); }}>
                     <ListItemIcon>
                         <SubjectIcon />
                     </ListItemIcon>
                     <ListItemText primary={contentText.mementoList.entryActions.textDiff.primary} secondary={contentText.mementoList.entryActions.textDiff.secondary} />
                 </ListItem>
-                <ListItem button onClick={() => { copyToClipboard(getMementoURL(url, memento.timestamp)); onCloseFn(); setFeedback({ open: true, message: contentText.mementoList.entryActions.copy.successMsg }); }}>
+                <ListItem button onClick={() => { copyMementoURLToClipboard(url, memento.timestamp, dispatch); onCloseFn(); }}>
                     <ListItemIcon>
                         <FileCopyIcon />
                     </ListItemIcon>
@@ -69,11 +66,5 @@ export const MementoEntryActions = (props: MementoEntryActionsProps) => {
                 </Button>
             </DialogActions>
         </Dialog>
-        <Snackbar open={feedback.open} autoHideDuration={3000} onClose={() => setFeedback({ open: false, message: "" })}>
-            {/* <Alert onClose={() => setFeedbackOpen(false)} severity="success">  
-                Success!
-            </Alert> */}
-            <SnackbarContent message={feedback.message}/>
-        </Snackbar>
     </>
 }

@@ -45,7 +45,8 @@
             },
             "textDiff": {
                 "primary": "Text Differences",
-                "secondary": "See text differences between this version and the current page"
+                "secondary": "See text differences between this version and the current page",
+                "successMsg": "Opened text differences view"
             },
             "copy": {
                 "primary": "Copy URL",
@@ -58,7 +59,10 @@
             "sideBySide": "side by side",
             "textDiff": "text differences",
             "subHeader": "You traveled to",
-            "close": "Stop viewing this memento"
+            "close": "Stop viewing this memento",
+            "closeFeedback": {
+                "success": "Closed memento viewing"
+            }
         }
     },
     "dates": {

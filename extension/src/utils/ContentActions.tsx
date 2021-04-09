@@ -5,8 +5,9 @@ import { Message } from "./Message"
 import { PageStateId } from "./Page"
 import { getMementoURL } from "./URL"
 import { ArquivoArticle } from "./ArquivoData"
-
-const Diff = require('text-diff');
+import { setFeedbackMessageAndOpen } from "../store/feedbackSlice"
+import contentText from "../text/en.json"
+import { copyToClipboard } from "./Clipboard"
 
 export const openSideBySide = (url: string | undefined, timestamp: string, current: ArquivoArticle | undefined, dispatch: Dispatch<any>) => {
     if (process.env.NODE_ENV == "production") {
@@ -29,6 +30,7 @@ export const openSideBySide = (url: string | undefined, timestamp: string, curre
     setTimeout(() => window.scrollTo(0, 0), 500);
 
     dispatch(updateState({ id: PageStateId.SHOWING_SIDE_BY_SIDE, data: timestamp }));
+    dispatch(setFeedbackMessageAndOpen(contentText.mementoList.entryActions.sideBySide.successMsg));
 }
 
 export const openTextDiff = (url: string | undefined, timestamp: string, current: ArquivoArticle | undefined, dispatch: Dispatch<any>) => {
@@ -52,6 +54,7 @@ export const openTextDiff = (url: string | undefined, timestamp: string, current
     setTimeout(() => window.scrollTo(0, 0), 500);
 
     dispatch(updateState({ id: PageStateId.SHOWING_TEXT_DIFF, data: timestamp }));
+    dispatch(setFeedbackMessageAndOpen(contentText.mementoList.entryActions.textDiff.successMsg));
 }
 
 
@@ -66,8 +69,17 @@ export const closeMementoViewing = (dispatch: Dispatch<any>) => {
     }
 
     dispatch(updateState({ id: PageStateId.START, data: null }));
+    dispatch(setFeedbackMessageAndOpen(contentText.mementoList.viewingMementoCard.closeFeedback.success));
 }
 
 
+export const copyMementoURLToClipboard = (url: string | undefined, timestamp: string, dispatch: Dispatch<any>) => {
+    if (url == undefined) {
+        console.error("Received null url in 'copyMementoURLToClipboard'");
+        return;
+    }
+    copyToClipboard(getMementoURL(url, timestamp));
+    dispatch(setFeedbackMessageAndOpen(contentText.mementoList.entryActions.copy.successMsg));
+}
 
 

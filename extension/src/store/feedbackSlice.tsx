@@ -13,6 +13,7 @@ export const feedbackSlice = createSlice({
         },
         closeFeedback: state => {
             state.open = false;
+            state.message = "";
         },
         setFeedbackMessage: (state, action) => {
             state.message = action.payload;

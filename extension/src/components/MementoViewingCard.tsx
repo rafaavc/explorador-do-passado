@@ -2,13 +2,13 @@ import { CardActions, IconButton, Tooltip, Typography, makeStyles, CardContent }
 import CloseIcon from '@material-ui/icons/Close'
 import OpenInNewIcon from '@material-ui/icons/OpenInNew'
 import contentText from '../text/en.json'
-import { closeMementoViewing, openSideBySide, openTextDiff } from '../utils/ContentActions'
+import { closeMementoViewing, copyMementoURLToClipboard, openSideBySide, openTextDiff } from '../utils/ContentActions'
 import { useDispatch, useSelector } from 'react-redux'
 import { arquivoDateToDate, getHumanReadableDate } from '../utils/ArquivoDate'
 import { selectArquivoData, selectPageState } from '../store/dataSlice'
 import { PageStateId } from '../utils/Page'
 import { getMementoURL, openURL } from '../utils/URL'
-import { copyToClipboard } from '../utils/Clipboard'
+import { setFeedbackMessageAndOpen } from '../store/feedbackSlice'
 
 interface MementoViewingCardProps {
     timestamp: string
@@ -48,6 +48,7 @@ export const MementoViewingCard = (props: MementoViewingCardProps) => {
         else if (state.id == PageStateId.SHOWING_TEXT_DIFF)
         {
             openSideBySide(arquivoData?.url, state.data, arquivoData?.article, dispatch);
+            dispatch(setFeedbackMessageAndOpen(contentText.mementoList.entryActions.sideBySide.successMsg));
         }
     }
 
@@ -72,7 +73,7 @@ export const MementoViewingCard = (props: MementoViewingCardProps) => {
                 </IconButton>
             </Tooltip>
             <Tooltip title={contentText.mementoList.entryActions.copy.primary}>
-                <IconButton aria-label={contentText.mementoList.entryActions.copy.primary} className={classes.button} onClick={() => copyToClipboard(getMementoURL(arquivoData?.url, state.data))}>
+                <IconButton aria-label={contentText.mementoList.entryActions.copy.primary} className={classes.button} onClick={() => copyMementoURLToClipboard(arquivoData?.url, state.data, dispatch)}>
                     <span className="material-icons">content_copy</span>
                 </IconButton>
             </Tooltip>
