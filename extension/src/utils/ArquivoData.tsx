@@ -8,6 +8,14 @@ interface PageMemento {
     date: Date
 }
 
+interface MementoHistoryEntry {
+    url: string, // the original page url
+    title: string, // the page title
+    favicon: string, // url of the page favicon
+    memento_timestamp: string, // the memento timestamp
+    viewed_timestamp: string
+}
+
 interface ArquivoEntity {
     text: string,
     type: string
@@ -33,4 +41,4 @@ interface ArquivoData<T=PageMemento> {
 }
 
 
-export type { ArquivoMemento, ArquivoData, PageMemento, PageTimestamp, ArquivoArticle, ArquivoEntity }
+export type { ArquivoMemento, ArquivoData, PageMemento, PageTimestamp, ArquivoArticle, ArquivoEntity, MementoHistoryEntry }

@@ -1,4 +1,4 @@
-import { ArquivoData } from "../utils/ArquivoData";
+import { ArquivoData, MementoHistoryEntry } from "../utils/ArquivoData";
 import { PageState } from "../utils/Page";
 
 export enum ThunkState {
@@ -15,6 +15,11 @@ export interface DataState {
     error: any
 }
 
+export interface HistoryState {
+    entries: MementoHistoryEntry[],
+    status: ThunkState
+}
+
 export interface RootState {
     settings: {
         retrieveAtLoad: boolean,
@@ -24,5 +29,6 @@ export interface RootState {
         open: boolean,
         message: string
     },
+    history: HistoryState,
     data: DataState
 }

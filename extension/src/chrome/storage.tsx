@@ -1,3 +1,4 @@
+import { MementoHistoryEntry } from '../utils/ArquivoData'
 import { logError } from '../utils/Logger'
 import { SettingsOptions } from '../utils/SettingsOptions'
 
@@ -33,5 +34,17 @@ export const setSettingsValue = (setting: SettingsOptions, value: any) => {
     obj[setting] = value
  
     return setStorage(obj, "setSettingsValue", setting);
+}
+
+export const getHistory = () => new Promise<MementoHistoryEntry[] | undefined>((resolve) => {
+    getStorage("mementoHistory")
+        .then((res) => resolve(res["mementoHistory"]));
+})
+
+export const writeHistory = (history: MementoHistoryEntry[]) => {
+    const obj: Dict = {};
+    obj["mementoHistory"] = history;
+ 
+    return setStorage(obj, "writeHistory", history);    
 }
 

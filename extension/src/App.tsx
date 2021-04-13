@@ -10,6 +10,7 @@ import { fetchData, selectArquivoData, selectPageState } from './store/dataSlice
 import { fetchSettings, selectSettingsState } from './store/settingsSlice'
 import { ThunkState } from './store/storeInterfaces'
 import { ActionFeedback } from './components/ActionFeedback'
+import { fetchHistory } from './store/historySlice'
 
 
 const App = () => {
@@ -21,6 +22,7 @@ const App = () => {
     useEffect(() => {
         dispatch(fetchData());
         dispatch(fetchSettings());
+        dispatch(fetchHistory());
     }, []);
 
     const theme = createMuiTheme({
