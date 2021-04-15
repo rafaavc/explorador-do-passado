@@ -17,7 +17,8 @@ interface MementoEntryActionsProps {
     onCloseFn: any,
     memento: PageMemento,
     url: string,
-    closeAncestors: any
+    closeAncestors: any,
+    contentScriptActions?: boolean
 }
 
 const useStyles = makeStyles((theme) => {
@@ -42,6 +43,9 @@ const useStyles = makeStyles((theme) => {
 
 export const MementoEntryActions = (props: MementoEntryActionsProps) => {
     const { open, onCloseFn, closeAncestors, memento, url } = props;
+    let { contentScriptActions } = props;
+
+    if (contentScriptActions == null) contentScriptActions = true;
 
     const dispatch = useDispatch();
     const classes = useStyles();
@@ -64,24 +68,26 @@ export const MementoEntryActions = (props: MementoEntryActionsProps) => {
                     </ListItemIcon>
                     <ListItemText secondaryTypographyProps={{ className: classes.textSecondary }} primary={contentText.mementoList.entryActions.newTab.primary} secondary={contentText.mementoList.entryActions.newTab.secondary} />
                 </ListItem>
-                <ListItem dense button onClick={() => { closeAll(); openSideBySide(history, url, memento.timestamp, arquivoData?.article, dispatch); }}>
-                    <ListItemIcon className={classes.icon}>
-                        <CompareIcon />
-                    </ListItemIcon>
-                    <ListItemText secondaryTypographyProps={{ className: classes.textSecondary }} primary={contentText.mementoList.entryActions.sideBySide.primary} secondary={contentText.mementoList.entryActions.sideBySide.secondary} />
-                </ListItem>
-                <ListItem dense button onClick={() => { closeAll(); openTextDiff(history, url, memento.timestamp, arquivoData?.article, dispatch); }}>
-                    <ListItemIcon className={classes.icon}>
-                        <SubjectIcon />
-                    </ListItemIcon>
-                    <ListItemText secondaryTypographyProps={{ className: classes.textSecondary }} primary={contentText.mementoList.entryActions.textDiff.primary} secondary={contentText.mementoList.entryActions.textDiff.secondary} />
-                </ListItem>
+                {contentScriptActions ? <>
+                    <ListItem dense button onClick={() => { closeAll(); openSideBySide(history, url, memento.timestamp, arquivoData?.article, dispatch); }}>
+                        <ListItemIcon className={classes.icon}>
+                            <CompareIcon />
+                        </ListItemIcon>
+                        <ListItemText secondaryTypographyProps={{ className: classes.textSecondary }} primary={contentText.mementoList.entryActions.sideBySide.primary} secondary={contentText.mementoList.entryActions.sideBySide.secondary} />
+                    </ListItem>
+                    <ListItem dense button onClick={() => { closeAll(); openTextDiff(history, url, memento.timestamp, arquivoData?.article, dispatch); }}>
+                        <ListItemIcon className={classes.icon}>
+                            <SubjectIcon />
+                        </ListItemIcon>
+                        <ListItemText secondaryTypographyProps={{ className: classes.textSecondary }} primary={contentText.mementoList.entryActions.textDiff.primary} secondary={contentText.mementoList.entryActions.textDiff.secondary} />
+                    </ListItem>
+                </> : null }
                 <ListItem dense button onClick={() => { copyMementoURLToClipboard(history, arquivoData?.article, url, memento.timestamp, dispatch); onCloseFn(); }}>
                     <ListItemIcon className={classes.icon}>
                         <FileCopyIcon />
                     </ListItemIcon>
                     <ListItemText secondaryTypographyProps={{ className: classes.textSecondary }} primary={contentText.mementoList.entryActions.copy.primary} secondary={contentText.mementoList.entryActions.copy.secondary} />
-                </ListItem>
+                </ListItem> 
             </List>
             <DialogActions>
                 <Button onClick={onCloseFn} color="primary" autoFocus>
