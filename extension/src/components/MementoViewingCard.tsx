@@ -7,7 +7,6 @@ import { useDispatch, useSelector } from 'react-redux'
 import { arquivoDateToDate, getHumanReadableDate } from '../utils/ArquivoDate'
 import { selectArquivoData, selectPageState } from '../store/dataSlice'
 import { PageStateId } from '../utils/Page'
-import { getMementoURL, openURL } from '../utils/URL'
 import { setFeedbackMessageAndOpen } from '../store/feedbackSlice'
 import { selectHistory } from '../store/historySlice'
 

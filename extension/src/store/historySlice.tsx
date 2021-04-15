@@ -19,13 +19,44 @@ export const addToHistory = createAsyncThunk('settings/toggleRetrieveAtLoad', as
     copy.push(diff.added);
 
     if (copy.length > 50) copy.splice(0, copy.length - 50);
-    
+
     writeHistory(copy);
     return copy;
     
 });
 
 export const fetchHistory = createAsyncThunk('history/fetchHistory', async (): Promise<{ entries: MementoHistoryEntry[] }> => {
+    if (process.env.NODE_ENV != "production") {
+        return {
+            entries: [
+                {
+                    mementoTimestamp: "20120703151615",
+                    title: "PÚBLICO",
+                    url: "www.publico.pt/",
+                    viewedTimestamp: 1618499944163
+                },
+                {
+                    mementoTimestamp: "20001017215803",
+                    title: "PÚBLICO",
+                    url: "www.publico.pt/",
+                    viewedTimestamp: 1618500116186
+                },
+                {
+                    mementoTimestamp: "20050310023349",
+                    title: "PÚBLICO",
+                    url: "www.publico.pt/",
+                    viewedTimestamp: 1618500130123
+                },
+                {
+                    mementoTimestamp: "20020807183932",
+                    title: "PÚBLICO",
+                    url: "www.publico.pt/",
+                    viewedTimestamp: 1618500199664
+                }
+            ]
+        };
+    }
+
     const entries: MementoHistoryEntry[] | undefined = await getHistory();
     console.log("Received the value of history:", entries);
     if (entries == undefined) return { entries: [] };
