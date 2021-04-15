@@ -11,9 +11,9 @@ interface PageMemento {
 interface MementoHistoryEntry {
     url: string, // the original page url
     title: string, // the page title
-    favicon: string, // url of the page favicon
-    memento_timestamp: string, // the memento timestamp
-    viewed_timestamp: string
+    favicon?: string, // url of the page favicon
+    mementoTimestamp: string, // the memento timestamp
+    viewedTimestamp: number
 }
 
 interface ArquivoEntity {

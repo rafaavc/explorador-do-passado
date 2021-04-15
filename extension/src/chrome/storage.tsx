@@ -41,7 +41,7 @@ export const getHistory = () => new Promise<MementoHistoryEntry[] | undefined>((
         .then((res) => resolve(res["mementoHistory"]));
 })
 
-export const writeHistory = (history: MementoHistoryEntry[]) => {
+export const writeHistory = (history: MementoHistoryEntry[]): Promise<void> => {
     const obj: Dict = {};
     obj["mementoHistory"] = history;
  

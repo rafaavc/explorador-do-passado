@@ -10,9 +10,17 @@ export interface AddToHistory {
 }
 
 export const addToHistory = createAsyncThunk('settings/toggleRetrieveAtLoad', async (diff: AddToHistory): Promise<MementoHistoryEntry[]> => {
-    const copy = [ ...diff.current ];
+    const newUrl = new URL(diff.added.url);
+    diff.added.url = newUrl.hostname + newUrl.pathname;
+
+    console.log(`Adding '${diff.added.url}' to memento history.`);
+    
+    const copy = diff.current.filter((el: MementoHistoryEntry) => el.url != diff.added.url || el.mementoTimestamp != diff.added.mementoTimestamp);
     copy.push(diff.added);
-    writeHistory(copy); // async
+
+    if (copy.length > 50) copy.splice(0, copy.length - 50);
+    
+    writeHistory(copy);
     return copy;
     
 });

@@ -15,8 +15,4 @@ const getMementoURL = (url: string | undefined, timestamp: string): string => {
     return `https://arquivo.pt/noFrame/replay/${timestamp}/${url}`
 }
 
-const openMemento = (url: string, timestamp: string): void => {
-    openURL(getMementoURL(url, timestamp))
-}
-
-export { openURL, openMemento, getMementoURL }
+export { openURL, getMementoURL }

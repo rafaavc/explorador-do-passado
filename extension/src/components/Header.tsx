@@ -7,6 +7,7 @@ import { SettingsDialog } from './Settings'
 import contentText from '../text/en.json'
 import { openURL } from '../utils/URL'
 import HistoryIcon from '@material-ui/icons/History'
+import { HistoryDialog } from './History';
 
 const useStyles = makeStyles(() => ({
     grow: {
@@ -41,10 +42,11 @@ const InfoDialog = (props: InfoDialogProps) => {
 }
 
 const Header = () => {
-    const classes = useStyles()
+    const classes = useStyles();
 
-    const [ infoOpen, setInfoOpen ] = useState(false)
-    const [ settingsOpen, setSettingsOpen ] = useState(false)
+    const [ infoOpen, setInfoOpen ] = useState(false);
+    const [ settingsOpen, setSettingsOpen ] = useState(false);
+    const [ historyOpen, setHistoryOpen ] = useState(false);
 
     return <>
         <AppBar position="static" elevation={6}>
@@ -60,7 +62,7 @@ const Header = () => {
                         <InfoIcon />
                     </IconButton>
                 </Tooltip>
-                <Tooltip title={contentText.history.tooltip}>
+                <Tooltip title={contentText.history.tooltip} onClick={setHistoryOpen.bind(undefined, true)}>
                     <IconButton edge="start" color="inherit" aria-label="menu">
                         <HistoryIcon />
                     </IconButton>
@@ -74,6 +76,7 @@ const Header = () => {
         </AppBar>
         <InfoDialog open={infoOpen} onCloseFn={() => setInfoOpen(false)} />
         <SettingsDialog open={settingsOpen} onCloseFn={() => setSettingsOpen(false)} />
+        <HistoryDialog open={historyOpen} onCloseFn={() => setHistoryOpen(false)} />
     </>
 
 }
