@@ -26,6 +26,12 @@
         },
         "language": {
             "primary": "Language"
+        },
+        "historyMaxNEntries": {
+            "primary": "Maximum number of entries in history"
+        },
+        "defaultEntitiesState": {
+            "primary": "Initial state of the entities list"
         }
     },
     "entities": {

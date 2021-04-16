@@ -6,7 +6,8 @@ import { HistoryState, RootState, ThunkState } from './storeInterfaces';
 
 export interface AddToHistory {
     current: MementoHistoryEntry[],
-    added: MementoHistoryEntry
+    added: MementoHistoryEntry,
+    maxHistoryEntries: number
 }
 
 export const addToHistory = createAsyncThunk('history/addToHistory', async (diff: AddToHistory): Promise<MementoHistoryEntry[]> => {
@@ -18,7 +19,7 @@ export const addToHistory = createAsyncThunk('history/addToHistory', async (diff
     const copy = diff.current.filter((el: MementoHistoryEntry) => el.url != diff.added.url || el.mementoTimestamp != diff.added.mementoTimestamp);
     copy.push(diff.added);
 
-    if (copy.length > 50) copy.splice(0, copy.length - 50);
+    if (copy.length > diff.maxHistoryEntries) copy.splice(0, copy.length - diff.maxHistoryEntries);
 
     writeHistory(copy);
     return copy;

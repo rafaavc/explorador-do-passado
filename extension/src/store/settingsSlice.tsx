@@ -20,6 +20,16 @@ export const changeLanguage = createAsyncThunk('settings/changeLanguage', async 
     };
 });
 
+export const setHistoryMax = createAsyncThunk('settings/setHistoryMax', async (n: { value: number, write: boolean }) => {
+    if (process.env.NODE_ENV == "production" && n.write) await setSettingsValue(SettingsOptions.HistoryMaxNEntries, n.value);
+    return n.value;
+});
+
+export const toggleDefaultEntitiesState = createAsyncThunk('settings/setDefaultEntitiesState', async (currentState: boolean) => {
+    if (process.env.NODE_ENV == "production") await setSettingsValue(SettingsOptions.DefaultEntitiesState, !currentState);
+    return !currentState;
+});
+
 const getLanguageText = (lang: Language): PopupLanguage => {
     if (lang == Language.PT) return ptlang;
     return enlang;
@@ -34,7 +44,7 @@ const detectBrowserLanguage = (): Language => {
 }
 
 export const fetchSettings = createAsyncThunk('settings/fetchSettings', async () => {
-    const settings = await getSettingsValue([ SettingsOptions.RetrieveAtLoad, SettingsOptions.Language ]);
+    const settings = await getSettingsValue([ SettingsOptions.RetrieveAtLoad, SettingsOptions.Language, SettingsOptions.DefaultEntitiesState, SettingsOptions.HistoryMaxNEntries ]);
     console.log("Received the value of settings:", settings);
 
     const userLang = detectBrowserLanguage();
@@ -48,7 +58,9 @@ export const fetchSettings = createAsyncThunk('settings/fetchSettings', async ()
         language: {
             lang,
             text: getLanguageText(lang)
-        }
+        },
+        historyMax: SettingsOptions.HistoryMaxNEntries in settings ? settings[SettingsOptions.HistoryMaxNEntries] : 50,
+        defaultEntitiesState: SettingsOptions.DefaultEntitiesState in settings ? settings[SettingsOptions.DefaultEntitiesState] : true
     };
 });
 
@@ -64,7 +76,9 @@ export const settingsSlice = createSlice({
     initialState: {
         retrieveAtLoad: true,
         status: ThunkState.Idle,
-        language: initialLanguage
+        language: initialLanguage,
+        historyMax: 50,
+        defaultEntitiesState: true
     },
     reducers: {
     },
@@ -76,9 +90,17 @@ export const settingsSlice = createSlice({
             .addCase(changeLanguage.fulfilled, (state, action) => {
                 state.language = action.payload;
             })
+            .addCase(toggleDefaultEntitiesState.fulfilled, (state, action) => {
+                state.defaultEntitiesState = action.payload;
+            })
+            .addCase(setHistoryMax.fulfilled, (state, action) => {
+                state.historyMax = action.payload;
+            })
             .addCase(fetchSettings.fulfilled, (state, action: { payload: any }) => {
                 state.retrieveAtLoad = action.payload.retrieveAtLoad;
                 state.language = action.payload.language;
+                state.historyMax = action.payload.historyMax;
+                state.defaultEntitiesState = action.payload.defaultEntitiesState;
                 state.status = ThunkState.Success;
             })
             .addCase(fetchSettings.rejected, (state, action: { payload: any }) => {
@@ -101,6 +123,10 @@ export const selectLanguage = (state: RootState) => state.settings.language.lang
 export const selectLanguageText = (state: RootState) => state.settings.language.text;
 
 export const selectSettingsState = (state: RootState) => state.settings.status;
+
+export const selectDefaultEntitiesState = (state: RootState) => state.settings.defaultEntitiesState;
+
+export const selectHistoryMax = (state: RootState) => state.settings.historyMax;
 
 export default settingsSlice.reducer;
 

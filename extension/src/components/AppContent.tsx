@@ -1,6 +1,7 @@
 import { Box, Typography, CardContent, Card, makeStyles, Divider } from '@material-ui/core'
 import { useSelector } from 'react-redux'
 import { selectPageState } from '../store/dataSlice'
+import { selectDefaultEntitiesState } from '../store/settingsSlice'
 import { ArquivoData } from '../utils/ArquivoData'
 import { PageState, PageStateId } from '../utils/Page'
 import { EntityList } from './EntityList'
@@ -35,7 +36,7 @@ const AppContent = (props: AppContentProps) => {
             </CardContent>
             { state.id != PageStateId.START ? <><Divider/><MementoViewingCard timestamp={state.data} /></> : null }
             <Divider/>
-            <EntityList entities={props.data.article.entities} open={state.id == PageStateId.START} />
+            <EntityList entities={props.data.article.entities} open={state.id == PageStateId.START && useSelector(selectDefaultEntitiesState)} />
         </Card>
         <MementoList memento={props.data.memento} url={props.data.url} />
     </>

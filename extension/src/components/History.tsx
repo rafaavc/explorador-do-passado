@@ -112,7 +112,7 @@ const HistoryDialog = (props: HistoryDialogProps) => {
             </AppBar>
             <DialogContent className={classes.dialogContent}>
                 <List>
-                    {reversedHistory.map((entry: MementoHistoryEntry, idx: number) => <HistoryItem entry={entry} idx={idx} onCloseFn={onCloseFn} historySize={history.length} />)}
+                    {reversedHistory.map((entry: MementoHistoryEntry, idx: number) => <HistoryItem key={idx} entry={entry} idx={idx} onCloseFn={onCloseFn} historySize={history.length} />)}
                 </List>
             </DialogContent>
         </Dialog>

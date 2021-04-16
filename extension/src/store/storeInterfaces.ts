@@ -42,7 +42,9 @@ export interface RootState {
         language: {
             lang: Language,
             text: PopupLanguage
-        }
+        },
+        historyMax: number,
+        defaultEntitiesState: boolean
     },
     feedback: {
         open: boolean,

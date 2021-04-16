@@ -8,7 +8,7 @@ import { selectArquivoData, selectPageState } from '../store/dataSlice'
 import { PageStateId } from '../utils/Page'
 import { setFeedbackMessageAndOpen } from '../store/feedbackSlice'
 import { selectHistory } from '../store/historySlice'
-import { selectLanguageText } from '../store/settingsSlice'
+import { selectHistoryMax, selectLanguageText } from '../store/settingsSlice'
 
 interface MementoViewingCardProps {
     timestamp: string
@@ -41,15 +41,16 @@ export const MementoViewingCard = (props: MementoViewingCardProps) => {
     const history = useSelector(selectHistory);
     const dispatch = useDispatch();
     const contentText = useSelector(selectLanguageText);
+    const maxHistoryEntries = useSelector(selectHistoryMax);
 
     const toggleMementoViewingMode = () => {
         if (state.id == PageStateId.SHOWING_SIDE_BY_SIDE) 
         {
-            openTextDiff(contentText, history, arquivoData?.url, state.data, arquivoData?.article, dispatch);
+            openTextDiff(contentText, history, maxHistoryEntries, arquivoData?.url, state.data, arquivoData?.article, dispatch);
         } 
         else if (state.id == PageStateId.SHOWING_TEXT_DIFF)
         {
-            openSideBySide(contentText, history, arquivoData?.url, state.data, arquivoData?.article, dispatch);
+            openSideBySide(contentText, history, maxHistoryEntries, arquivoData?.url, state.data, arquivoData?.article, dispatch);
             dispatch(setFeedbackMessageAndOpen(contentText.mementoList.entryActions.sideBySide.successMsg));
         }
     }
@@ -65,7 +66,7 @@ export const MementoViewingCard = (props: MementoViewingCardProps) => {
         </CardContent>
         <CardActions disableSpacing>
             <Tooltip title={contentText.mementoList.viewingMementoCard.actions.newTab}>
-                <IconButton aria-label={contentText.mementoList.viewingMementoCard.actions.newTab} className={classes.button} onClick={() => openMemento(history, arquivoData?.article, arquivoData?.url, state.data, dispatch)}>
+                <IconButton aria-label={contentText.mementoList.viewingMementoCard.actions.newTab} className={classes.button} onClick={() => openMemento(history, maxHistoryEntries, arquivoData?.article, arquivoData?.url, state.data, dispatch)}>
                     <OpenInNewIcon />
                 </IconButton>
             </Tooltip>
@@ -75,7 +76,7 @@ export const MementoViewingCard = (props: MementoViewingCardProps) => {
                 </IconButton>
             </Tooltip>
             <Tooltip title={contentText.mementoList.viewingMementoCard.actions.copy}>
-                <IconButton aria-label={contentText.mementoList.viewingMementoCard.actions.copy} className={classes.button} onClick={() => copyMementoURLToClipboard(contentText, history, arquivoData?.article, arquivoData?.url, state.data, dispatch)}>
+                <IconButton aria-label={contentText.mementoList.viewingMementoCard.actions.copy} className={classes.button} onClick={() => copyMementoURLToClipboard(contentText, history, maxHistoryEntries, arquivoData?.article, arquivoData?.url, state.data, dispatch)}>
                     <span className="material-icons">content_copy</span>
                 </IconButton>
             </Tooltip>
