@@ -9,7 +9,7 @@ export interface AddToHistory {
     added: MementoHistoryEntry
 }
 
-export const addToHistory = createAsyncThunk('settings/toggleRetrieveAtLoad', async (diff: AddToHistory): Promise<MementoHistoryEntry[]> => {
+export const addToHistory = createAsyncThunk('history/addToHistory', async (diff: AddToHistory): Promise<MementoHistoryEntry[]> => {
     const newUrl = new URL(diff.added.url);
     diff.added.url = newUrl.hostname + newUrl.pathname;
 

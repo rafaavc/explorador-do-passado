@@ -8,12 +8,12 @@ import { PopupLanguage } from '../text/PopupLanguage';
 
 
 export const toggleRetrieveAtLoad = createAsyncThunk('settings/toggleRetrieveAtLoad', async (current: boolean) => {
-    await setSettingsValue(SettingsOptions.RetrieveAtLoad, !current);
+    if (process.env.NODE_ENV == "production") await setSettingsValue(SettingsOptions.RetrieveAtLoad, !current);
     return !current;
 });
 
 export const changeLanguage = createAsyncThunk('settings/changeLanguage', async (lang: Language) => {
-    await setSettingsValue(SettingsOptions.Language, languageAsStr(lang));
+    if (process.env.NODE_ENV == "production") await setSettingsValue(SettingsOptions.Language, languageAsStr(lang));
     return {
         lang,
         text: getLanguageText(lang)

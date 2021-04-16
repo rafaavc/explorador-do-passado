@@ -32,7 +32,6 @@ export const getSettingsValue = (setting: SettingsOptions | SettingsOptions[]): 
 export const setSettingsValue = (setting: SettingsOptions, value: any) => {
     const obj: Dict = {}
     obj[setting] = value
- 
     return setStorage(obj, "setSettingsValue", setting);
 }
 

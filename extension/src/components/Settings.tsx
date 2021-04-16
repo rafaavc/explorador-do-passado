@@ -1,4 +1,4 @@
-import { Dialog, AppBar, Toolbar, IconButton, Typography, Slide, DialogContent, List, ListItem, ListItemIcon, ListItemText, ListItemSecondaryAction, Switch, Select, MenuItem, makeStyles } from '@material-ui/core'
+import { Dialog, AppBar, Toolbar, IconButton, Typography, Slide, DialogContent, List, ListItem, ListItemIcon, ListItemText, ListItemSecondaryAction, Switch, Select, MenuItem, makeStyles, Divider } from '@material-ui/core'
 import CloseIcon from '@material-ui/icons/Close'
 import React from 'react'
 import { TransitionProps } from '@material-ui/core/transitions'
@@ -20,8 +20,20 @@ const Transition = React.forwardRef(
 const useStyles = makeStyles((theme) => {
     return {
         dialogContent: {
-            paddingLeft: '.8rem',
-            paddingRight: '.8rem'
+            paddingLeft: '.6rem',
+            paddingRight: '.6rem'
+        },
+        icon: {
+            minWidth: 0,
+            marginRight: '1rem',
+            color: theme.palette.text.primary
+        },
+        itemText: {
+            marginRight: '4rem'
+        },
+        item: {
+            paddingLeft: '.6rem',
+            paddingRight: '.6rem'
         }
     }
 });
@@ -47,11 +59,11 @@ const SettingsDialog = (props: SettingsDialogProps) => {
             </AppBar>
             <DialogContent className={classes.dialogContent}>
                 <List>
-                    <ListItem dense>
-                        <ListItemIcon>
+                    <ListItem className={classes.item}>
+                        <ListItemIcon className={classes.icon}>
                             <TranslateIcon />
                         </ListItemIcon>
-                        <ListItemText primary={contentText.settings.language.primary} />
+                        <ListItemText primary={contentText.settings.language.primary} className={classes.itemText} />
                         <ListItemSecondaryAction>
                             <Select
                                 value={language}
@@ -63,11 +75,12 @@ const SettingsDialog = (props: SettingsDialogProps) => {
                             </Select>
                         </ListItemSecondaryAction>
                     </ListItem>
-                    <ListItem dense>
-                        <ListItemIcon>
+                    <Divider />
+                    <ListItem className={classes.item}>
+                        <ListItemIcon className={classes.icon}>
                             <AutorenewIcon />
                         </ListItemIcon>
-                        <ListItemText primary={contentText.settings.retrieveAtLoad.primary} />
+                        <ListItemText primary={contentText.settings.retrieveAtLoad.primary} className={classes.itemText} />
                         <ListItemSecondaryAction>
                             <Switch
                                 edge="end"
