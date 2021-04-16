@@ -21,7 +21,12 @@
     "settings": {
         "title": "Settings",
         "tooltip": "Settings",
-        "content": "Welcome to the empty settings page"
+        "retrieveAtLoad": {
+            "primary": "Retrieve pages on load"
+        },
+        "language": {
+            "primary": "Language"
+        }
     },
     "entities": {
         "title": "Entities"

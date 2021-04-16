@@ -2,7 +2,6 @@ import { Dialog, AppBar, Toolbar, IconButton, Typography, Slide, DialogContent, 
 import CloseIcon from '@material-ui/icons/Close'
 import React, { useState } from 'react'
 import { TransitionProps } from '@material-ui/core/transitions'
-import contentText from '../text/en.json'
 import { useSelector } from 'react-redux'
 import { selectHistory, selectHistoryStatus } from '../store/historySlice'
 import { MementoHistoryEntry, PageMemento } from '../utils/ArquivoData'
@@ -10,6 +9,7 @@ import { arquivoDateToDate, getHumanReadableDate } from '../utils/ArquivoDate'
 import * as timeago from 'timeago.js'
 import { MementoEntryActions } from './MementoEntryActions'
 import { selectArquivoData } from '../store/dataSlice'
+import { selectLanguageText } from '../store/settingsSlice'
 
 interface HistoryDialogProps {
     open: boolean,
@@ -52,6 +52,8 @@ const HistoryItem = (props: { entry: MementoHistoryEntry, idx: number, onCloseFn
     const { entry, idx, onCloseFn, historySize } = props;
     const [ open, setOpen ] = useState(false);
     const classes = useStyles();
+    
+    const contentText = useSelector(selectLanguageText);
 
     const memento: PageMemento = {
         timestamp: entry.mementoTimestamp,
@@ -82,7 +84,7 @@ const HistoryItem = (props: { entry: MementoHistoryEntry, idx: number, onCloseFn
         </ListItem>
         <MementoEntryActions contentScriptActions={currentURL == entry.url} memento={memento} url={entry.url} open={open} closeAncestors={onCloseFn} onCloseFn={setOpen.bind(undefined, false)} />
         { idx == historySize - 1 ? null : <Divider/> }
-    </>;
+    </>
 }
 
 
@@ -95,8 +97,7 @@ const HistoryDialog = (props: HistoryDialogProps) => {
     const reversedHistory = [ ...history ];
     reversedHistory.reverse();  // most recent to oldest
 
-    // const url = new URL();
-    // const currentPageUrl = 
+    const contentText = useSelector(selectLanguageText);
   
     return <Dialog fullScreen open={open} onClose={onCloseFn} TransitionComponent={Transition}>
             <AppBar position="static">
@@ -114,7 +115,7 @@ const HistoryDialog = (props: HistoryDialogProps) => {
                     {reversedHistory.map((entry: MementoHistoryEntry, idx: number) => <HistoryItem entry={entry} idx={idx} onCloseFn={onCloseFn} historySize={history.length} />)}
                 </List>
             </DialogContent>
-        </Dialog>    
+        </Dialog>
 }
 
 export { HistoryDialog }

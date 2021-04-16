@@ -4,10 +4,11 @@ import TuneIcon from '@material-ui/icons/Tune'
 import InfoIcon from '@material-ui/icons/Info';
 import { useState } from 'react'
 import { SettingsDialog } from './Settings'
-import contentText from '../text/en.json'
 import { openURL } from '../utils/URL'
 import HistoryIcon from '@material-ui/icons/History'
 import { HistoryDialog } from './History';
+import { useSelector } from 'react-redux';
+import { selectLanguageText } from '../store/settingsSlice';
 
 const useStyles = makeStyles(() => ({
     grow: {
@@ -22,6 +23,8 @@ interface InfoDialogProps {
 
 const InfoDialog = (props: InfoDialogProps) => {
     const { open, onCloseFn } = props;
+
+    const contentText = useSelector(selectLanguageText);
   
     return <Dialog onClose={onCloseFn} aria-labelledby="info-dialog-title" open={open}>
             <DialogTitle id="simple-dialog-title">{contentText.info.titleBeginning + contentText.extensionTitle}</DialogTitle>
@@ -47,6 +50,8 @@ const Header = () => {
     const [ infoOpen, setInfoOpen ] = useState(false);
     const [ settingsOpen, setSettingsOpen ] = useState(false);
     const [ historyOpen, setHistoryOpen ] = useState(false);
+
+    const contentText = useSelector(selectLanguageText);
 
     return <>
         <AppBar position="static" elevation={6}>

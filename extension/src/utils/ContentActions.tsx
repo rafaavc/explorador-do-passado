@@ -6,9 +6,9 @@ import { PageStateId } from "./Page"
 import { getMementoURL, openURL } from "./URL"
 import { ArquivoArticle, MementoHistoryEntry } from "./ArquivoData"
 import { setFeedbackMessageAndOpen } from "../store/feedbackSlice"
-import contentText from "../text/en.json"
 import { copyToClipboard } from "./Clipboard"
 import { addToHistory } from "../store/historySlice"
+import { PopupLanguage } from "../text/PopupLanguage"
 
 const createMementoHistoryEntry = (article: ArquivoArticle, url: string, mementoTimestamp: string): MementoHistoryEntry => {
     return {
@@ -19,7 +19,7 @@ const createMementoHistoryEntry = (article: ArquivoArticle, url: string, memento
     }
 }
 
-export const openSideBySide = (current: MementoHistoryEntry[], url: string | undefined, timestamp: string, article: ArquivoArticle | undefined, dispatch: Dispatch<any>) => {
+export const openSideBySide = (contentText: PopupLanguage, current: MementoHistoryEntry[], url: string | undefined, timestamp: string, article: ArquivoArticle | undefined, dispatch: Dispatch<any>) => {
     if (process.env.NODE_ENV == "production") {
         if (article == undefined) {
             console.error("Received null arquivo article in 'openTextDiff'");
@@ -45,7 +45,7 @@ export const openSideBySide = (current: MementoHistoryEntry[], url: string | und
     dispatch(setFeedbackMessageAndOpen(contentText.mementoList.entryActions.sideBySide.successMsg));
 }
 
-export const openTextDiff = (current: MementoHistoryEntry[], url: string | undefined, timestamp: string, article: ArquivoArticle | undefined, dispatch: Dispatch<any>) => {
+export const openTextDiff = (contentText: PopupLanguage, current: MementoHistoryEntry[], url: string | undefined, timestamp: string, article: ArquivoArticle | undefined, dispatch: Dispatch<any>) => {
     if (process.env.NODE_ENV == "production") {
         if (article == undefined) {
             console.error("Received null arquivo article in 'openTextDiff'");
@@ -72,7 +72,7 @@ export const openTextDiff = (current: MementoHistoryEntry[], url: string | undef
 }
 
 
-export const closeMementoViewing = (dispatch: Dispatch<any>) => {
+export const closeMementoViewing = (contentText: PopupLanguage, dispatch: Dispatch<any>) => {
     if (process.env.NODE_ENV == "production") {
         const message: Message = { type: "close_viewing" };
         queryCurrentTab().then((tabId: number) => {
@@ -95,7 +95,7 @@ export const openMemento = (current: MementoHistoryEntry[], article: ArquivoArti
 }
 
 
-export const copyMementoURLToClipboard = (current: MementoHistoryEntry[], article: ArquivoArticle | undefined, url: string | undefined, timestamp: string, dispatch: Dispatch<any>) => {
+export const copyMementoURLToClipboard = (contentText: PopupLanguage, current: MementoHistoryEntry[], article: ArquivoArticle | undefined, url: string | undefined, timestamp: string, dispatch: Dispatch<any>) => {
     if (article == undefined) {
         console.error("Received null arquivo article in 'copyMementoURLToClipboard'");
         return;

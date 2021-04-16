@@ -1,11 +1,12 @@
-import { Dialog, AppBar, Toolbar, IconButton, Typography, Slide, DialogContent, List, ListItem, ListItemIcon, ListItemText, ListItemSecondaryAction, Switch } from '@material-ui/core'
+import { Dialog, AppBar, Toolbar, IconButton, Typography, Slide, DialogContent, List, ListItem, ListItemIcon, ListItemText, ListItemSecondaryAction, Switch, Select, MenuItem, makeStyles } from '@material-ui/core'
 import CloseIcon from '@material-ui/icons/Close'
-import React, { useState } from 'react'
+import React from 'react'
 import { TransitionProps } from '@material-ui/core/transitions'
-import contentText from '../text/en.json'
 import AutorenewIcon from '@material-ui/icons/Autorenew'
 import { useSelector, useDispatch } from 'react-redux'
-import { selectRetrieveAtLoad, toggleRetrieveAtLoad } from '../store/settingsSlice'
+import { changeLanguage, selectLanguage, selectLanguageText, selectRetrieveAtLoad, toggleRetrieveAtLoad } from '../store/settingsSlice'
+import TranslateIcon from '@material-ui/icons/Translate';
+import { languageAsStr, strAsLanguage } from '../store/storeInterfaces'
 
 interface SettingsDialogProps {
     open: boolean,
@@ -16,10 +17,22 @@ const Transition = React.forwardRef(
     (props: TransitionProps & { children?: React.ReactElement }, ref: React.Ref<unknown>) => 
         <Slide direction="up" ref={ref} {...props} />)
 
+const useStyles = makeStyles((theme) => {
+    return {
+        dialogContent: {
+            paddingLeft: '.8rem',
+            paddingRight: '.8rem'
+        }
+    }
+});
+
 const SettingsDialog = (props: SettingsDialogProps) => {
     const { open, onCloseFn } = props;
     const retrieveAtLoad = useSelector(selectRetrieveAtLoad);
     const dispatch = useDispatch();
+    const language = languageAsStr(useSelector(selectLanguage));
+    const contentText = useSelector(selectLanguageText);
+    const classes = useStyles();
   
     return <Dialog fullScreen open={open} onClose={onCloseFn} TransitionComponent={Transition}>
             <AppBar position="static">
@@ -32,20 +45,35 @@ const SettingsDialog = (props: SettingsDialogProps) => {
                     </Typography>
                 </Toolbar>
             </AppBar>
-            <DialogContent>
+            <DialogContent className={classes.dialogContent}>
                 <List>
-                    <ListItem>
+                    <ListItem dense>
+                        <ListItemIcon>
+                            <TranslateIcon />
+                        </ListItemIcon>
+                        <ListItemText primary={contentText.settings.language.primary} />
+                        <ListItemSecondaryAction>
+                            <Select
+                                value={language}
+                                onChange={(event: any) => dispatch(changeLanguage(strAsLanguage(event.target.value)))}
+                                displayEmpty
+                            >
+                                <MenuItem value={"PT"}>Português</MenuItem>
+                                <MenuItem value={"EN"}>English</MenuItem>
+                            </Select>
+                        </ListItemSecondaryAction>
+                    </ListItem>
+                    <ListItem dense>
                         <ListItemIcon>
                             <AutorenewIcon />
                         </ListItemIcon>
-                        <ListItemText id="switch-list-label-wifi" primary="Retrieve pages on load" />
+                        <ListItemText primary={contentText.settings.retrieveAtLoad.primary} />
                         <ListItemSecondaryAction>
                             <Switch
                                 edge="end"
                                 color="primary"
                                 onChange={() => dispatch(toggleRetrieveAtLoad(retrieveAtLoad))}
                                 checked={retrieveAtLoad}
-                                inputProps={{ 'aria-labelledby': 'switch-list-label-wifi' }}
                             />
                         </ListItemSecondaryAction>
                     </ListItem>

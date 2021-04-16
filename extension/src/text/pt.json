@@ -7,6 +7,10 @@
     "general": {
         "closeButtonText": "Fechar"
     },
+    "history": {
+        "title": "Histórico",
+        "tooltip": "Histórico de Mementos"
+    },
     "info": {
         "tooltip": "Informação",
         "titleBeginning": "Sobre o ",
@@ -17,14 +21,22 @@
     "settings": {
         "title": "Definições",
         "tooltip": "Definições",
-        "content": "Bem-vindo à página de definições vazia."
+        "retrieveAtLoad": {
+            "primary": "Obter informação ao carregar página"
+        },
+        "language": {
+            "primary": "Linguagem"
+        }
+    },
+    "entities": {
+        "title": "Entidades"
     },
     "mementoList": {
         "versionLabel": {
             "singular": "versão",
             "plural": "versões"
         },
-        "title": "Versões antigas",
+        "title": "Mementos",
         "notFoundMessage": "Não foram encontradas versões antigas desta página.",
         "entryActions": {
             "title": "Ações",
@@ -34,11 +46,34 @@
             },
             "sideBySide": {
                 "primary": "Lado a Lado",
-                "secondary": "Abrir esta versão lado a lado com a página atual"
+                "secondary": "Abrir esta versão lado a lado com a página atual",
+                "successMsg": "A vista lado a lado foi aberta."
             },
             "textDiff": {
                 "primary": "Diferenças de Texto",
-                "secondary": "Ver diferenças do texto entre esta versão e a página atual"
+                "secondary": "Ver diferenças do texto entre esta versão e a página atual",
+                "successMsg": "A vista de diferenças de texto foi aberta."
+            },
+            "copy": {
+                "primary": "Copiar URL",
+                "secondary": "Copiar o URL desta versão para a área de transferência",
+                "successMsg": "O URL foi copiado para a área de transferência."
+            }
+        },
+        "viewingMementoCard": {
+            "header": "A ver ",
+            "sideBySide": "lado a lado",
+            "textDiff": "diferenças de texto",
+            "subHeader": "Viajaste até",
+            "actions": {
+                "close": "Fechar a visualizalização deste memento",
+                "newTab": "Abrir memento num novo separador",
+                "sideBySide": "Abrir vista lado a lado",
+                "textDiff": "Abrir vista de diferenças de texto",
+                "copy": "Copiar o URL do memento"
+            },
+            "closeFeedback": {
+                "success": "A visualização do memento foi encerrada."
             }
         }
     },

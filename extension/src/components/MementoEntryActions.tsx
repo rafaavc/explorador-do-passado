@@ -2,7 +2,6 @@ import { Button, Dialog, DialogActions, DialogTitle, List, ListItem, ListItemIco
 import { useDispatch, useSelector } from "react-redux";
 import { selectArquivoData } from "../store/dataSlice";
 import { ArquivoData, PageMemento } from "../utils/ArquivoData";
-import contentText from "../text/en.json";
 import { openMemento } from "../utils/ContentActions";
 import { copyMementoURLToClipboard, openSideBySide, openTextDiff } from "../utils/ContentActions";
 import OpenInNewIcon from '@material-ui/icons/OpenInNew'
@@ -10,6 +9,7 @@ import CompareIcon from '@material-ui/icons/Compare'
 import SubjectIcon from '@material-ui/icons/Subject'
 import FileCopyIcon from '@material-ui/icons/FileCopy'
 import { selectHistory } from "../store/historySlice";
+import { selectLanguageText } from "../store/settingsSlice";
 
 
 interface MementoEntryActionsProps {
@@ -50,6 +50,7 @@ export const MementoEntryActions = (props: MementoEntryActionsProps) => {
     const dispatch = useDispatch();
     const classes = useStyles();
     const history = useSelector(selectHistory);
+    const contentText = useSelector(selectLanguageText);
 
     const closeAll = () => {
         onCloseFn();
@@ -69,20 +70,20 @@ export const MementoEntryActions = (props: MementoEntryActionsProps) => {
                     <ListItemText secondaryTypographyProps={{ className: classes.textSecondary }} primary={contentText.mementoList.entryActions.newTab.primary} secondary={contentText.mementoList.entryActions.newTab.secondary} />
                 </ListItem>
                 {contentScriptActions ? <>
-                    <ListItem dense button onClick={() => { closeAll(); openSideBySide(history, url, memento.timestamp, arquivoData?.article, dispatch); }}>
+                    <ListItem dense button onClick={() => { closeAll(); openSideBySide(contentText, history, url, memento.timestamp, arquivoData?.article, dispatch); }}>
                         <ListItemIcon className={classes.icon}>
                             <CompareIcon />
                         </ListItemIcon>
                         <ListItemText secondaryTypographyProps={{ className: classes.textSecondary }} primary={contentText.mementoList.entryActions.sideBySide.primary} secondary={contentText.mementoList.entryActions.sideBySide.secondary} />
                     </ListItem>
-                    <ListItem dense button onClick={() => { closeAll(); openTextDiff(history, url, memento.timestamp, arquivoData?.article, dispatch); }}>
+                    <ListItem dense button onClick={() => { closeAll(); openTextDiff(contentText, history, url, memento.timestamp, arquivoData?.article, dispatch); }}>
                         <ListItemIcon className={classes.icon}>
                             <SubjectIcon />
                         </ListItemIcon>
                         <ListItemText secondaryTypographyProps={{ className: classes.textSecondary }} primary={contentText.mementoList.entryActions.textDiff.primary} secondary={contentText.mementoList.entryActions.textDiff.secondary} />
                     </ListItem>
                 </> : null }
-                <ListItem dense button onClick={() => { copyMementoURLToClipboard(history, arquivoData?.article, url, memento.timestamp, dispatch); onCloseFn(); }}>
+                <ListItem dense button onClick={() => { copyMementoURLToClipboard(contentText, history, arquivoData?.article, url, memento.timestamp, dispatch); onCloseFn(); }}>
                     <ListItemIcon className={classes.icon}>
                         <FileCopyIcon />
                     </ListItemIcon>

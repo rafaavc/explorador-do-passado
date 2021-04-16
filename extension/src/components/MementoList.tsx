@@ -6,9 +6,10 @@ import { ExpandLess, ExpandMore } from '@material-ui/icons'
 import { ArquivoMemento, PageMemento } from '../utils/ArquivoData'
 import { FixedSizeList, ListChildComponentProps } from 'react-window'
 import React, { useRef, useState } from 'react'
-import contentText from '../text/en.json'
 import { getHumanReadableDate } from '../utils/ArquivoDate'
 import { MementoEntryActions } from './MementoEntryActions'
+import { selectLanguageText } from '../store/settingsSlice'
+import { useSelector } from 'react-redux'
 
 interface MementoListProps {
     memento: ArquivoMemento,
@@ -31,6 +32,7 @@ interface MonthState {
 const renderRow = (mementoList: PageMemento[], url: string, fade: boolean, closeAncestors: any, props: ListChildComponentProps) => {
     const { index, style } = props
     const date = mementoList[index].date
+    const contentText = useSelector(selectLanguageText);
 
     const [ open, setOpen ] = useState(false)
 
@@ -61,6 +63,7 @@ const YearList = (props: YearListProps) => {
     const { mementos, url } = props
     const months: MonthState[] = []
     const classes = useStyles()
+    const contentText = useSelector(selectLanguageText);
 
     const year = mementos[0].date.getFullYear()
 
@@ -118,6 +121,7 @@ const YearList = (props: YearListProps) => {
 
 const MementoList = (props: MementoListProps) => {
     const { memento, url } = props;
+    const contentText = useSelector(selectLanguageText);
 
     const years: Array<YearState> = []
     memento.years.forEach((year) => {

@@ -11,7 +11,8 @@ import Collapse from '@material-ui/core/Collapse';
 import ExpandLess from '@material-ui/icons/ExpandLess';
 import ExpandMore from '@material-ui/icons/ExpandMore';
 import PeopleIcon from '@material-ui/icons/People';
-import contentText from '../text/en.json';
+import { useSelector } from 'react-redux'
+import { selectLanguageText } from '../store/settingsSlice'
 
 interface EntityListProps {
     entities: Array<ArquivoEntity>,
@@ -30,6 +31,7 @@ const useStyles = makeStyles((theme) => {
 const EntityList = (props: EntityListProps) => {
     const [open, setOpen] = useState(props.open);
     const classes = useStyles();
+    const contentText = useSelector(selectLanguageText);
 
     return <>
         <ListItem dense button onClick={setOpen.bind(undefined, !open)}>

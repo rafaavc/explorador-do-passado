@@ -1,7 +1,6 @@
 import { CardActions, IconButton, Tooltip, Typography, makeStyles, CardContent } from '@material-ui/core'
 import CloseIcon from '@material-ui/icons/Close'
 import OpenInNewIcon from '@material-ui/icons/OpenInNew'
-import contentText from '../text/en.json'
 import { closeMementoViewing, copyMementoURLToClipboard, openMemento, openSideBySide, openTextDiff } from '../utils/ContentActions'
 import { useDispatch, useSelector } from 'react-redux'
 import { arquivoDateToDate, getHumanReadableDate } from '../utils/ArquivoDate'
@@ -9,6 +8,7 @@ import { selectArquivoData, selectPageState } from '../store/dataSlice'
 import { PageStateId } from '../utils/Page'
 import { setFeedbackMessageAndOpen } from '../store/feedbackSlice'
 import { selectHistory } from '../store/historySlice'
+import { selectLanguageText } from '../store/settingsSlice'
 
 interface MementoViewingCardProps {
     timestamp: string
@@ -40,15 +40,16 @@ export const MementoViewingCard = (props: MementoViewingCardProps) => {
     const arquivoData = useSelector(selectArquivoData);
     const history = useSelector(selectHistory);
     const dispatch = useDispatch();
+    const contentText = useSelector(selectLanguageText);
 
     const toggleMementoViewingMode = () => {
         if (state.id == PageStateId.SHOWING_SIDE_BY_SIDE) 
         {
-            openTextDiff(history, arquivoData?.url, state.data, arquivoData?.article, dispatch);
+            openTextDiff(contentText, history, arquivoData?.url, state.data, arquivoData?.article, dispatch);
         } 
         else if (state.id == PageStateId.SHOWING_TEXT_DIFF)
         {
-            openSideBySide(history, arquivoData?.url, state.data, arquivoData?.article, dispatch);
+            openSideBySide(contentText, history, arquivoData?.url, state.data, arquivoData?.article, dispatch);
             dispatch(setFeedbackMessageAndOpen(contentText.mementoList.entryActions.sideBySide.successMsg));
         }
     }
@@ -74,12 +75,12 @@ export const MementoViewingCard = (props: MementoViewingCardProps) => {
                 </IconButton>
             </Tooltip>
             <Tooltip title={contentText.mementoList.viewingMementoCard.actions.copy}>
-                <IconButton aria-label={contentText.mementoList.viewingMementoCard.actions.copy} className={classes.button} onClick={() => copyMementoURLToClipboard(history, arquivoData?.article, arquivoData?.url, state.data, dispatch)}>
+                <IconButton aria-label={contentText.mementoList.viewingMementoCard.actions.copy} className={classes.button} onClick={() => copyMementoURLToClipboard(contentText, history, arquivoData?.article, arquivoData?.url, state.data, dispatch)}>
                     <span className="material-icons">content_copy</span>
                 </IconButton>
             </Tooltip>
             <Tooltip title={contentText.mementoList.viewingMementoCard.actions.close}>
-                <IconButton aria-label={contentText.mementoList.viewingMementoCard.actions.close} className={classes.button} onClick={closeMementoViewing.bind(undefined, useDispatch())}>
+                <IconButton aria-label={contentText.mementoList.viewingMementoCard.actions.close} className={classes.button} onClick={closeMementoViewing.bind(undefined, contentText, useDispatch())}>
                     <CloseIcon />
                 </IconButton>
             </Tooltip>
