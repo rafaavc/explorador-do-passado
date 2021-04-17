@@ -1,5 +1,24 @@
 /* using @import didn't work :/ */
 
+#ah-text-diff-content {
+    padding: 5rem 25vw;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 400;
+}
+
+#ah-text-diff-content h1 {
+    font-weight: 700
+}
+
+#ah-text-diff-content del {
+    background-color: #f8d8d8;
+}
+
+#ah-text-diff-content ins {
+    background-color: #dff6dc;
+    text-decoration: none;
+}
+
 #ah-loading {
     height: 1.7rem;
     width: 1.7rem;

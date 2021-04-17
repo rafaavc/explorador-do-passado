@@ -29,7 +29,7 @@ export const openSideBySide = (contentText: PopupLanguage, current: MementoHisto
             return;
         }
         
-        const message: Message = { type: "view_side_by_side", content: { url: getMementoURL(url, timestamp), timestamp, currentText: article.text } };
+        const message: Message = { type: "view_side_by_side", content: { url: getMementoURL(url, timestamp), timestamp } };
         queryCurrentTab().then((tabId: number) => {
             chrome.tabs.sendMessage(tabId, message);
         });
@@ -55,7 +55,7 @@ export const openTextDiff = (contentText: PopupLanguage, current: MementoHistory
             return;
         }
 
-        const message: Message = { type: "view_text_diff", content: { url: getMementoURL(url, timestamp), timestamp, currentText: article.text } };
+        const message: Message = { type: "view_text_diff", content: { url: getMementoURL(url, timestamp), timestamp } };
         queryCurrentTab().then((tabId: number) => {
             chrome.tabs.sendMessage(tabId, message);
         });

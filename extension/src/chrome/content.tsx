@@ -41,7 +41,7 @@ const loadExtraCSS = () => {
     document.head.appendChild(icons);
 }
 
-const showFloatingBox = (url: string, currentText: string, timestamp: string) => {
+const showFloatingBox = (url: string, timestamp: string) => {
     loadExtraCSS();  // every time the box will be shown is after changing the whole html tree
 
     const mode = pageState.id == PageStateId.SHOWING_SIDE_BY_SIDE ? textContent.sideBySideTitle : textContent.textDiffTitle;
@@ -88,9 +88,9 @@ const showFloatingBox = (url: string, currentText: string, timestamp: string) =>
 
     box.querySelector(".ah-open-opposite")?.addEventListener('click', () => {
         if (pageState.id == PageStateId.SHOWING_SIDE_BY_SIDE) {
-            openTextDiffViewing(url, timestamp, currentText);
+            openTextDiffViewing(url, timestamp);
         } else {
-            openSideBySideViewing(url, timestamp, currentText);
+            openSideBySideViewing(url, timestamp);
         }
     });
     box.querySelector(".ah-open-in-new")?.addEventListener('click', () => window.open(url));
@@ -156,12 +156,29 @@ const retrieveDiffPageData = (url: string) => new Promise<DiffPageData>((resolve
     });
 });
 
-const openTextDiff = (data: DiffPageData, currentText: string, timestamp: string) => {
+const openTextDiff = (data: DiffPageData, timestamp: string) => {
     const diff = new diff_match_patch();
-    const diffs = diff.diff_main(data.text, currentText);
+    if (arquivoData == undefined) {
+        console.error("Trying to view text diff without arquivo data.");
+        return;
+    }
+
+    const titleDiffs = diff.diff_main(data.title, arquivoData?.article.title);
+    diff.diff_cleanupSemantic(titleDiffs);
+
+    const titleHtml = diff.diff_prettyHtml(titleDiffs);
+
+    const diffs = diff.diff_main(data.text, arquivoData?.article.text);
     diff.diff_cleanupSemantic(diffs);
     console.log("Viewing diffs:", diffs);
     const html = diff.diff_prettyHtml(diffs);
+
+    const container = document.createElement('div');
+    container.id = 'ah-text-diff-content';
+
+    const pageTitle = document.createElement('h1');
+    pageTitle.innerHTML = titleHtml;
+    container.appendChild(pageTitle);
 
     const content = document.createElement('p');
     content.innerHTML = html;
@@ -174,7 +191,8 @@ const openTextDiff = (data: DiffPageData, currentText: string, timestamp: string
     newDoc.appendChild(head);
     const body = document.createElement('body');
     body.style.margin = '0';
-    body.appendChild(content);
+    container.appendChild(content);
+    body.appendChild(container);
     newDoc.appendChild(body);
 
     saved = pageState.id != PageStateId.START ? saved : document.documentElement.innerHTML;
@@ -215,18 +233,18 @@ const buildPageData = (arquivoData: ArquivoData<PageTimestamp>): PageData<PageTi
     }
 }
 
-const openSideBySideViewing = (url: string, timestamp: string, currentText: string) => {
+const openSideBySideViewing = (url: string, timestamp: string) => {
     openSideBySide(url, timestamp);
-    showFloatingBox(url, currentText, timestamp);
+    showFloatingBox(url, timestamp);
 }
 
-const openTextDiffViewing = (url: string, timestamp: string, currentText: string) => {
+const openTextDiffViewing = (url: string, timestamp: string) => {
     showLoading();
     retrieveDiffPageData(url)
         .then((data: DiffPageData) => {
             hideLoading();
-            openTextDiff(data, currentText, timestamp);
-            showFloatingBox(url, currentText, timestamp);
+            openTextDiff(data, timestamp);
+            showFloatingBox(url, timestamp);
         });
 }
 
@@ -239,9 +257,9 @@ chrome.runtime.onMessage.addListener((message: Message, sender, sendResponse) =>
                 .then((arquivoData: ArquivoData<PageTimestamp>) => { sendResponse(buildPageData(arquivoData)) });
         }
     } else if (message.type === "view_side_by_side") {
-        openSideBySideViewing(message.content.url, message.content.timestamp, message.content.currentText);
+        openSideBySideViewing(message.content.url, message.content.timestamp);
     } else if (message.type === "view_text_diff") {
-        openTextDiffViewing(message.content.url, message.content.timestamp, message.content.currentText);
+        openTextDiffViewing(message.content.url, message.content.timestamp);
     } else if (message.type === "close_viewing") {
         closeViewing();
     }
