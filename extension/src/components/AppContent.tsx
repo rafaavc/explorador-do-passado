@@ -24,6 +24,7 @@ const useStyles = makeStyles((theme) => {
 const AppContent = (props: AppContentProps) => {
     const url = new URL(props.data.url);
     const state: PageState = useSelector(selectPageState);
+    const defaultEntitiesState = useSelector(selectDefaultEntitiesState);
     const classes = useStyles();
 
     return <>
@@ -36,7 +37,7 @@ const AppContent = (props: AppContentProps) => {
             </CardContent>
             { state.id != PageStateId.START ? <><Divider/><MementoViewingCard timestamp={state.data} /></> : null }
             <Divider/>
-            <EntityList entities={props.data.article.entities} open={state.id == PageStateId.START && useSelector(selectDefaultEntitiesState)} />
+            <EntityList entities={props.data.article.entities} open={state.id == PageStateId.START && defaultEntitiesState} />
         </Card>
         <MementoList memento={props.data.memento} url={props.data.url} />
     </>
