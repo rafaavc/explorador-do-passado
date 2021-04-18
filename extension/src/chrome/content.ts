@@ -127,13 +127,13 @@ const showFloatingBox = (url: string, timestamp: string) => {
 
     box.querySelector(".ah-open-opposite")?.addEventListener('click', () => {
         if (pageState.id == PageStateId.SHOWING_SIDE_BY_SIDE) {
-            openTextDiffViewing(url, timestamp);
+            openTextDiffViewing(url, timestamp, true);
         } else {
-            openSideBySideViewing(url, timestamp);
+            openSideBySideViewing(url, timestamp, true);
         }
     });
     box.querySelector(".ah-open-in-new")?.addEventListener('click', () => window.open(url));
-    box.querySelector(".ah-copy-url")?.addEventListener('click', () => { copyToClipboard.bind(undefined, url); showFeedback(textContent.copyURL.successMsg); });
+    box.querySelector(".ah-copy-url")?.addEventListener('click', () => { copyToClipboard(url); showFeedback(textContent.copyURL.successMsg); });
     box.querySelector(".ah-close")?.addEventListener('click', closeViewing);
 
     document.body.appendChild(box);
@@ -187,8 +187,6 @@ const openSideBySide = (url: string, timestamp: string) => {
 
     pageState.id = PageStateId.SHOWING_SIDE_BY_SIDE
     pageState.data = timestamp
-
-    showFeedback(textContent.openSideBySide.successMsg);
 }
 
 const retrieveDiffPageData = (url: string) => new Promise<DiffPageData>((resolve, reject) => {
@@ -241,8 +239,6 @@ const openTextDiff = (data: DiffPageData, timestamp: string) => {
 
     pageState.id = PageStateId.SHOWING_TEXT_DIFF
     pageState.data = timestamp
-
-    showFeedback(textContent.openTextDiff.successMsg);
 }
 
 const closeViewing = () => {
@@ -285,14 +281,16 @@ const buildPageData = (arquivoData: ArquivoData<PageTimestamp>): PageData<PageTi
     }
 }
 
-const openSideBySideViewing = (url: string, timestamp: string) => {
+const openSideBySideViewing = (url: string, timestamp: string, feedback: boolean) => {
     updateLanguageFromStorage().then(() => {
         openSideBySide(url, timestamp);
         showFloatingBox(url, timestamp);
+
+        if (feedback) showFeedback(textContent.openSideBySide.successMsg);
     });
 }
 
-const openTextDiffViewing = (url: string, timestamp: string) => {
+const openTextDiffViewing = (url: string, timestamp: string, feedback: boolean) => {
     updateLanguageFromStorage().then(() => {
         showLoading();
         retrieveDiffPageData(url)
@@ -300,6 +298,8 @@ const openTextDiffViewing = (url: string, timestamp: string) => {
                 hideLoading();
                 openTextDiff(data, timestamp);
                 showFloatingBox(url, timestamp);
+
+                if (feedback) showFeedback(textContent.openTextDiff.successMsg);
             });
     });
 }
@@ -313,9 +313,9 @@ chrome.runtime.onMessage.addListener((message: Message, sender, sendResponse) =>
                 .then((arquivoData: ArquivoData<PageTimestamp>) => { sendResponse(buildPageData(arquivoData)) });
         }
     } else if (message.type === "view_side_by_side") {
-        openSideBySideViewing(message.content.url, message.content.timestamp);
+        openSideBySideViewing(message.content.url, message.content.timestamp, false);
     } else if (message.type === "view_text_diff") {
-        openTextDiffViewing(message.content.url, message.content.timestamp);
+        openTextDiffViewing(message.content.url, message.content.timestamp, false);
     } else if (message.type === "close_viewing") {
         closeViewing();
     }
