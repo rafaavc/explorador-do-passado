@@ -5,11 +5,20 @@ import { Message } from "../utils/Message";
 import { DiffPageData, PageData, PageInfo, PageState, PageStateId } from "../utils/Page";
 import { SettingsOptions } from "../utils/SettingsOptions";
 import { getSettingsValue, Dict } from "./storage";
-import diff_match_patch from "./diff_match_patch";
-import textContent from "../text/content_en.json";
 import { arquivoDateToDate, getHumanReadableDate } from "../utils/ArquivoDate";
-import { openURL } from "../utils/URL";
 import { copyToClipboard } from "../utils/Clipboard";
+import { ContentLanguage } from "../text/ContentLanguage";
+import { detectBrowserLanguage, Language, strAsLanguage } from "../utils/Language";
+import diff_match_patch from "./diff_match_patch";
+import ptlang from '../text/content_pt.json';
+import enlang from '../text/content_en.json';
+
+let textContent: ContentLanguage = detectBrowserLanguage() == Language.PT ? ptlang : enlang;
+
+const updateLanguage = (language: string) => {
+    const lang: Language = strAsLanguage(language);
+    textContent = lang == Language.PT ? ptlang : enlang;
+}
 
 if (window.location.href.includes('chrome-extension://')) abort();
 
@@ -220,10 +229,19 @@ const retrieveArquivoData = (pageInfo: PageInfo) => new Promise<ArquivoData<Page
     })
 })
 
-getSettingsValue(SettingsOptions.RetrieveAtLoad).then((res: Dict) => {
-    console.log("Received the value of " + SettingsOptions.RetrieveAtLoad + ":", res)
-    const value = SettingsOptions.RetrieveAtLoad in res ? res[SettingsOptions.RetrieveAtLoad] : true
-    if (value === true) retrieveArquivoData(pageInfo)
+getSettingsValue([ SettingsOptions.RetrieveAtLoad, SettingsOptions.Language ]).then((res: Dict) => {
+    console.log("Received content script settings:", res);
+    const retrieveAtLoad = SettingsOptions.RetrieveAtLoad in res ? res[SettingsOptions.RetrieveAtLoad] : true;
+    if (retrieveAtLoad === true) retrieveArquivoData(pageInfo);
+
+    if (SettingsOptions.Language in res) updateLanguage(res[SettingsOptions.Language]);
+})
+
+const updateLanguageFromStorage = () => new Promise<void>((resolve) => {
+    getSettingsValue([ SettingsOptions.Language ]).then((res: Dict) => {    
+        if (SettingsOptions.Language in res) updateLanguage(res[SettingsOptions.Language]);
+        resolve();
+    })
 })
 
 const buildPageData = (arquivoData: ArquivoData<PageTimestamp>): PageData<PageTimestamp> => {
@@ -234,18 +252,22 @@ const buildPageData = (arquivoData: ArquivoData<PageTimestamp>): PageData<PageTi
 }
 
 const openSideBySideViewing = (url: string, timestamp: string) => {
-    openSideBySide(url, timestamp);
-    showFloatingBox(url, timestamp);
+    updateLanguageFromStorage().then(() => {
+        openSideBySide(url, timestamp);
+        showFloatingBox(url, timestamp);
+    });
 }
 
 const openTextDiffViewing = (url: string, timestamp: string) => {
-    showLoading();
-    retrieveDiffPageData(url)
-        .then((data: DiffPageData) => {
-            hideLoading();
-            openTextDiff(data, timestamp);
-            showFloatingBox(url, timestamp);
-        });
+    updateLanguageFromStorage().then(() => {
+        showLoading();
+        retrieveDiffPageData(url)
+            .then((data: DiffPageData) => {
+                hideLoading();
+                openTextDiff(data, timestamp);
+                showFloatingBox(url, timestamp);
+            });
+    });
 }
 
 chrome.runtime.onMessage.addListener((message: Message, sender, sendResponse) => {

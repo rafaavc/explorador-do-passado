@@ -1,10 +1,11 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import { getSettingsValue, setSettingsValue } from '../chrome/storage';
 import { SettingsOptions } from '../utils/SettingsOptions';
-import { Language, languageAsStr, RootState, strAsLanguage, ThunkState } from './storeInterfaces';
+import { RootState, ThunkState } from './storeInterfaces';
 import enlang from '../text/en.json';
 import ptlang from '../text/pt.json';
 import { PopupLanguage } from '../text/PopupLanguage';
+import { detectBrowserLanguage, Language, languageAsStr, strAsLanguage } from '../utils/Language';
 
 
 export const toggleRetrieveAtLoad = createAsyncThunk('settings/toggleRetrieveAtLoad', async (current: boolean) => {
@@ -33,14 +34,6 @@ export const toggleDefaultEntitiesState = createAsyncThunk('settings/setDefaultE
 const getLanguageText = (lang: Language): PopupLanguage => {
     if (lang == Language.PT) return ptlang;
     return enlang;
-}
-
-const detectBrowserLanguage = (): Language => {
-    const navigatorLanguage = (navigator.languages && navigator.languages[0]) || navigator.language; // mavigator.userLanguage doesn't exist?
-    const lang = navigatorLanguage.substring(0, 2).toUpperCase();
-    const converted = strAsLanguage(lang);
-    if (converted == Language.ERROR) return Language.EN;
-    return converted;
 }
 
 export const fetchSettings = createAsyncThunk('settings/fetchSettings', async () => {

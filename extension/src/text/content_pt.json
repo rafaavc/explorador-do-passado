@@ -1,0 +1,23 @@
+{
+    "serviceName": "Arquivo Handbook",
+    "titlePrefix": "A ver",
+    "sideBySideTitle": "lado a lado",
+    "textDiffTitle": "diferenças de texto",
+    "traveledTo": "Viajaste até",
+    "stopViewing": "Fechar a visualizalização deste memento",
+    "openInNew": "Abrir memento num novo separador",
+    "openSideBySide": "Abrir vista lado a lado",
+    "openTextDiff": "Abrir vista de diferenças de texto",
+    "copyURL": "Copiar o URL do memento",
+    "dates": {
+        "months": {
+            "long": [ "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro" ],
+            "short": [ "Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez" ]
+        },
+        "weekdays": {
+            "long": [ "Domingo", "Segunda-feira", "Terça-feira", "Quarta-feira", "Quinta-feira", "Sexta-feira", "Sábado" ]
+        },
+        "dayLabel": "dia",
+        "locale": "pt"
+    }
+}

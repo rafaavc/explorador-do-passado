@@ -6,9 +6,9 @@ import AutorenewIcon from '@material-ui/icons/Autorenew'
 import { useSelector, useDispatch } from 'react-redux'
 import { changeLanguage, selectDefaultEntitiesState, selectHistoryMax, selectLanguage, selectLanguageText, selectRetrieveAtLoad, setHistoryMax, toggleDefaultEntitiesState, toggleRetrieveAtLoad } from '../store/settingsSlice'
 import TranslateIcon from '@material-ui/icons/Translate';
-import { languageAsStr, strAsLanguage } from '../store/storeInterfaces'
-import HistoryIcon from '@material-ui/icons/History'
+import HistoryIcon from '@material-ui/icons/History';
 import PeopleIcon from '@material-ui/icons/People';
+import { languageAsStr, strAsLanguage } from '../utils/Language'
 
 interface SettingsDialogProps {
     open: boolean,
