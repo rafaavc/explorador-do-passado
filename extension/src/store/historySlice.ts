@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
-import { getHistory, writeHistory } from '../chrome/storage';
+import { getHistory, writeHistory, deleteHistoryStorage } from '../chrome/storage';
 import { MementoHistoryEntry } from '../utils/ArquivoData';
 import { HistoryState, RootState, ThunkState } from './storeInterfaces';
 
@@ -23,7 +23,10 @@ export const addToHistory = createAsyncThunk('history/addToHistory', async (diff
 
     writeHistory(copy);
     return copy;
-    
+});
+
+export const deleteHistory = createAsyncThunk('history/deleteHistory', async () => {
+    if (process.env.NODE_ENV == "production") deleteHistoryStorage();
 });
 
 export const fetchHistory = createAsyncThunk('history/fetchHistory', async (): Promise<{ entries: MementoHistoryEntry[] }> => {
@@ -79,6 +82,9 @@ export const historySlice = createSlice({
         builder
             .addCase(addToHistory.fulfilled, (state, action: { payload: MementoHistoryEntry[] }) => {
                 state.entries = action.payload;
+            })
+            .addCase(deleteHistory.fulfilled, (state) => {
+                state.entries = [];
             })
             .addCase(fetchHistory.pending, (state) => {
                 state.status = ThunkState.Waiting;

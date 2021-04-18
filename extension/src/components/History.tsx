@@ -1,15 +1,16 @@
-import { Dialog, AppBar, Toolbar, IconButton, Typography, Slide, DialogContent, List, ListItem, ListItemIcon, ListItemText, ListItemSecondaryAction, Switch, makeStyles, CardContent, Divider } from '@material-ui/core'
-import CloseIcon from '@material-ui/icons/Close'
-import React, { useState } from 'react'
+import { Dialog, AppBar, Toolbar, IconButton, Typography, Slide, DialogContent, List, ListItem, ListItemIcon, ListItemText, ListItemSecondaryAction, Switch, makeStyles, CardContent, Divider, Tooltip } from '@material-ui/core'
 import { TransitionProps } from '@material-ui/core/transitions'
-import { useSelector } from 'react-redux'
-import { selectHistory, selectHistoryStatus } from '../store/historySlice'
+import { useDispatch, useSelector } from 'react-redux'
+import { deleteHistory, selectHistory, selectHistoryStatus } from '../store/historySlice'
 import { MementoHistoryEntry, PageMemento } from '../utils/ArquivoData'
 import { arquivoDateToDate, getHumanReadableDate } from '../utils/ArquivoDate'
-import * as timeago from 'timeago.js'
 import { MementoEntryActions } from './MementoEntryActions'
 import { selectArquivoData } from '../store/dataSlice'
 import { selectLanguageText } from '../store/settingsSlice'
+import * as timeago from 'timeago.js'
+import CloseIcon from '@material-ui/icons/Close'
+import DeleteIcon from '@material-ui/icons/Delete'
+import React, { useState } from 'react'
 
 interface HistoryDialogProps {
     open: boolean,
@@ -40,6 +41,13 @@ const useStyles = makeStyles((theme) => {
         dialogContent: {
             paddingLeft: '.8rem',
             paddingRight: '.8rem'
+        },
+        grow: {
+            flexGrow: 1,
+        },
+        noHistoryTitle: {
+            fontSize: '1rem',
+            marginTop: '1rem'
         }
     }
 });
@@ -60,10 +68,13 @@ const HistoryItem = (props: { entry: MementoHistoryEntry, idx: number, onCloseFn
         date: arquivoDateToDate(entry.mementoTimestamp)
     }
 
-    const url = useSelector(selectArquivoData)?.url;
-    if (url == null) return <h1>ERROR</h1>;
-    const urlObj = new URL(url);
-    const currentURL = urlObj.hostname + urlObj.pathname;
+    let url = useSelector(selectArquivoData)?.url;
+    let currentURL: string | null = null;
+    if (url == null) currentURL = "";
+    else {
+        const urlObj = new URL(url);
+        currentURL = urlObj.hostname + urlObj.pathname;
+    }
 
     return <>
         <ListItem button onClick={setOpen.bind(undefined, true)}>
@@ -91,8 +102,8 @@ const HistoryItem = (props: { entry: MementoHistoryEntry, idx: number, onCloseFn
 const HistoryDialog = (props: HistoryDialogProps) => {
     const { open, onCloseFn } = props;
     const history = useSelector(selectHistory);
-    const historyState = useSelector(selectHistoryStatus);
     const classes = useStyles();
+    const dispatch = useDispatch();
 
     const reversedHistory = [ ...history ];
     reversedHistory.reverse();  // most recent to oldest
@@ -105,15 +116,26 @@ const HistoryDialog = (props: HistoryDialogProps) => {
                     <IconButton edge="start" color="inherit" onClick={onCloseFn} aria-label="close">
                         <CloseIcon />
                     </IconButton>
-                    <Typography variant="h6">
+                    <Typography variant="h6" className={classes.grow}>
                         {contentText.history.title}
                     </Typography>
+                    {reversedHistory.length != 0 ?
+                    <Tooltip title={contentText.history.deleteTooltip}>
+                        <IconButton edge="start" color="inherit" onClick={() => dispatch(deleteHistory())} aria-label="close">
+                            <DeleteIcon />
+                        </IconButton>
+                    </Tooltip> : null }
                 </Toolbar>
             </AppBar>
             <DialogContent className={classes.dialogContent}>
+                {reversedHistory.length == 0 ? 
+                    <>
+                        <Typography variant="h6" className={classes.noHistoryTitle}>{contentText.history.noHistoryMsg.title}</Typography>
+                        <Typography variant="body2">{contentText.history.noHistoryMsg.body}</Typography>
+                    </> :
                 <List>
                     {reversedHistory.map((entry: MementoHistoryEntry, idx: number) => <HistoryItem key={idx} entry={entry} idx={idx} onCloseFn={onCloseFn} historySize={history.length} />)}
-                </List>
+                </List>}
             </DialogContent>
         </Dialog>
 }

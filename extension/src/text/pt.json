@@ -9,7 +9,12 @@
     },
     "history": {
         "title": "Histórico",
-        "tooltip": "Histórico de Mementos"
+        "tooltip": "Histórico de Mementos",
+        "noHistoryMsg": {
+            "title": "Sem histórico de visualizações",
+            "body": " Vai explorar a web portuguesa do passado e volta!"
+        },
+        "deleteTooltip": "Eliminar histórico"
     },
     "info": {
         "tooltip": "Informação",

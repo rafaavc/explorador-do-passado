@@ -9,7 +9,12 @@
     },
     "history": {
         "title": "History",
-        "tooltip": "Memento History"
+        "tooltip": "Memento History",
+        "noHistoryMsg": {
+            "title": "No history",
+            "body": "Go explore the portuguese web of the past and come back!"
+        },
+        "deleteTooltip": "Delete history"
     },
     "info": {
         "tooltip": "Information",

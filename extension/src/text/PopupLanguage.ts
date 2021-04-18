@@ -107,6 +107,13 @@ interface Info {
 interface History {
   title: string;
   tooltip: string;
+  noHistoryMsg: NoHistoryMsg;
+  deleteTooltip: string;
+}
+
+interface NoHistoryMsg {
+  title: string;
+  body: string;
 }
 
 interface General {

@@ -47,3 +47,7 @@ export const writeHistory = (history: MementoHistoryEntry[]): Promise<void> => {
     return setStorage(obj, "writeHistory", history);    
 }
 
+export const deleteHistoryStorage = () => {
+    chrome.storage.local.remove("mementoHistory");
+}
+
