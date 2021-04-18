@@ -4,11 +4,24 @@
     "sideBySideTitle": "side by side",
     "textDiffTitle": "text differences",
     "traveledTo": "You traveled to",
-    "openInNew": "Open memento in new tab",
-    "openTextDiff": "Open text differences viewing",
-    "openSideBySide": "Open side by side viewing",
-    "copyURL": "Copy memento URL",
-    "stopViewing": "Stop viewing memento",
+    "openInNew": {
+        "text": "Open memento in new tab"
+    },
+    "openTextDiff": {
+        "text": "Open text differences viewing",
+        "successMsg": "Opened text differences view"
+    },
+    "openSideBySide": {
+        "text": "Open side by side viewing",
+        "successMsg": "Opened side by side view"
+    },
+    "copyURL": {
+        "text": "Copy memento URL",
+        "successMsg": "URL copied to clipboard"
+    },
+    "stopViewing": {
+        "text": "Stop viewing memento"
+    },
     "dates": {
         "months": {
             "long": [ "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" ],

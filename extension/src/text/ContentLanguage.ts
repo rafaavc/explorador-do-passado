@@ -4,26 +4,35 @@ export interface ContentLanguage {
     sideBySideTitle: string;
     textDiffTitle: string;
     traveledTo: string;
-    openInNew: string;
-    openTextDiff: string;
-    openSideBySide: string;
-    copyURL: string;
-    stopViewing: string;
+    openInNew: OpenInNew;
+    openTextDiff: OpenTextDiff;
+    openSideBySide: OpenTextDiff;
+    copyURL: OpenTextDiff;
+    stopViewing: OpenInNew;
     dates: Dates;
-}
-
-interface Dates {
+  }
+  
+  interface Dates {
     months: Months;
     weekdays: Weekdays;
     dayLabel: string;
     locale: string;
-}
-
-interface Weekdays {
+  }
+  
+  interface Weekdays {
     long: string[];
-}
-
-interface Months {
+  }
+  
+  interface Months {
     long: string[];
     short: string[];
-}
+  }
+  
+  interface OpenTextDiff {
+    text: string;
+    successMsg: string;
+  }
+  
+  interface OpenInNew {
+    text: string;
+  }

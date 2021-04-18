@@ -27,16 +27,6 @@ const pageInfo: PageInfo = {
     html: document.documentElement.outerHTML
 }
 
-const showLoading = () => {
-    const loadingElement = document.createElement("div");
-    loadingElement.id = "ah-loading";
-    document.body.appendChild(loadingElement);
-}
-
-const hideLoading = () => {
-    document.querySelector("#ah-loading")?.remove();
-}
-
 const loadExtraCSS = () => {
     const font = document.createElement('link');
     font.rel = "stylesheet";
@@ -48,6 +38,46 @@ const loadExtraCSS = () => {
 
     document.head.appendChild(font);
     document.head.appendChild(icons);
+}
+
+let feedback: HTMLDivElement | null = null;
+
+const closeFeedback = (box: HTMLDivElement | null) => new Promise<void>((resolve) => {
+    if (box == null) {
+        resolve();
+        return;
+    }
+
+    box.style.animation = 'ah-disappear-kf .15s ease both';
+    setTimeout(() => {
+        box.remove()
+        resolve();
+    }, 200);
+});
+
+const showFeedback = (content: string) => {
+    closeFeedback(feedback).then(() => {
+        const box = document.createElement('div');
+        box.id = 'ah-feedback';
+        box.innerText = content;
+    
+        document.body.appendChild(box);
+    
+        setTimeout(() => {
+            closeFeedback(box);
+            if (feedback == box) feedback = null;
+        }, 3000);
+    })
+}
+
+const showLoading = () => {
+    const loadingElement = document.createElement("div");
+    loadingElement.id = "ah-loading";
+    document.body.appendChild(loadingElement);
+}
+
+const hideLoading = () => {
+    document.querySelector("#ah-loading")?.remove();
 }
 
 const showFloatingBox = (url: string, timestamp: string) => {
@@ -66,7 +96,7 @@ const showFloatingBox = (url: string, timestamp: string) => {
                     <span class="material-icons">open_in_new</span>
                 </button>
                 <div class="ah-tooltip">
-                    ${textContent.openInNew}
+                    ${textContent.openInNew.text}
                 </div>
             </li>
             <li>
@@ -74,7 +104,7 @@ const showFloatingBox = (url: string, timestamp: string) => {
                     <span class="material-icons">${pageState.id == PageStateId.SHOWING_SIDE_BY_SIDE ? "notes" : "compare"}</span>
                 </button>
                 <div class="ah-tooltip">
-                    ${pageState.id == PageStateId.SHOWING_SIDE_BY_SIDE ? textContent.openTextDiff : textContent.openSideBySide}
+                    ${pageState.id == PageStateId.SHOWING_SIDE_BY_SIDE ? textContent.openTextDiff.text : textContent.openSideBySide.text}
                 </div>
             </li>
             <li>
@@ -82,7 +112,7 @@ const showFloatingBox = (url: string, timestamp: string) => {
                     <span class="material-icons">content_copy</span>
                 </button>
                 <div class="ah-tooltip">
-                    ${textContent.copyURL}
+                    ${textContent.copyURL.text}
                 </div>
             </li>
             <li>
@@ -90,7 +120,7 @@ const showFloatingBox = (url: string, timestamp: string) => {
                     <span class="material-icons">close</span>
                 </button>
                 <div class="ah-tooltip">
-                    ${textContent.stopViewing}
+                    ${textContent.stopViewing.text}
                 </div>
             </li>
         </ul>`;
@@ -103,7 +133,7 @@ const showFloatingBox = (url: string, timestamp: string) => {
         }
     });
     box.querySelector(".ah-open-in-new")?.addEventListener('click', () => window.open(url));
-    box.querySelector(".ah-copy-url")?.addEventListener('click', copyToClipboard.bind(undefined, url));
+    box.querySelector(".ah-copy-url")?.addEventListener('click', () => { copyToClipboard.bind(undefined, url); showFeedback(textContent.copyURL.successMsg); });
     box.querySelector(".ah-close")?.addEventListener('click', closeViewing);
 
     document.body.appendChild(box);
@@ -157,6 +187,8 @@ const openSideBySide = (url: string, timestamp: string) => {
 
     pageState.id = PageStateId.SHOWING_SIDE_BY_SIDE
     pageState.data = timestamp
+
+    showFeedback(textContent.openSideBySide.successMsg);
 }
 
 const retrieveDiffPageData = (url: string) => new Promise<DiffPageData>((resolve, reject) => {
@@ -209,6 +241,8 @@ const openTextDiff = (data: DiffPageData, timestamp: string) => {
 
     pageState.id = PageStateId.SHOWING_TEXT_DIFF
     pageState.data = timestamp
+
+    showFeedback(textContent.openTextDiff.successMsg);
 }
 
 const closeViewing = () => {

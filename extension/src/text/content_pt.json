@@ -4,11 +4,24 @@
     "sideBySideTitle": "lado a lado",
     "textDiffTitle": "diferenças de texto",
     "traveledTo": "Viajaste até",
-    "stopViewing": "Fechar a visualizalização deste memento",
-    "openInNew": "Abrir memento num novo separador",
-    "openSideBySide": "Abrir vista lado a lado",
-    "openTextDiff": "Abrir vista de diferenças de texto",
-    "copyURL": "Copiar o URL do memento",
+    "openInNew": {
+        "text": "Abrir memento num novo separador"
+    },
+    "openTextDiff": {
+        "text": "Abrir vista de diferenças de texto",
+        "successMsg": "A vista de diferenças de texto foi aberta."
+    },
+    "openSideBySide": {
+        "text": "Abrir vista lado a lado",
+        "successMsg": "A vista lado a lado foi aberta."
+    },
+    "copyURL": {
+        "text": "Copiar o URL do memento",
+        "successMsg": "O URL foi copiado para a área de transferência."
+    },
+    "stopViewing": {
+        "text": "Fechar a visualizalização deste memento"
+    },
     "dates": {
         "months": {
             "long": [ "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro" ],
