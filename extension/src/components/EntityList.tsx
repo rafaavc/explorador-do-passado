@@ -14,6 +14,8 @@ import PeopleIcon from '@material-ui/icons/People';
 import { useSelector } from 'react-redux'
 import { selectLanguageText } from '../store/settingsSlice'
 
+/* THIS FILE IS NO LONGER USED (ROLLED-BACK FEATURE) */
+
 interface EntityListProps {
     entities: Array<ArquivoEntity>,
     open: boolean

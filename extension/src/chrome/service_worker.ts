@@ -53,7 +53,7 @@ const retrievePageData = (content: PageInfo) => new Promise<ArquivoData<PageTime
     });
 
 const retrieveDiffPageData = (content: { url: string }) => new Promise<DiffPageData>((resolve, reject) => {
-    fetch(`${process.env.REACT_APP_SERVER_URL}/extension/api/diff/page`, {
+    fetch(`${process.env.REACT_APP_SERVER_URL}/extension/api/page`, {
         headers: {
             'Content-Type': 'application/json'
         },

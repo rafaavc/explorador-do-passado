@@ -26,7 +26,7 @@ interface ArquivoArticle {
     authors: Array<string>,
     text: string,
     top_image: string,
-    entities: Array<ArquivoEntity>
+    // entities: Array<ArquivoEntity>
 }
 
 interface ArquivoMemento<T=PageMemento> {

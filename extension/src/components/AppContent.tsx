@@ -37,7 +37,7 @@ const AppContent = (props: AppContentProps) => {
             </CardContent>
             { state.id != PageStateId.START ? <><Divider/><MementoViewingCard timestamp={state.data} /></> : null }
             <Divider/>
-            <EntityList entities={props.data.article.entities} open={state.id == PageStateId.START && defaultEntitiesState} />
+            {/* <EntityList entities={props.data.article.entities} open={state.id == PageStateId.START && defaultEntitiesState} /> */}
         </Card>
         <MementoList memento={props.data.memento} url={props.data.url} />
     </>

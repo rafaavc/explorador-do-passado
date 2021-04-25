@@ -10,9 +10,8 @@ def home():
 @app.route('/extension/api/page', methods=['POST'])
 def extensionApiPage():
     url = request.json['url']
-    html = request.json['html']
-
-    # TODO check if html is present or not
+    html = None
+    if 'html' in request.json: html = request.json['html']
 
     return getBasicArticleInfo(url, html)
 
