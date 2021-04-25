@@ -9,6 +9,7 @@ import { PageStateId } from '../utils/Page'
 import { setFeedbackMessageAndOpen } from '../store/feedbackSlice'
 import { selectHistory } from '../store/historySlice'
 import { selectHistoryMax, selectLanguageText } from '../store/settingsSlice'
+import { getFaviconURL } from '../utils/URL'
 
 interface MementoViewingCardProps {
     timestamp: string

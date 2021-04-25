@@ -1,4 +1,4 @@
-import { DialogContentText, DialogContent, AppBar, Toolbar, Typography, Tooltip, IconButton, makeStyles, Dialog, Button, DialogTitle, DialogActions } from '@material-ui/core'
+import { Link, DialogContentText, DialogContent, AppBar, Toolbar, Typography, Tooltip, IconButton, makeStyles, Dialog, Button, DialogTitle, DialogActions } from '@material-ui/core'
 import LanguageIcon from '@material-ui/icons/Language'
 import TuneIcon from '@material-ui/icons/Tune'
 import InfoIcon from '@material-ui/icons/Info';
@@ -13,6 +13,8 @@ import { selectLanguageText } from '../store/settingsSlice';
 const useStyles = makeStyles(() => ({
     grow: {
         flexGrow: 1,
+        cursor: 'pointer',
+        userSelect: 'none'
     }
 }))
 
@@ -56,7 +58,13 @@ const Header = () => {
     return <>
         <AppBar position="static" elevation={6}>
             <Toolbar>
-                <Typography variant="h6" className={classes.grow}>{contentText.extensionTitle}</Typography>
+                <Typography onClick={
+                    () => { 
+                        const contentWrapper = document.querySelector('#ah-content-wrapper');
+                        if (contentWrapper == undefined) return;
+                        contentWrapper.scrollBy(0, - contentWrapper.scrollTop);
+                    }
+                } variant="h6" className={classes.grow}>{contentText.extensionTitle}</Typography>
                 <Tooltip title={contentText.website.tooltip}>
                     <IconButton edge="start" color="inherit" onClick={openURL.bind(undefined, 'https://rafaelcristino.com/arquivo-handbook')} aria-label="menu">
                         <LanguageIcon />

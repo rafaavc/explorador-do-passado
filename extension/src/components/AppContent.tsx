@@ -1,9 +1,10 @@
 import { Box, Typography, CardContent, Card, makeStyles, Divider } from '@material-ui/core'
 import { useSelector } from 'react-redux'
-import { selectPageState } from '../store/dataSlice'
+import { selectArquivoData, selectPageState } from '../store/dataSlice'
 import { selectDefaultEntitiesState } from '../store/settingsSlice'
 import { ArquivoData } from '../utils/ArquivoData'
 import { PageState, PageStateId } from '../utils/Page'
+import { getFaviconURL } from '../utils/URL'
 import { EntityList } from './EntityList'
 import { MementoList } from './MementoList'
 import { MementoViewingCard } from './MementoViewingCard'
@@ -17,6 +18,13 @@ const useStyles = makeStyles((theme) => {
     return {
         card: {
             marginTop: theme.spacing(3)
+        },
+        favicon: {
+            display: 'inline-block',
+            marginRight: '.5rem'
+        },
+        title: {
+            display: 'inline'
         }
     }
 });
@@ -24,14 +32,16 @@ const useStyles = makeStyles((theme) => {
 const AppContent = (props: AppContentProps) => {
     const url = new URL(props.data.url);
     const state: PageState = useSelector(selectPageState);
-    const defaultEntitiesState = useSelector(selectDefaultEntitiesState);
+    const arquivoData = useSelector(selectArquivoData);
     const classes = useStyles();
 
     return <>
         <Card elevation={3} className={classes.card}>
             <CardContent>
                 <Box>
-                    <Typography variant="subtitle1">{props.data.article.title}</Typography>
+                    <img src={getFaviconURL(arquivoData?.url)} className={classes.favicon} />
+                    <Typography variant="subtitle1" className={classes.title}>{props.data.article.title}</Typography>
+                    <br/>
                     <Typography variant="caption">{url.hostname}</Typography>
                 </Box>
             </CardContent>

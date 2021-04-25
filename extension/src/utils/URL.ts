@@ -15,4 +15,8 @@ const getMementoURL = (url: string | undefined, timestamp: string): string => {
     return `https://arquivo.pt/noFrame/replay/${timestamp}/${url}`
 }
 
-export { openURL, getMementoURL }
+const getFaviconURL = (url: string | undefined): string => {
+    return 'https://s2.googleusercontent.com/s2/favicons?domain_url=' + url;
+}
+
+export { openURL, getMementoURL, getFaviconURL }

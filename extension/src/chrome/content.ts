@@ -253,9 +253,9 @@ const closeViewing = () => {
 const retrieveArquivoData = (pageInfo: PageInfo) => new Promise<ArquivoData<PageTimestamp>>((resolve) => {
     retrievingPageData = true
     chrome.runtime.sendMessage({ type: "retrieve_page_data", content: pageInfo }, (data: ArquivoData<PageTimestamp>) => { 
-        arquivoData = data
-        retrievingPageData = false
-        resolve(data) 
+        arquivoData = data;
+        retrievingPageData = false;
+        resolve(data);
     })
 })
 
