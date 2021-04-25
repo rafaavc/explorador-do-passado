@@ -98,6 +98,12 @@
         },
         "dayLabel": "day",
         "locale": "en"
+    },
+    "error": {
+        "title": "Error",
+        "messages": {
+            "retrieveData": "Couldn't retrieve page data."
+        },
+        "githubIssue": "Start an issue at GitHub"
     }
-
 }

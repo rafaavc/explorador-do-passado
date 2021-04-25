@@ -13,7 +13,7 @@ export enum ThunkState {
 export interface DataState {
     arquivoData: ArquivoData|null,
     pageState: PageState,
-    status: String,
+    status: ThunkState,
     error: any
 }
 

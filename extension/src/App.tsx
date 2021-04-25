@@ -4,10 +4,10 @@ import { ArquivoData } from './utils/ArquivoData'
 import { Header } from './components/Header'
 import { Loading } from './components/Loading'
 import { AppContent } from './components/AppContent'
-import { PageState } from './utils/Page'
+import { Error } from './components/Error'
 import { useDispatch, useSelector } from 'react-redux'
-import { fetchData, selectArquivoData, selectPageState } from './store/dataSlice'
-import { fetchSettings, selectSettingsState } from './store/settingsSlice'
+import { fetchData, selectArquivoData, selectDataStatus } from './store/dataSlice'
+import { fetchSettings, selectLanguageText, selectSettingsState } from './store/settingsSlice'
 import { ThunkState } from './store/storeInterfaces'
 import { ActionFeedback } from './components/ActionFeedback'
 import { fetchHistory } from './store/historySlice'
@@ -16,8 +16,10 @@ import { fetchHistory } from './store/historySlice'
 const App = () => {
     const dispatch = useDispatch();
 
-    const data: ArquivoData|null = useSelector(selectArquivoData);
+    const data: ArquivoData | null = useSelector(selectArquivoData);
+    const dataState: ThunkState = useSelector(selectDataStatus);
     const settingsState: ThunkState = useSelector(selectSettingsState);
+    const textContent = useSelector(selectLanguageText);
 
     useEffect(() => {
         dispatch(fetchData());
@@ -37,7 +39,8 @@ const App = () => {
     });
 
     const pageContent = () => {
-        if (data === null || settingsState != ThunkState.Success) return <Loading />;
+        if (dataState == ThunkState.Failed) return <Error msg={textContent.error.messages.retrieveData} />;
+        else if (data === null || settingsState != ThunkState.Success) return <Loading />;
         return <AppContent data={data} />;
     }
 

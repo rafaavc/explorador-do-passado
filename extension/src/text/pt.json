@@ -98,6 +98,12 @@
         },
         "dayLabel": "dia",
         "locale": "pt"
+    },
+    "error": {
+        "title": "Erro",
+        "messages": {
+            "retrieveData": "Não foi possível obter os dados da página."
+        },
+        "githubIssue": "Iniciar um issue no Github"
     }
-
 }

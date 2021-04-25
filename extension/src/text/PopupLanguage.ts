@@ -8,6 +8,17 @@ export interface PopupLanguage {
   entities: Entities;
   mementoList: MementoList;
   dates: Dates;
+  error: Error;
+}
+
+interface Error {
+  title: string;
+  messages: Messages;
+  githubIssue: string;
+}
+
+interface Messages {
+  retrieveData: string;
 }
 
 interface Dates {
