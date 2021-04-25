@@ -12,3 +12,4 @@ yarn-error.log
 content-testing.html
 setup.py
 .env
+nginx.conf
