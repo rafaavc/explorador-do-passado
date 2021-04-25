@@ -33,13 +33,26 @@ export const getContentData = () => new Promise((resolve) => {
 
     queryCurrentTab()
         .then((tabId: number) => {
-            // need to add timeout (if too long show error)
+            let timeout: NodeJS.Timeout | null = null;
+            const cancelTimeout = () => {
+                if (timeout == null) return;
+                clearTimeout(timeout);
+                timeout = null;
+            }
             const sendMessage = () => {
+                cancelTimeout();
+                timeout = setTimeout(() => {
+                    console.warn("Timing out...");
+                    sendMessage();
+                }, 3000);
                 chrome.tabs.sendMessage(tabId, message, (data: PageData<PageTimestamp>) => {
-                    if (chrome.runtime.lastError) {
-                        console.error("Error!!", chrome.runtime.lastError.message)
-                        setTimeout(sendMessage, 1000)
-                    } else messageResponseHandler(data)
+                    cancelTimeout();
+                    if (chrome.runtime.lastError)
+                    {
+                        console.error("Error!!", chrome.runtime.lastError.message);
+                        sendMessage();
+                    } 
+                    else messageResponseHandler(data);
                 })
             }
             sendMessage()
