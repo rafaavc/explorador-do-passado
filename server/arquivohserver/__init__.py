@@ -1,0 +1,1 @@
+from arquivohserver.server import app
