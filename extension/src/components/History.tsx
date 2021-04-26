@@ -21,7 +21,8 @@ const useStyles = makeStyles((theme) => {
     return {
         title: {
             fontWeight: 'bold',
-            fontSize: '.95rem'
+            fontSize: '.95rem',
+            marginRight: '5.2rem'
         },
         subtitle: {
             fontWeight: 'normal',
