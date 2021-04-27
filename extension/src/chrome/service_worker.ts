@@ -1,9 +1,8 @@
 import { Message } from "../utils/Message"
 import { PageInfo } from "../utils/Page"
-import { ArquivoData, PageTimestamp, ArquivoMemento } from "../utils/ArquivoData"
+import { ArquivoData, PageTimestamp, ArquivoMemento, ArquivoArticle } from "../utils/ArquivoData"
 import { logEvent, logReceived } from "../utils/Logger"
 import { getYearFromTimestamp } from "../utils/ArquivoDate"
-import { DiffPageData } from "../utils/Page"
 
 
 const processCDXReply = (textData: string): ArquivoMemento<PageTimestamp> => {
@@ -26,7 +25,19 @@ const processCDXReply = (textData: string): ArquivoMemento<PageTimestamp> => {
     return { list, years }
 }
 
-const retrievePageData = (content: PageInfo) => new Promise<ArquivoData<PageTimestamp>>((resolve) => {
+const retrievePageHTML = (url: string) => new Promise<string|null>((resolve, reject) => {
+    fetch(url)
+        .then((response: Response) => response.text())
+        .then((text: string) => resolve(text))
+        .catch(() => reject())
+})
+
+const retrievePageData = (content: PageInfo) => new Promise<ArquivoData<PageTimestamp>>(async (resolve, reject) => {
+    if (content.html == undefined) {
+         const html: string|null = await retrievePageHTML(content.url);
+         if (html == null) reject();
+         else content.html = html;
+    }
     const pyserverPromise = fetch(`${process.env.REACT_APP_SERVER_URL}/extension/api/page`, {
         headers: {
             'Content-Type': 'application/json'
@@ -52,7 +63,16 @@ const retrievePageData = (content: PageInfo) => new Promise<ArquivoData<PageTime
         })
     });
 
-const retrieveDiffPageData = (content: { url: string }) => new Promise<DiffPageData>((resolve, reject) => {
+const retrieveArquivoArticle = (content: { url: string, html?: string }) => new Promise<ArquivoArticle>(async (resolve, reject) => {
+    if (content.html == undefined) {
+        const html: string|null = await retrievePageHTML(content.url);
+        if (html == null) {
+            reject();
+            return;
+        }
+        content.html = html;
+    }
+
     fetch(`${process.env.REACT_APP_SERVER_URL}/extension/api/page`, {
         headers: {
             'Content-Type': 'application/json'
@@ -63,7 +83,7 @@ const retrieveDiffPageData = (content: { url: string }) => new Promise<DiffPageD
         .then(async (response: Response) => {
             return response.json()
         })
-        .then((data: DiffPageData) => {
+        .then((data: ArquivoArticle) => {
             console.log("Received data: " + data);
             resolve(data);
         })
@@ -77,10 +97,10 @@ chrome.runtime.onMessage.addListener((message: Message<PageInfo>, sender, sendRe
             retrievePageData(message.content)
                 .then((data: ArquivoData<PageTimestamp>) => { sendResponse(data) })
         }
-    } else if (message.type === "retrieve_diff_page_data") {
+    } else if (message.type === "retrieve_arquivo_article") {
         if (message.content != undefined) {
-            retrieveDiffPageData(message.content)
-                .then((data: DiffPageData) => { sendResponse(data) })
+            retrieveArquivoArticle(message.content)
+                .then((data: ArquivoArticle) => { sendResponse(data) })
         }
     }
     return true

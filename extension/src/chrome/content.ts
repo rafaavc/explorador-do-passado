@@ -1,8 +1,8 @@
 import { abort } from "process";
-import { ArquivoData, PageTimestamp } from "../utils/ArquivoData";
+import { ArquivoArticle, ArquivoData, PageTimestamp } from "../utils/ArquivoData";
 import { logReceived } from "../utils/Logger";
 import { Message } from "../utils/Message";
-import { DiffPageData, PageData, PageInfo, PageState, PageStateId } from "../utils/Page";
+import { PageData, PageInfo, PageState, PageStateId } from "../utils/Page";
 import { SettingsOptions } from "../utils/SettingsOptions";
 import { getSettingsValue, Dict } from "./storage";
 import { arquivoDateToDate, getHumanReadableDate } from "../utils/ArquivoDate";
@@ -189,13 +189,13 @@ const openSideBySide = (url: string, timestamp: string) => {
     pageState.data = timestamp
 }
 
-const retrieveDiffPageData = (url: string) => new Promise<DiffPageData>((resolve, reject) => {
-    chrome.runtime.sendMessage({ type: "retrieve_diff_page_data", content: { url } }, (response: DiffPageData) => {
+const retrieveArquivoArticle = (url: string) => new Promise<ArquivoArticle>((resolve) => {
+    chrome.runtime.sendMessage({ type: "retrieve_arquivo_article", content: { url } }, (response: ArquivoArticle) => {
         resolve(response);
     });
 });
 
-const openTextDiff = (data: DiffPageData, timestamp: string) => {
+const openTextDiff = (data: ArquivoArticle, timestamp: string) => {
     const diff = new diff_match_patch();
     if (arquivoData == undefined) {
         console.error("Trying to view text diff without arquivo data.");
@@ -293,8 +293,8 @@ const openSideBySideViewing = (url: string, timestamp: string, feedback: boolean
 const openTextDiffViewing = (url: string, timestamp: string, feedback: boolean) => {
     updateLanguageFromStorage().then(() => {
         showLoading();
-        retrieveDiffPageData(url)
-            .then((data: DiffPageData) => {
+        retrieveArquivoArticle(url)
+            .then((data: ArquivoArticle) => {
                 hideLoading();
                 openTextDiff(data, timestamp);
                 showFloatingBox(url, timestamp);

@@ -12,6 +12,6 @@ RUN pip3 install arquivohserver-1.0.0-py3-none-any.whl
 
 EXPOSE 8000/tcp
 
-CMD ["gunicorn", "-w", "3", "--bind", "0.0.0.0:8000", "arquivohserver:app"]
+CMD ["gunicorn", "-t", "120", "-w", "3", "--bind", "0.0.0.0:8000", "arquivohserver:app"]
 
 
