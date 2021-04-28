@@ -6,7 +6,7 @@ import { Message } from "./Message";
 import { PageData, PageStateId } from "./Page";
 import dev_data from '../dev_data.json'
 
-export const getContentData = () => new Promise((resolve) => {
+export const getContentData = () => new Promise((resolve, reject) => {
     const message: Message = { type: "get_page_data" }
 
     const messageResponseHandler = (pageData: PageData<PageTimestamp>) => {
@@ -33,13 +33,38 @@ export const getContentData = () => new Promise((resolve) => {
 
     queryCurrentTab()
         .then((tabId: number) => {
-            // need to add timeout (if too long show error)
+            let timeout: NodeJS.Timeout | null | "nomore" = null;
+
+            const overallTimeout = setTimeout(() => {
+                timeout = "nomore";
+                reject("Couldn't retrieve page data.");
+            }, 10000);
+
+            const cancelTimeout = () => {
+                if (timeout == null || timeout == "nomore") return;
+                clearTimeout(timeout);
+                timeout = null;
+            }
             const sendMessage = () => {
+                cancelTimeout();
+                if (timeout != "nomore") {
+                    timeout = setTimeout(() => {
+                        console.warn("Timing out...");
+                        sendMessage();
+                    }, 2000);
+                }
                 chrome.tabs.sendMessage(tabId, message, (data: PageData<PageTimestamp>) => {
-                    if (chrome.runtime.lastError) {
-                        console.error("Error!!", chrome.runtime.lastError.message)
-                        setTimeout(sendMessage, 1000)
-                    } else messageResponseHandler(data)
+                    cancelTimeout();
+                    if (chrome.runtime.lastError)
+                    {
+                        console.error("Error!!", chrome.runtime.lastError.message);
+                        sendMessage();
+                    } 
+                    else 
+                    {
+                        clearTimeout(overallTimeout);
+                        messageResponseHandler(data);
+                    }
                 })
             }
             sendMessage()
@@ -59,5 +84,5 @@ export const getDevData = () => new Promise((resolve) => {
         }
     }
 
-    resolve({ arquivoData: validDevData, pageState: { data: null, id: PageStateId.START } });
+    resolve({ arquivoData: validDevData, pageState: { data: "20170420044735", id: PageStateId.SHOWING_SIDE_BY_SIDE } });
 });

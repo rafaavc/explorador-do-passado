@@ -19,3 +19,7 @@ export const getYearFromTimestamp = (timestamp: string): number => {
     const timestampNum: number = Number(timestamp)
     return Math.floor(timestampNum / Math.pow(10, 10))
 }
+
+export const getHumanReadableDate = (date: Date, weekdays: string[], dayLabel: string, locale: string, months?: string[]): string => {
+    return weekdays[date.getDay()] + " " + dayLabel + " " + date.getDate() + (months ? " " + months[date.getMonth()] + " " + date.getFullYear() : "") + " (" + date.toLocaleTimeString(locale, {hour: '2-digit', minute:'2-digit'}) + ")";
+}

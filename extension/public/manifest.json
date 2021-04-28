@@ -21,7 +21,8 @@
         "http://*/*", 
         "https://*/*"
       ],
-      "js": ["static/js/content.js"]
+      "js": ["static/js/content.js"],
+      "css": ["static/css/style.css"]
     }
   ],
   "icons": {

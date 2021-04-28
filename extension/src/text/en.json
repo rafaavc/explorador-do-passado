@@ -7,6 +7,15 @@
     "general": {
         "closeButtonText": "Close"
     },
+    "history": {
+        "title": "History",
+        "tooltip": "Memento History",
+        "noHistoryMsg": {
+            "title": "No history",
+            "body": "Go explore the portuguese web of the past and come back!"
+        },
+        "deleteTooltip": "Delete history"
+    },
     "info": {
         "tooltip": "Information",
         "titleBeginning": "About ",
@@ -17,14 +26,28 @@
     "settings": {
         "title": "Settings",
         "tooltip": "Settings",
-        "content": "Welcome to the empty settings page"
+        "retrieveAtLoad": {
+            "primary": "Retrieve pages on load"
+        },
+        "language": {
+            "primary": "Language"
+        },
+        "historyMaxNEntries": {
+            "primary": "Maximum number of entries in history"
+        },
+        "defaultEntitiesState": {
+            "primary": "Initial state of the entities list"
+        }
+    },
+    "entities": {
+        "title": "Entities"
     },
     "mementoList": {
         "versionLabel": {
             "singular": "version",
             "plural": "versions"
         },
-        "title": "Old versions",
+        "title": "Mementos",
         "notFoundMessage": "No old versions of this page were found.",
         "entryActions": {
             "title": "Actions",
@@ -39,7 +62,8 @@
             },
             "textDiff": {
                 "primary": "Text Differences",
-                "secondary": "See text differences between this version and the current page"
+                "secondary": "See text differences between this version and the current page",
+                "successMsg": "Opened text differences view"
             },
             "copy": {
                 "primary": "Copy URL",
@@ -48,9 +72,20 @@
             }
         },
         "viewingMementoCard": {
-            "header": "Viewing Memento",
-            "subHeader": "You travelled to",
-            "close": "Stop viewing this memento"
+            "header": "Viewing ",
+            "sideBySide": "side by side",
+            "textDiff": "text differences",
+            "subHeader": "You traveled to",
+            "actions": {
+                "close": "Stop viewing this memento",
+                "newTab": "Open memento in new tab",
+                "sideBySide": "Open memento side by side",
+                "textDiff": "Open memento text differences",
+                "copy": "Copy memento URL"
+            },
+            "closeFeedback": {
+                "success": "Closed memento viewing"
+            }
         }
     },
     "dates": {
@@ -63,6 +98,12 @@
         },
         "dayLabel": "day",
         "locale": "en"
+    },
+    "error": {
+        "title": "Error",
+        "messages": {
+            "retrieveData": "Couldn't retrieve page data."
+        },
+        "githubIssue": "Start an issue at GitHub"
     }
-
 }

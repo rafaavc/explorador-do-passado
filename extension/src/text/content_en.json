@@ -1,0 +1,36 @@
+{
+    "serviceName": "Arquivo Handbook",
+    "titlePrefix": "Viewing",
+    "sideBySideTitle": "side by side",
+    "textDiffTitle": "text differences",
+    "traveledTo": "You traveled to",
+    "openInNew": {
+        "text": "Open memento in new tab"
+    },
+    "openTextDiff": {
+        "text": "Open text differences viewing",
+        "successMsg": "Opened text differences view"
+    },
+    "openSideBySide": {
+        "text": "Open side by side viewing",
+        "successMsg": "Opened side by side view"
+    },
+    "copyURL": {
+        "text": "Copy memento URL",
+        "successMsg": "URL copied to clipboard"
+    },
+    "stopViewing": {
+        "text": "Stop viewing memento"
+    },
+    "dates": {
+        "months": {
+            "long": [ "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" ],
+            "short": [ "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" ]
+        },
+        "weekdays": {
+            "long": [ "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" ]
+        },
+        "dayLabel": "day",
+        "locale": "en"
+    }
+}

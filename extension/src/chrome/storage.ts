@@ -1,3 +1,4 @@
+import { MementoHistoryEntry } from '../utils/ArquivoData'
 import { logError } from '../utils/Logger'
 import { SettingsOptions } from '../utils/SettingsOptions'
 
@@ -31,7 +32,22 @@ export const getSettingsValue = (setting: SettingsOptions | SettingsOptions[]): 
 export const setSettingsValue = (setting: SettingsOptions, value: any) => {
     const obj: Dict = {}
     obj[setting] = value
- 
     return setStorage(obj, "setSettingsValue", setting);
+}
+
+export const getHistory = () => new Promise<MementoHistoryEntry[] | undefined>((resolve) => {
+    getStorage("mementoHistory")
+        .then((res) => resolve(res["mementoHistory"]));
+})
+
+export const writeHistory = (history: MementoHistoryEntry[]): Promise<void> => {
+    const obj: Dict = {};
+    obj["mementoHistory"] = history;
+ 
+    return setStorage(obj, "writeHistory", history);    
+}
+
+export const deleteHistoryStorage = () => {
+    chrome.storage.local.remove("mementoHistory");
 }
 
