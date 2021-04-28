@@ -113,6 +113,7 @@ interface Info {
   content: string;
   arquivoURL: string;
   arquivoButtonText: string;
+  githubButtonText: string;
 }
 
 interface History {

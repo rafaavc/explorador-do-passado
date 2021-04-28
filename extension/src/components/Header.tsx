@@ -1,14 +1,15 @@
-import { Link, DialogContentText, DialogContent, AppBar, Toolbar, Typography, Tooltip, IconButton, makeStyles, Dialog, Button, DialogTitle, DialogActions } from '@material-ui/core'
-import LanguageIcon from '@material-ui/icons/Language'
-import TuneIcon from '@material-ui/icons/Tune'
-import InfoIcon from '@material-ui/icons/Info';
+import { AppBar, Toolbar, Typography, Tooltip, IconButton, makeStyles, Dialog, Button, DialogTitle, DialogActions } from '@material-ui/core'
 import { useState } from 'react'
 import { SettingsDialog } from './Settings'
 import { openURL } from '../utils/URL'
+import { HistoryDialog } from './History'
+import { useSelector } from 'react-redux'
+import { selectLanguageText } from '../store/settingsSlice'
+import { InfoDialog } from './InfoDialog'
+import LanguageIcon from '@material-ui/icons/Language'
+import TuneIcon from '@material-ui/icons/Tune'
+import InfoIcon from '@material-ui/icons/Info'
 import HistoryIcon from '@material-ui/icons/History'
-import { HistoryDialog } from './History';
-import { useSelector } from 'react-redux';
-import { selectLanguageText } from '../store/settingsSlice';
 
 const useStyles = makeStyles(() => ({
     grow: {
@@ -17,34 +18,6 @@ const useStyles = makeStyles(() => ({
         userSelect: 'none'
     }
 }))
-
-interface InfoDialogProps {
-    open: boolean,
-    onCloseFn: any
-}
-
-const InfoDialog = (props: InfoDialogProps) => {
-    const { open, onCloseFn } = props;
-
-    const contentText = useSelector(selectLanguageText);
-  
-    return <Dialog onClose={onCloseFn} aria-labelledby="info-dialog-title" open={open}>
-            <DialogTitle id="simple-dialog-title">{contentText.info.titleBeginning + contentText.extensionTitle}</DialogTitle>
-            <DialogContent>
-                <DialogContentText id="alert-dialog-description">
-                    {contentText.info.content}
-                </DialogContentText>
-            </DialogContent>
-            <DialogActions>
-                <Button onClick={openURL.bind(undefined, contentText.info.arquivoURL)} color="primary">
-                    {contentText.info.arquivoButtonText}
-                </Button>
-                <Button onClick={onCloseFn} color="primary" autoFocus>
-                    {contentText.general.closeButtonText}
-                </Button>
-            </DialogActions>
-        </Dialog>
-}
 
 const Header = () => {
     const classes = useStyles();

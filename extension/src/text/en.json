@@ -1,5 +1,5 @@
 {
-    "extensionTitle": "Arquivo Handbook",
+    "extensionTitle": "Past Explorer",
     "website": {
         "tooltip": "Website",
         "url": ""
@@ -21,7 +21,8 @@
         "titleBeginning": "About ",
         "content": "This tool was developed with the information made available by the Arquivo.pt service, an investigation infrastructure that allows people to search and access portuguese web pages archived since 1996.",
         "arquivoURL": "https://arquivo.pt",
-        "arquivoButtonText": "Arquivo.pt"
+        "arquivoButtonText": "Arquivo.pt",
+        "githubButtonText": "Github"
     },
     "settings": {
         "title": "Settings",
