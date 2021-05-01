@@ -20,4 +20,30 @@ html, body {
     scroll-behavior: smooth;
 }
 
+/* width */
+::-webkit-scrollbar {
+    width: 7px;
+}
+  
+/* Track */
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 1.5rem;
+    transition: all 0.2s;
+}
 
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: rgb(195, 195, 195);
+    border-radius: 1.5rem;
+    transition: all 0.2s;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+    background: rgb(124, 124, 124);
+}
+
+::-webkit-scrollbar-thumb:active {
+    background: rgb(77, 77, 77);
+}

@@ -6,11 +6,12 @@ import { MementoHistoryEntry, PageMemento } from '../utils/ArquivoData'
 import { arquivoDateToDate, getHumanReadableDate } from '../utils/ArquivoDate'
 import { MementoEntryActions } from './MementoEntryActions'
 import { selectArquivoData } from '../store/dataSlice'
-import { selectLanguageText } from '../store/settingsSlice'
+import { selectLanguage, selectLanguageText } from '../store/settingsSlice'
 import * as timeago from 'timeago.js'
 import CloseIcon from '@material-ui/icons/Close'
 import DeleteIcon from '@material-ui/icons/Delete'
 import React, { useState } from 'react'
+import { Language } from '../utils/Language'
 
 interface HistoryDialogProps {
     open: boolean,
@@ -53,6 +54,30 @@ const useStyles = makeStyles((theme) => {
     }
 });
 
+const ptLocale = (number: number, index: number): [string, string] => {
+    const list: [string, string][] = [
+        ['agora mesmo', 'agora'],
+        ['há %s segundos', 'em %s segundos'],
+        ['há um minuto', 'em um minuto'],
+        ['há %s minutos', 'em %s minutos'],
+        ['há uma hora', 'em uma hora'],
+        ['há %s horas', 'em %s horas'],
+        ['há um dia', 'em um dia'],
+        ['há %s dias', 'em %s dias'],
+        ['há uma semana', 'em uma semana'],
+        ['há %s semanas', 'em %s semanas'],
+        ['há um mês', 'em um mês'],
+        ['há %s meses', 'em %s meses'],
+        ['há um ano', 'em um ano'],
+        ['há %s anos', 'em %s anos'],
+    ];
+
+    return list[index];
+}
+
+timeago.register('pt_PT', ptLocale);
+
+
 const Transition = React.forwardRef(
     (props: TransitionProps & { children?: React.ReactElement }, ref: React.Ref<unknown>) => 
         <Slide direction="up" ref={ref} {...props} />)
@@ -63,6 +88,7 @@ const HistoryItem = (props: { entry: MementoHistoryEntry, idx: number, onCloseFn
     const classes = useStyles();
     
     const contentText = useSelector(selectLanguageText);
+    const language: Language = useSelector(selectLanguage);
 
     const memento: PageMemento = {
         timestamp: entry.mementoTimestamp,
@@ -90,7 +116,7 @@ const HistoryItem = (props: { entry: MementoHistoryEntry, idx: number, onCloseFn
                     {contentText.mementoList.viewingMementoCard.subHeader + " " + getHumanReadableDate(arquivoDateToDate(entry.mementoTimestamp), contentText.dates.weekdays.long, contentText.dates.dayLabel, contentText.dates.locale, contentText.dates.months.long)}
                 </Typography>
                 <Typography variant="caption" className={classes.right}>
-                    {timeago.format(entry.viewedTimestamp)}
+                    {timeago.format(entry.viewedTimestamp, language == Language.PT ? 'pt_PT' : undefined)}
                 </Typography>
             </CardContent>
         </ListItem>

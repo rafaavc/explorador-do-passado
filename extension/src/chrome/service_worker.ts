@@ -3,6 +3,14 @@ import { PageInfo } from "../utils/Page"
 import { ArquivoData, PageTimestamp, ArquivoMemento, ArquivoArticle } from "../utils/ArquivoData"
 import { logEvent, logReceived } from "../utils/Logger"
 import { getYearFromTimestamp } from "../utils/ArquivoDate"
+import { foundIcon, loadingIcon, notFoundIcon } from "../utils/Icons"
+
+
+const setIcon = (icon: {16: string, 48: string, 128: string}, tabId: number | undefined) => {
+    chrome.action.setIcon({ path: icon, tabId });
+}
+
+setIcon(loadingIcon, undefined);
 
 
 const processCDXReply = (textData: string): ArquivoMemento<PageTimestamp> => {
@@ -94,8 +102,18 @@ chrome.runtime.onMessage.addListener((message: Message<PageInfo>, sender, sendRe
     logReceived(message, sender);
     if (message.type === "retrieve_page_data") {
         if (message.content != undefined) {
+            setIcon(loadingIcon, sender.tab?.id);
             retrievePageData(message.content)
-                .then((data: ArquivoData<PageTimestamp>) => { sendResponse(data) })
+                .then((data: ArquivoData<PageTimestamp>) => { 
+                    if (data.memento.list.length == 0) setIcon(notFoundIcon, sender.tab?.id);
+                    else setIcon(foundIcon, sender.tab?.id);
+
+                    sendResponse(data);
+                })
+                .catch(error => {
+                    console.error(error);
+                    setIcon(notFoundIcon, sender.tab?.id);
+                })
         }
     } else if (message.type === "retrieve_arquivo_article") {
         if (message.content != undefined) {

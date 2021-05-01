@@ -1,6 +1,6 @@
 
 {
-  "name": "Arquivo Handbook",
+  "name": "Explorador do Passado",
   "description": "Base Level Extension",
   "version": "1.0",
   "manifest_version": 3,
@@ -10,7 +10,7 @@
   ],
   "action": {
     "default_popup": "index.html",
-    "default_title": "Arquivo Handbook"
+    "default_title": "Explorador do Passado"
   },
   "background": {
     "service_worker": "service_worker.js"
@@ -26,8 +26,8 @@
     }
   ],
   "icons": {
-    "16": "logo192.png",
-    "48": "logo192.png",
-    "128": "logo192.png"
+    "16": "found16x16.png",
+    "48": "found48x48.png",
+    "128": "found128x128.png"
   }
 }
