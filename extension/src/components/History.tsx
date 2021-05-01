@@ -22,12 +22,16 @@ const useStyles = makeStyles((theme) => {
     return {
         title: {
             fontWeight: 'bold',
-            fontSize: '.95rem',
-            marginRight: '5.2rem'
+            fontSize: '1.1rem',
+            marginRight: '5.2rem',
+            lineHeight: '1.3',
+            marginBottom: '.3rem',
+            marginTop: '.1rem'
+
         },
         subtitle: {
             fontWeight: 'normal',
-            fontSize: '.8rem',
+            fontSize: '.9rem',
             marginTop: '.4rem'
         },
         content: {
@@ -45,7 +49,7 @@ const useStyles = makeStyles((theme) => {
             paddingRight: '.8rem'
         },
         grow: {
-            flexGrow: 1,
+            flexGrow: 1
         },
         noHistoryTitle: {
             fontSize: '1rem',

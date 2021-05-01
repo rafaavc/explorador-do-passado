@@ -4,7 +4,7 @@ import React, { useState } from 'react'
 import { TransitionProps } from '@material-ui/core/transitions'
 import AutorenewIcon from '@material-ui/icons/Autorenew'
 import { useSelector, useDispatch } from 'react-redux'
-import { changeLanguage, selectDefaultEntitiesState, selectHistoryMax, selectLanguage, selectLanguageText, selectRetrieveAtLoad, setHistoryMax, toggleDefaultEntitiesState, toggleRetrieveAtLoad } from '../store/settingsSlice'
+import { changeLanguage, selectHistoryMax, selectLanguage, selectLanguageText, selectRetrieveAtLoad, setHistoryMax, toggleRetrieveAtLoad } from '../store/settingsSlice'
 import TranslateIcon from '@material-ui/icons/Translate';
 import HistoryIcon from '@material-ui/icons/History';
 import PeopleIcon from '@material-ui/icons/People';
@@ -51,7 +51,6 @@ const SettingsDialog = (props: SettingsDialogProps) => {
     const language = languageAsStr(useSelector(selectLanguage));
     const contentText = useSelector(selectLanguageText);
     const maxHistoryEntries = useSelector(selectHistoryMax);
-    const defaultEntitiesState = useSelector(selectDefaultEntitiesState);
 
     const classes = useStyles();
   
@@ -115,21 +114,6 @@ const SettingsDialog = (props: SettingsDialogProps) => {
                                 color="primary"
                                 onChange={() => dispatch(toggleRetrieveAtLoad(retrieveAtLoad))}
                                 checked={retrieveAtLoad}
-                            />
-                        </ListItemSecondaryAction>
-                    </ListItem>
-                    <Divider />
-                    <ListItem className={classes.item}>
-                        <ListItemIcon className={classes.icon}>
-                            <PeopleIcon />
-                        </ListItemIcon>
-                        <ListItemText primary={contentText.settings.defaultEntitiesState.primary} className={classes.itemText} />
-                        <ListItemSecondaryAction>
-                            <Switch
-                                edge="end"
-                                color="primary"
-                                onChange={() => dispatch(toggleDefaultEntitiesState(defaultEntitiesState))}
-                                checked={defaultEntitiesState}
                             />
                         </ListItemSecondaryAction>
                     </ListItem>

@@ -30,8 +30,7 @@ export interface RootState {
             lang: Language,
             text: PopupLanguage
         },
-        historyMax: number,
-        defaultEntitiesState: boolean
+        historyMax: number
     },
     feedback: {
         open: boolean,

@@ -1,11 +1,9 @@
 import { Box, Typography, CardContent, Card, makeStyles, Divider } from '@material-ui/core'
 import { useSelector } from 'react-redux'
 import { selectArquivoData, selectPageState } from '../store/dataSlice'
-import { selectDefaultEntitiesState } from '../store/settingsSlice'
 import { ArquivoData } from '../utils/ArquivoData'
 import { PageState, PageStateId } from '../utils/Page'
 import { getFaviconURL } from '../utils/URL'
-import { EntityList } from './EntityList'
 import { MementoList } from './MementoList'
 import { MementoViewingCard } from './MementoViewingCard'
 

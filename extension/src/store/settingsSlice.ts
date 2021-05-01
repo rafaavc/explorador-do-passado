@@ -26,18 +26,13 @@ export const setHistoryMax = createAsyncThunk('settings/setHistoryMax', async (n
     return n.value;
 });
 
-export const toggleDefaultEntitiesState = createAsyncThunk('settings/setDefaultEntitiesState', async (currentState: boolean) => {
-    if (process.env.NODE_ENV == "production") await setSettingsValue(SettingsOptions.DefaultEntitiesState, !currentState);
-    return !currentState;
-});
-
 const getLanguageText = (lang: Language): PopupLanguage => {
     if (lang == Language.PT) return ptlang;
     return enlang;
 }
 
 export const fetchSettings = createAsyncThunk('settings/fetchSettings', async () => {
-    const settings = await getSettingsValue([ SettingsOptions.RetrieveAtLoad, SettingsOptions.Language, SettingsOptions.DefaultEntitiesState, SettingsOptions.HistoryMaxNEntries ]);
+    const settings = await getSettingsValue([ SettingsOptions.RetrieveAtLoad, SettingsOptions.Language, SettingsOptions.HistoryMaxNEntries ]);
     console.log("Received the value of settings:", settings);
 
     const userLang = detectBrowserLanguage();
@@ -52,8 +47,7 @@ export const fetchSettings = createAsyncThunk('settings/fetchSettings', async ()
             lang,
             text: getLanguageText(lang)
         },
-        historyMax: SettingsOptions.HistoryMaxNEntries in settings ? settings[SettingsOptions.HistoryMaxNEntries] : 50,
-        defaultEntitiesState: SettingsOptions.DefaultEntitiesState in settings ? settings[SettingsOptions.DefaultEntitiesState] : true
+        historyMax: SettingsOptions.HistoryMaxNEntries in settings ? settings[SettingsOptions.HistoryMaxNEntries] : 50
     };
 });
 
@@ -82,9 +76,6 @@ export const settingsSlice = createSlice({
             })
             .addCase(changeLanguage.fulfilled, (state, action) => {
                 state.language = action.payload;
-            })
-            .addCase(toggleDefaultEntitiesState.fulfilled, (state, action) => {
-                state.defaultEntitiesState = action.payload;
             })
             .addCase(setHistoryMax.fulfilled, (state, action) => {
                 state.historyMax = action.payload;
@@ -116,8 +107,6 @@ export const selectLanguage = (state: RootState) => state.settings.language.lang
 export const selectLanguageText = (state: RootState) => state.settings.language.text;
 
 export const selectSettingsState = (state: RootState) => state.settings.status;
-
-export const selectDefaultEntitiesState = (state: RootState) => state.settings.defaultEntitiesState;
 
 export const selectHistoryMax = (state: RootState) => state.settings.historyMax;
 
