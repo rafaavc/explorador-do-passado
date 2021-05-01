@@ -3,5 +3,5 @@ module.exports = {
         `gatsby-plugin-typescript`,
         `gatsby-plugin-sass`
     ],
-    pathPrefix: "/arquivo-handbook",
+    pathPrefix: "/explorador-do-passado",
 }

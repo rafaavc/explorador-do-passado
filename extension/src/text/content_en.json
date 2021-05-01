@@ -4,6 +4,7 @@
     "sideBySideTitle": "side by side",
     "textDiffTitle": "text differences",
     "traveledTo": "You traveled to",
+    "cancelledTaskMessage": "Cancelled the previous task",
     "openInNew": {
         "text": "Open memento in new tab"
     },

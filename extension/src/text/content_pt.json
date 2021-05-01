@@ -4,6 +4,7 @@
     "sideBySideTitle": "lado a lado",
     "textDiffTitle": "diferenças de texto",
     "traveledTo": "Viajaste até",
+    "cancelledTaskMessage": "A tarefa anterior foi cancelada.",
     "openInNew": {
         "text": "Abrir memento num novo separador"
     },

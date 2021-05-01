@@ -70,6 +70,21 @@
                 "primary": "Copiar URL",
                 "secondary": "Copiar o URL desta versão para a área de transferência",
                 "successMsg": "O URL foi copiado para a área de transferência."
+            },
+            "mementoSection": {
+                "title": "Memento"
+            },
+            "originalSection": {
+                "title": "Página Original",
+                "copy": {
+                    "primary": "Copiar URL",
+                    "secondary": "Copiar o URL da página original para a área de transferência",
+                    "successMsg": "O URL foi copiado para a área de transferência."
+                },
+                "newTab": {
+                    "primary": "Novo Separador",
+                    "secondary": "Abrir a página original num novo separador"
+                }                
             }
         },
         "viewingMementoCard": {

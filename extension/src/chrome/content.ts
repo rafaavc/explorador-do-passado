@@ -12,6 +12,7 @@ import { detectBrowserLanguage, Language, strAsLanguage } from "../utils/Languag
 import diff_match_patch from "./diff_match_patch";
 import ptlang from '../text/content_pt.json';
 import enlang from '../text/content_en.json';
+import { closeViewingMessage, getPageDataMessage, retrieveArquivoArticleMessage, retrievePageDataMessage, viewSideBySideMessage, viewTextDiffMessage } from "./messages";
 
 let textContent: ContentLanguage = detectBrowserLanguage() == Language.PT ? ptlang : enlang;
 
@@ -70,13 +71,31 @@ const showFeedback = (content: string) => {
     })
 }
 
-const showLoading = () => {
+let nextLoadingId = 1;
+let loadingState: number = 0;
+
+const getNextLoadingId = (): number => {
+    const tmp = nextLoadingId;
+    nextLoadingId++;
+    return tmp;
+}
+
+const showLoading = (): number => {
+    if (loadingState) console.error("Trying to show loading while already loading.");
+    loadingState = getNextLoadingId();
+    console.log("Got new loading id:", loadingState);
+
     const loadingElement = document.createElement("div");
     loadingElement.id = "ah-loading";
     document.body.appendChild(loadingElement);
+
+    return loadingState;
 }
 
 const hideLoading = () => {
+    if (!loadingState) console.error("Trying to hide loading while already not loading.");
+    loadingState = 0;
+
     document.querySelector("#ah-loading")?.remove();
 }
 
@@ -189,9 +208,9 @@ const openSideBySide = (url: string, timestamp: string) => {
     pageState.data = timestamp
 }
 
-const retrieveArquivoArticle = (url: string) => new Promise<ArquivoArticle>((resolve) => {
-    chrome.runtime.sendMessage({ type: "retrieve_arquivo_article", content: { url } }, (response: ArquivoArticle) => {
-        resolve(response);
+const retrieveArquivoArticle = (url: string, loadingId?: number) => new Promise<{article: ArquivoArticle, loadingId?: number}>((resolve) => {
+    chrome.runtime.sendMessage({ type: retrieveArquivoArticleMessage, content: { url } }, (response: ArquivoArticle) => {
+        resolve({ article: response, loadingId });
     });
 });
 
@@ -242,17 +261,19 @@ const openTextDiff = (data: ArquivoArticle, timestamp: string) => {
 }
 
 const closeViewing = () => {
+    const aborted = abortLoading();
     hideFloatingBox();
     if (pageState.id != PageStateId.START && saved) {
         document.documentElement.innerHTML = saved;
         pageState.id = PageStateId.START;
         pageState.data = null;
     }
+    if (aborted) showFeedback(textContent.cancelledTaskMessage);
 }
 
 const retrieveArquivoData = (pageInfo: PageInfo) => new Promise<ArquivoData<PageTimestamp>>((resolve) => {
     retrievingPageData = true
-    chrome.runtime.sendMessage({ type: "retrieve_page_data", content: pageInfo }, (data: ArquivoData<PageTimestamp>) => { 
+    chrome.runtime.sendMessage({ type: retrievePageDataMessage, content: pageInfo }, (data: ArquivoData<PageTimestamp>) => { 
         arquivoData = data;
         retrievingPageData = false;
         resolve(data);
@@ -282,21 +303,31 @@ const buildPageData = (arquivoData: ArquivoData<PageTimestamp>): PageData<PageTi
 }
 
 const openSideBySideViewing = (url: string, timestamp: string, feedback: boolean) => {
+    const aborted = abortLoading();
+    const extra = () => { if (aborted) showFeedback(textContent.cancelledTaskMessage); }
     updateLanguageFromStorage().then(() => {
         openSideBySide(url, timestamp);
         showFloatingBox(url, timestamp);
 
         if (feedback) showFeedback(textContent.openSideBySide.successMsg);
+        extra();
     });
 }
 
 const openTextDiffViewing = (url: string, timestamp: string, feedback: boolean) => {
+    if (abortLoading()) showFeedback(textContent.cancelledTaskMessage);
     updateLanguageFromStorage().then(() => {
-        showLoading();
-        retrieveArquivoArticle(url)
-            .then((data: ArquivoArticle) => {
+        
+        retrieveArquivoArticle(url, showLoading())
+            .then((data: {article: ArquivoArticle, loadingId?: number}) => {
+                const { article, loadingId } = data;
+                if (loadingId != loadingState) {
+                    console.error("Finished loading but realized I as cancelled :(");
+                    return; // if it was cancelled
+                }
+
                 hideLoading();
-                openTextDiff(data, timestamp);
+                openTextDiff(article, timestamp);
                 showFloatingBox(url, timestamp);
 
                 if (feedback) showFeedback(textContent.openTextDiff.successMsg);
@@ -304,19 +335,28 @@ const openTextDiffViewing = (url: string, timestamp: string, feedback: boolean) 
     });
 }
 
+const abortLoading = (): boolean => {
+    console.log("Aborting loading... Current loadingState =", loadingState);
+    if (loadingState != 0) {
+        hideLoading();
+        return true;
+    }
+    return false;
+}
+
 chrome.runtime.onMessage.addListener((message: Message, sender, sendResponse) => {
     logReceived(message, sender);
-    if (message.type === "get_page_data") {
-        if (arquivoData) sendResponse(buildPageData(arquivoData))
+    if (message.type === getPageDataMessage) {
+        if (arquivoData) sendResponse(buildPageData(arquivoData));
         else if (!retrievingPageData) {
             retrieveArquivoData(pageInfo)
                 .then((arquivoData: ArquivoData<PageTimestamp>) => { sendResponse(buildPageData(arquivoData)) });
         }
-    } else if (message.type === "view_side_by_side") {
+    } else if (message.type === viewSideBySideMessage) {
         openSideBySideViewing(message.content.url, message.content.timestamp, false);
-    } else if (message.type === "view_text_diff") {
+    } else if (message.type === viewTextDiffMessage) {
         openTextDiffViewing(message.content.url, message.content.timestamp, false);
-    } else if (message.type === "close_viewing") {
+    } else if (message.type === closeViewingMessage) {
         closeViewing();
     }
     return true;

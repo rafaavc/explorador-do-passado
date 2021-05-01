@@ -70,6 +70,21 @@
                 "primary": "Copy URL",
                 "secondary": "Copy the URL of this version to your clipboard",
                 "successMsg": "URL copied to clipboard"
+            },
+            "mementoSection": {
+                "title": "Memento"
+            },
+            "originalSection": {
+                "title": "Original Page",
+                "copy": {
+                    "primary": "Copy URL",
+                    "secondary": "Copy the URL of the original page to your clipboard",
+                    "successMsg": "URL copied to clipboard"
+                },
+                "newTab": {
+                    "primary": "New Separator",
+                    "secondary": "Open the original page in a new separator"
+                }                
             }
         },
         "viewingMementoCard": {

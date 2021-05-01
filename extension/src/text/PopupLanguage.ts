@@ -72,6 +72,14 @@ interface EntryActions {
   sideBySide: SideBySide;
   textDiff: SideBySide;
   copy: SideBySide;
+  mementoSection: Entities;
+  originalSection: OriginalSection;
+}
+
+interface OriginalSection {
+  title: string;
+  copy: SideBySide;
+  newTab: NewTab;
 }
 
 interface SideBySide {
