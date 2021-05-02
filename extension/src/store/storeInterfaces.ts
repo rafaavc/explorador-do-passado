@@ -1,5 +1,5 @@
 import { PopupLanguage } from "../text/PopupLanguage";
-import { ArquivoData, MementoHistoryEntry } from "../utils/ArquivoData";
+import { ArquivoCDXData, MementoHistoryEntry } from "../utils/ArquivoInterfaces";
 import { Language } from "../utils/Language";
 import { PageState } from "../utils/Page";
 
@@ -11,7 +11,7 @@ export enum ThunkState {
 }
 
 export interface DataState {
-    arquivoData: ArquivoData|null,
+    arquivoCDXData: ArquivoCDXData|null,
     pageState: PageState,
     status: ThunkState,
     error: any

@@ -1,7 +1,7 @@
 import { Button, Collapse, Dialog, DialogActions, DialogContent, DialogTitle, Divider, List, ListItem, ListItemIcon, ListItemText, makeStyles, Typography } from "@material-ui/core";
 import { useDispatch, useSelector } from "react-redux";
-import { selectArquivoData } from "../store/dataSlice";
-import { ArquivoData, PageMemento } from "../utils/ArquivoData";
+import { selectArquivoCDXData } from "../store/dataSlice";
+import { ArquivoCDXData, PageMemento } from "../utils/ArquivoInterfaces";
 import { openMemento } from "../utils/ContentActions";
 import { copyMementoURLToClipboard, openSideBySide, openTextDiff } from "../utils/ContentActions";
 import { selectHistory } from "../store/historySlice";
@@ -16,6 +16,7 @@ import ExpandMore from '@material-ui/icons/ExpandMore';
 import { openURL } from "../utils/URL";
 import { copyToClipboard } from "../utils/Clipboard";
 import { arquivoDateToDate, getHumanReadableDate } from "../utils/ArquivoDate";
+import { Error } from "./Error";
 
 
 interface MementoEntryActionsProps {
@@ -81,7 +82,10 @@ export const MementoEntryActions = (props: MementoEntryActionsProps) => {
         closeAncestors();
     }
 
-    const arquivoData: ArquivoData<PageMemento> | null = useSelector(selectArquivoData);
+    const tmp = useSelector(selectArquivoCDXData);
+    if (tmp == null) return <Error msg="ERROR in MementoEntryActions"/>;
+
+    const arquivoCDXData: ArquivoCDXData<PageMemento> = tmp;
 
     return <>
         <Dialog onClose={onCloseFn} open={open}>
@@ -93,25 +97,25 @@ export const MementoEntryActions = (props: MementoEntryActionsProps) => {
             </DialogContent>
             <List className={classes.list}>
                 {contentScriptActions ? <>
-                    <ListItem dense button onClick={() => { closeAll(); openSideBySide(contentText, history, maxHistoryEntries, url, memento.timestamp, arquivoData?.article, dispatch); }}>
+                    <ListItem dense button onClick={() => { closeAll(); openSideBySide(contentText, history, maxHistoryEntries, url, memento.timestamp, arquivoCDXData.title, dispatch); }}>
                         <ListItemIcon className={classes.icon}>
                             <CompareIcon />
                         </ListItemIcon>
                         <ListItemText secondaryTypographyProps={{ className: classes.textSecondary }} primary={contentText.mementoList.entryActions.sideBySide.primary} secondary={contentText.mementoList.entryActions.sideBySide.secondary} />
                     </ListItem>
-                    <ListItem dense button onClick={() => { closeAll(); openTextDiff(contentText, history, maxHistoryEntries, url, memento.timestamp, arquivoData?.article, dispatch); }}>
+                    <ListItem dense button onClick={() => { closeAll(); openTextDiff(contentText, history, maxHistoryEntries, url, memento.timestamp, arquivoCDXData.title, dispatch); }}>
                         <ListItemIcon className={classes.icon}>
                             <SubjectIcon />
                         </ListItemIcon>
                         <ListItemText secondaryTypographyProps={{ className: classes.textSecondary }} primary={contentText.mementoList.entryActions.textDiff.primary} secondary={contentText.mementoList.entryActions.textDiff.secondary} />
                     </ListItem>
-                    <ListItem dense button onClick={() => openMemento(history, maxHistoryEntries, arquivoData?.article, url, memento.timestamp, dispatch)}>
+                    <ListItem dense button onClick={() => openMemento(history, maxHistoryEntries, arquivoCDXData.title, url, memento.timestamp, dispatch)}>
                         <ListItemIcon className={classes.icon}>
                             <OpenInNewIcon />
                         </ListItemIcon>
                         <ListItemText secondaryTypographyProps={{ className: classes.textSecondary }} primary={contentText.mementoList.entryActions.newTab.primary} secondary={contentText.mementoList.entryActions.newTab.secondary} />
                     </ListItem>
-                    <ListItem dense button onClick={() => { copyMementoURLToClipboard(contentText, history, maxHistoryEntries, arquivoData?.article, url, memento.timestamp, dispatch); onCloseFn(); }}>
+                    <ListItem dense button onClick={() => { copyMementoURLToClipboard(contentText, history, maxHistoryEntries, arquivoCDXData.title, url, memento.timestamp, dispatch); onCloseFn(); }}>
                         <ListItemIcon className={classes.icon}>
                             <FileCopyIcon />
                         </ListItemIcon>
@@ -125,13 +129,13 @@ export const MementoEntryActions = (props: MementoEntryActionsProps) => {
                     </ListItem>
                     <Collapse in={mementoActionsOpen} timeout="auto" unmountOnExit>
                         <List className={classes.list}>
-                            <ListItem dense button onClick={() => openMemento(history, maxHistoryEntries, arquivoData?.article, url, memento.timestamp, dispatch)}>
+                            <ListItem dense button onClick={() => openMemento(history, maxHistoryEntries, arquivoCDXData.title, url, memento.timestamp, dispatch)}>
                                 <ListItemIcon className={classes.icon}>
                                     <OpenInNewIcon />
                                 </ListItemIcon>
                                 <ListItemText secondaryTypographyProps={{ className: classes.textSecondary }} primary={contentText.mementoList.entryActions.newTab.primary} secondary={contentText.mementoList.entryActions.newTab.secondary} />
                             </ListItem>
-                            <ListItem dense button onClick={() => { copyMementoURLToClipboard(contentText, history, maxHistoryEntries, arquivoData?.article, url, memento.timestamp, dispatch); onCloseFn(); }}>
+                            <ListItem dense button onClick={() => { copyMementoURLToClipboard(contentText, history, maxHistoryEntries, arquivoCDXData.title, url, memento.timestamp, dispatch); onCloseFn(); }}>
                                 <ListItemIcon className={classes.icon}>
                                     <FileCopyIcon />
                                 </ListItemIcon>

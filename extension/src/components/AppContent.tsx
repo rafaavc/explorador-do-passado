@@ -1,14 +1,14 @@
 import { Box, Typography, CardContent, Card, makeStyles, Divider } from '@material-ui/core'
 import { useSelector } from 'react-redux'
-import { selectArquivoData, selectPageState } from '../store/dataSlice'
-import { ArquivoData } from '../utils/ArquivoData'
+import { selectArquivoCDXData, selectPageState } from '../store/dataSlice'
+import { ArquivoCDXData } from '../utils/ArquivoInterfaces'
 import { PageState, PageStateId } from '../utils/Page'
 import { getFaviconURL } from '../utils/URL'
 import { MementoList } from './MementoList'
 import { MementoViewingCard } from './MementoViewingCard'
 
 interface AppContentProps {
-    data: ArquivoData,
+    data: ArquivoCDXData,
     customComponent?: JSX.Element
 }
 
@@ -30,7 +30,7 @@ const useStyles = makeStyles((theme) => {
 const AppContent = (props: AppContentProps) => {
     const url = new URL(props.data.url);
     const state: PageState = useSelector(selectPageState);
-    const arquivoData = useSelector(selectArquivoData);
+    const arquivoData = useSelector(selectArquivoCDXData);
     const classes = useStyles();
 
     return <>
@@ -38,7 +38,7 @@ const AppContent = (props: AppContentProps) => {
             <CardContent>
                 <Box>
                     <img src={getFaviconURL(arquivoData?.url)} className={classes.favicon} />
-                    <Typography variant="subtitle1" className={classes.title}>{props.data.article.title}</Typography>
+                    <Typography variant="subtitle1" className={classes.title}>{props.data.title}</Typography>
                     <br/>
                     <Typography variant="caption">{url.hostname}</Typography>
                 </Box>

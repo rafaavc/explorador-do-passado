@@ -4,27 +4,24 @@ import { updateState } from "../store/dataSlice"
 import { Message } from "./Message"
 import { PageStateId } from "./Page"
 import { getMementoURL, openURL } from "./URL"
-import { ArquivoArticle, MementoHistoryEntry } from "./ArquivoData"
+import { ArquivoArticle, MementoHistoryEntry } from "./ArquivoInterfaces"
 import { setFeedbackMessageAndOpen } from "../store/feedbackSlice"
 import { copyToClipboard } from "./Clipboard"
 import { addToHistory } from "../store/historySlice"
 import { PopupLanguage } from "../text/PopupLanguage"
 
-const createMementoHistoryEntry = (article: ArquivoArticle, url: string, mementoTimestamp: string): MementoHistoryEntry => {
+const createMementoHistoryEntry = (title: string, url: string, mementoTimestamp: string): MementoHistoryEntry => {
     return {
         url,
         mementoTimestamp,
-        title: article.title,
+        title,
         viewedTimestamp: Date.now()
     }
 }
 
-export const openSideBySide = (contentText: PopupLanguage, current: MementoHistoryEntry[], maxHistoryEntries: number, url: string | undefined, timestamp: string, article: ArquivoArticle | undefined, dispatch: Dispatch<any>) => {
+export const openSideBySide = (contentText: PopupLanguage, current: MementoHistoryEntry[], maxHistoryEntries: number, url: string | undefined, timestamp: string, title: string, dispatch: Dispatch<any>) => {
     if (process.env.NODE_ENV == "production") {
-        if (article == undefined) {
-            console.error("Received null arquivo article in 'openTextDiff'");
-            return;
-        } else if (url == undefined) {
+        if (url == undefined) {
             console.error("Received null url in 'openTextDiff'");
             return;
         }
@@ -34,7 +31,7 @@ export const openSideBySide = (contentText: PopupLanguage, current: MementoHisto
             chrome.tabs.sendMessage(tabId, message);
         });
 
-        dispatch(addToHistory({ current, added: createMementoHistoryEntry(article, url, timestamp), maxHistoryEntries }));
+        dispatch(addToHistory({ current, added: createMementoHistoryEntry(title, url, timestamp), maxHistoryEntries }));
     } else {
         console.log(`Opened ${timestamp} side by side.`);
     }
@@ -45,12 +42,9 @@ export const openSideBySide = (contentText: PopupLanguage, current: MementoHisto
     dispatch(setFeedbackMessageAndOpen(contentText.mementoList.entryActions.sideBySide.successMsg));
 }
 
-export const openTextDiff = (contentText: PopupLanguage, current: MementoHistoryEntry[], maxHistoryEntries: number, url: string | undefined, timestamp: string, article: ArquivoArticle | undefined, dispatch: Dispatch<any>) => {
+export const openTextDiff = (contentText: PopupLanguage, current: MementoHistoryEntry[], maxHistoryEntries: number, url: string | undefined, timestamp: string, title: string, dispatch: Dispatch<any>) => {
     if (process.env.NODE_ENV == "production") {
-        if (article == undefined) {
-            console.error("Received null arquivo article in 'openTextDiff'");
-            return;
-        } else if (url == undefined) {
+        if (url == undefined) {
             console.error("Received null url in 'openTextDiff'");
             return;
         }
@@ -60,7 +54,7 @@ export const openTextDiff = (contentText: PopupLanguage, current: MementoHistory
             chrome.tabs.sendMessage(tabId, message);
         });
 
-        dispatch(addToHistory({ current, added: createMementoHistoryEntry(article, url, timestamp), maxHistoryEntries }));
+        dispatch(addToHistory({ current, added: createMementoHistoryEntry(title, url, timestamp), maxHistoryEntries }));
     } else {
         console.log(`Opened ${timestamp} text diff.`);
     }
@@ -86,20 +80,16 @@ export const closeMementoViewing = (contentText: PopupLanguage, dispatch: Dispat
     dispatch(setFeedbackMessageAndOpen(contentText.mementoList.viewingMementoCard.closeFeedback.success));
 }
 
-export const openMemento = (current: MementoHistoryEntry[], maxHistoryEntries: number, article: ArquivoArticle | undefined, url: string | undefined, timestamp: string, dispatch: Dispatch<any>): void => {
-    if (article == undefined || url == undefined) return;
+export const openMemento = (current: MementoHistoryEntry[], maxHistoryEntries: number, title: string, url: string | undefined, timestamp: string, dispatch: Dispatch<any>): void => {
+    if (url == undefined) return;
 
     openURL(getMementoURL(url, timestamp));
 
-    if (process.env.NODE_ENV == "production") dispatch(addToHistory({ current, added: createMementoHistoryEntry(article, url, timestamp), maxHistoryEntries }));
+    if (process.env.NODE_ENV == "production") dispatch(addToHistory({ current, added: createMementoHistoryEntry(title, url, timestamp), maxHistoryEntries }));
 }
 
 
-export const copyMementoURLToClipboard = (contentText: PopupLanguage, current: MementoHistoryEntry[], maxHistoryEntries: number, article: ArquivoArticle | undefined, url: string | undefined, timestamp: string, dispatch: Dispatch<any>) => {
-    if (article == undefined) {
-        console.error("Received null arquivo article in 'copyMementoURLToClipboard'");
-        return;
-    }
+export const copyMementoURLToClipboard = (contentText: PopupLanguage, current: MementoHistoryEntry[], maxHistoryEntries: number, title: string, url: string | undefined, timestamp: string, dispatch: Dispatch<any>) => {
     if (url == undefined) {
         console.error("Received null url in 'copyMementoURLToClipboard'");
         return;
@@ -108,7 +98,7 @@ export const copyMementoURLToClipboard = (contentText: PopupLanguage, current: M
     copyToClipboard(getMementoURL(url, timestamp));
     dispatch(setFeedbackMessageAndOpen(contentText.mementoList.entryActions.copy.successMsg));
 
-    if (process.env.NODE_ENV == "production") dispatch(addToHistory({ current, added: createMementoHistoryEntry(article, url, timestamp), maxHistoryEntries }));
+    if (process.env.NODE_ENV == "production") dispatch(addToHistory({ current, added: createMementoHistoryEntry(title, url, timestamp), maxHistoryEntries }));
 }
 
 

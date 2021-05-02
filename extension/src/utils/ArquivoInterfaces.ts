@@ -34,11 +34,11 @@ interface ArquivoMemento<T=PageMemento> {
     years: Array<number>
 }
 
-interface ArquivoData<T=PageMemento> {
+interface ArquivoCDXData<T=PageMemento> {
     memento: ArquivoMemento<T>,
-    article: ArquivoArticle,
+    title: string,
     url: string
 }
 
 
-export type { ArquivoMemento, ArquivoData, PageMemento, PageTimestamp, ArquivoArticle, ArquivoEntity, MementoHistoryEntry }
+export type { ArquivoMemento, ArquivoCDXData, PageMemento, PageTimestamp, ArquivoArticle, ArquivoEntity, MementoHistoryEntry }

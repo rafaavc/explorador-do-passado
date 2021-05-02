@@ -39,7 +39,7 @@ const Header = () => {
                     }
                 } variant="h6" className={classes.grow}>{contentText.extensionTitle}</Typography>
                 <Tooltip title={contentText.website.tooltip}>
-                    <IconButton edge="start" color="inherit" onClick={openURL.bind(undefined, 'https://rafaelcristino.com/arquivo-handbook')} aria-label="menu">
+                    <IconButton edge="start" color="inherit" onClick={openURL.bind(undefined, 'https://rafaelcristino.com/explorador-do-passado')} aria-label="menu">
                         <LanguageIcon />
                     </IconButton>
                 </Tooltip>

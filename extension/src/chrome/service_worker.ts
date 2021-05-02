@@ -1,10 +1,10 @@
 import { Message } from "../utils/Message"
 import { PageInfo } from "../utils/Page"
-import { ArquivoData, PageTimestamp, ArquivoMemento, ArquivoArticle } from "../utils/ArquivoData"
+import { ArquivoCDXData, PageTimestamp, ArquivoMemento, ArquivoArticle } from "../utils/ArquivoInterfaces"
 import { logEvent, logReceived } from "../utils/Logger"
 import { getYearFromTimestamp } from "../utils/ArquivoDate"
 import { foundIcon, loadingIcon, notFoundIcon } from "../utils/Icons"
-import { retrieveArquivoArticleMessage, retrievePageDataMessage } from "./messages"
+import { retrieveArquivoArticleMessage, retrieveArquivoCDXDataMessage } from "./messages"
 
 
 const setIcon = (icon: {16: string, 48: string, 128: string}, tabId: number | undefined) => {
@@ -41,35 +41,21 @@ const retrievePageHTML = (url: string) => new Promise<string|null>((resolve, rej
         .catch(() => reject())
 })
 
-const retrievePageData = (content: PageInfo) => new Promise<ArquivoData<PageTimestamp>>(async (resolve, reject) => {
-    if (content.html == undefined) {
-         const html: string|null = await retrievePageHTML(content.url);
-         if (html == null) reject();
-         else content.html = html;
-    }
-    const pyserverPromise = fetch(`${process.env.REACT_APP_SERVER_URL}/extension/api/page`, {
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        method: 'POST',
-        body: JSON.stringify(content)
-    })
-        
-    const cdxPromise = fetch(`https://arquivo.pt/wayback/cdx?url=${encodeURIComponent(content.url)}&output=json&fl=timestamp`)
-    
-    Promise.all([ pyserverPromise, cdxPromise ])
-        .then(([pyserver, cdx]: [ Response, Response ]) => Promise.all([ pyserver.json(), cdx.text() ]))
-        .then(([pyserver, cdx]: [ any, string ]) => {
-            const processedData: ArquivoData<PageTimestamp> = { 
+const retrievePageData = (content: PageInfo) => new Promise<ArquivoCDXData<PageTimestamp>>(async (resolve, reject) => {        
+    fetch(`https://arquivo.pt/wayback/cdx?url=${encodeURIComponent(content.url)}&output=json&fl=timestamp`)
+        .then((cdx: Response) => cdx.text())
+        .then((cdx: string) => {
+            const processedData: ArquivoCDXData<PageTimestamp> = { 
                 url: content.url,
                 memento: processCDXReply(cdx),
-                article: pyserver
+                title: content.title
             }
 
-            logEvent("Received memento and article data:", processedData)
+            logEvent("Received CDX data:", processedData);
 
-            resolve(processedData)
+            resolve(processedData);
         })
+        .catch(error => reject(error));
     });
 
 const retrieveArquivoArticle = (content: { url: string, html?: string }) => new Promise<ArquivoArticle>(async (resolve, reject) => {
@@ -99,13 +85,14 @@ const retrieveArquivoArticle = (content: { url: string, html?: string }) => new 
         .catch((reason: any) => reject(reason))
 });
 
+
 chrome.runtime.onMessage.addListener((message: Message<PageInfo>, sender, sendResponse) => {
     logReceived(message, sender);
-    if (message.type === retrievePageDataMessage) {
+    if (message.type === retrieveArquivoCDXDataMessage) {
         if (message.content != undefined) {
             setIcon(loadingIcon, sender.tab?.id);
             retrievePageData(message.content)
-                .then((data: ArquivoData<PageTimestamp>) => { 
+                .then((data: ArquivoCDXData<PageTimestamp>) => { 
                     if (data.memento.list.length == 0) setIcon(notFoundIcon, sender.tab?.id);
                     else setIcon(foundIcon, sender.tab?.id);
 

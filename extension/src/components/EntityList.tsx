@@ -1,4 +1,4 @@
-import { ArquivoEntity } from '../utils/ArquivoData'
+import { ArquivoEntity } from '../utils/ArquivoInterfaces'
 import { Box, Chip, CardContent, makeStyles } from '@material-ui/core'
 import FaceIcon from '@material-ui/icons/Face'
 import BusinessIcon from '@material-ui/icons/Business'

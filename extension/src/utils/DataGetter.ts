@@ -1,25 +1,26 @@
 import { queryCurrentTab } from "../chrome/utils";
-import { ArquivoData, PageMemento, PageTimestamp } from "./ArquivoData";
+import { ArquivoCDXData, PageMemento, PageTimestamp } from "./ArquivoInterfaces";
 import { arquivoDateToDate } from "./ArquivoDate";
 import { logEvent } from "./Logger";
 import { Message } from "./Message";
 import { PageData, PageStateId } from "./Page";
 import dev_data from '../dev_data.json'
+import { getArquivoCDXDataMessage } from "../chrome/messages";
 
-export const getContentData = () => new Promise((resolve, reject) => {
-    const message: Message = { type: "get_page_data" }
+export const getArquivoCDXData = () => new Promise((resolve, reject) => {
+    const message: Message = { type: getArquivoCDXDataMessage }
 
     const messageResponseHandler = (pageData: PageData<PageTimestamp>) => {
         const arquivoData = pageData.arquivoData
         const mementoList = arquivoData.memento.list
         
-        const validArquivoData: ArquivoData = {
+        const validArquivoData: ArquivoCDXData = {
             url: arquivoData.url,
             memento: {
                 list: [],
                 years: arquivoData.memento.years
             },
-            article: arquivoData.article
+            title: pageData.arquivoData.title
         }
 
         for (const memento of mementoList) {
@@ -75,13 +76,13 @@ export const getDevData = () => new Promise((resolve) => {
     const validMementoList: PageMemento[] = []
     dev_data.memento.list.forEach((memento) => { validMementoList.push({ timestamp: memento.timestamp, date: arquivoDateToDate(memento.timestamp) }) })
 
-    const validDevData: ArquivoData = {
+    const validDevData: ArquivoCDXData = {
         url: dev_data.url,
-        article: dev_data.article,
         memento: {
             list: validMementoList,
             years: dev_data.memento.years
-        }
+        },
+        title: dev_data.article.title
     }
 
     resolve({ arquivoData: validDevData, pageState: { data: "20170420044735", id: PageStateId.SHOWING_SIDE_BY_SIDE } });

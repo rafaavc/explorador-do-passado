@@ -4,6 +4,8 @@ import GitHubIcon from '@material-ui/icons/GitHub'
 import * as React from "react"
 import "./style.scss"
 import contentText from "../text/pt.json"
+import { InfoDialog } from "../components/InfoDialog"
+import { useState } from "react"
 
 const useStyles = makeStyles(() => {
   return {
@@ -15,6 +17,7 @@ const useStyles = makeStyles(() => {
   
 const IndexPage = () => {
   const classes = useStyles();
+  const [open, setOpen] = useState(false);
   return (
     <main>
       <AppBar position="static">
@@ -28,12 +31,13 @@ const IndexPage = () => {
               </IconButton>
           </Tooltip>
           <Tooltip title={contentText.info.tooltip}>
-              <IconButton edge="start" color="inherit" onClick={() => console.log("Open info")} aria-label="menu">
+              <IconButton edge="start" color="inherit" onClick={() => setOpen(true)} aria-label="menu">
                   <InfoIcon />
               </IconButton>
           </Tooltip>
         </Toolbar>
       </AppBar>
+      <InfoDialog open={open} onCloseFn={() => setOpen(false)} />
     </main>
   )
 }

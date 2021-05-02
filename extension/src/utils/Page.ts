@@ -1,4 +1,4 @@
-import { ArquivoData } from "./ArquivoData";
+import { ArquivoCDXData } from "./ArquivoInterfaces";
 
 export enum PageStateId {
     START,
@@ -12,7 +12,8 @@ export interface SideBySideStateData {
 
 export interface PageInfo {
     url: string,
-    html: string
+    html: string,
+    title: string
 };
 
 export interface PageState {
@@ -21,7 +22,7 @@ export interface PageState {
 };
 
 export interface PageData<T> {
-    arquivoData: ArquivoData<T>,
+    arquivoData: ArquivoCDXData<T>,
     state: PageState
 };
 

@@ -2,10 +2,10 @@ import { Dialog, AppBar, Toolbar, IconButton, Typography, Slide, DialogContent, 
 import { TransitionProps } from '@material-ui/core/transitions'
 import { useDispatch, useSelector } from 'react-redux'
 import { deleteHistory, selectHistory, selectHistoryStatus } from '../store/historySlice'
-import { MementoHistoryEntry, PageMemento } from '../utils/ArquivoData'
+import { MementoHistoryEntry, PageMemento } from '../utils/ArquivoInterfaces'
 import { arquivoDateToDate, getHumanReadableDate } from '../utils/ArquivoDate'
 import { MementoEntryActions } from './MementoEntryActions'
-import { selectArquivoData } from '../store/dataSlice'
+import { selectArquivoCDXData } from '../store/dataSlice'
 import { selectLanguage, selectLanguageText } from '../store/settingsSlice'
 import * as timeago from 'timeago.js'
 import CloseIcon from '@material-ui/icons/Close'
@@ -99,7 +99,7 @@ const HistoryItem = (props: { entry: MementoHistoryEntry, idx: number, onCloseFn
         date: arquivoDateToDate(entry.mementoTimestamp)
     }
 
-    let url = useSelector(selectArquivoData)?.url;
+    let url = useSelector(selectArquivoCDXData)?.url;
     let currentURL: string | null = null;
     if (url == null) currentURL = "";
     else {

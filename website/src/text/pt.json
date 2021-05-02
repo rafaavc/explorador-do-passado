@@ -1,10 +1,12 @@
 {
+    "extensionTitle": "Explorador do Passado",
     "info": {
         "tooltip": "Informação",
         "titleBeginning": "Sobre o ",
         "content": "Esta ferramenta foi desenvolvida com base na informação disponibilizada pelo serviço Arquivo.pt, uma infraestrutura de investigação que permite pesquisar e aceder a páginas da web portuguesa arquivadas desde 1996.",
         "arquivoURL": "https://arquivo.pt",
-        "arquivoButtonText": "Arquivo.pt"
+        "arquivoButtonText": "Arquivo.pt",
+        "closeButtonText": "Fechar"
     },
     "github": {
         "tooltip": "Github"

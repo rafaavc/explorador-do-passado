@@ -1,5 +1,5 @@
 import { abort } from "process";
-import { ArquivoArticle, ArquivoData, PageTimestamp } from "../utils/ArquivoData";
+import { ArquivoArticle, ArquivoCDXData, PageTimestamp } from "../utils/ArquivoInterfaces";
 import { logReceived } from "../utils/Logger";
 import { Message } from "../utils/Message";
 import { PageData, PageInfo, PageState, PageStateId } from "../utils/Page";
@@ -12,7 +12,7 @@ import { detectBrowserLanguage, Language, strAsLanguage } from "../utils/Languag
 import diff_match_patch from "./diff_match_patch";
 import ptlang from '../text/content_pt.json';
 import enlang from '../text/content_en.json';
-import { closeViewingMessage, getPageDataMessage, retrieveArquivoArticleMessage, retrievePageDataMessage, viewSideBySideMessage, viewTextDiffMessage } from "./messages";
+import { closeViewingMessage, getArquivoCDXDataMessage, retrieveArquivoArticleMessage, retrieveArquivoCDXDataMessage, viewSideBySideMessage, viewTextDiffMessage } from "./messages";
 
 let textContent: ContentLanguage = detectBrowserLanguage() == Language.PT ? ptlang : enlang;
 
@@ -25,7 +25,8 @@ if (window.location.href.includes('chrome-extension://')) abort();
 
 const pageInfo: PageInfo = {
     url: window.location.href,
-    html: document.documentElement.outerHTML
+    html: document.documentElement.outerHTML,
+    title: document.title
 }
 
 const loadExtraCSS = () => {
@@ -162,13 +163,15 @@ const hideFloatingBox = () => {
     document.querySelector("#ah-floating-box")?.remove();
 }
 
-let arquivoData: ArquivoData<PageTimestamp> | null = null
+let arquivoData: ArquivoCDXData<PageTimestamp> | null = null;
+let originalArquivoArticle: ArquivoArticle | null = null;
 let pageState: PageState = {
     id: PageStateId.START,
     data: null
 }
 
-let retrievingPageData: boolean = false
+let retrievingPageData: boolean = false;
+let retrievingArquivoArticle: boolean = false;
 
 let saved: string | null = null;
 
@@ -208,25 +211,19 @@ const openSideBySide = (url: string, timestamp: string) => {
     pageState.data = timestamp
 }
 
-const retrieveArquivoArticle = (url: string, loadingId?: number) => new Promise<{article: ArquivoArticle, loadingId?: number}>((resolve) => {
-    chrome.runtime.sendMessage({ type: retrieveArquivoArticleMessage, content: { url } }, (response: ArquivoArticle) => {
-        resolve({ article: response, loadingId });
-    });
-});
-
 const openTextDiff = (data: ArquivoArticle, timestamp: string) => {
     const diff = new diff_match_patch();
-    if (arquivoData == undefined) {
+    if (originalArquivoArticle == undefined) {
         console.error("Trying to view text diff without arquivo data.");
         return;
     }
 
-    const titleDiffs = diff.diff_main(data.title, arquivoData?.article.title);
+    const titleDiffs = diff.diff_main(data.title, originalArquivoArticle.title);
     diff.diff_cleanupSemantic(titleDiffs);
 
     const titleHtml = diff.diff_prettyHtml(titleDiffs);
 
-    const diffs = diff.diff_main(data.text, arquivoData?.article.text);
+    const diffs = diff.diff_main(data.text, originalArquivoArticle.text);
     diff.diff_cleanupSemantic(diffs);
     console.log("Viewing diffs:", diffs);
     const html = diff.diff_prettyHtml(diffs);
@@ -271,9 +268,26 @@ const closeViewing = () => {
     if (aborted) showFeedback(textContent.cancelledTaskMessage);
 }
 
-const retrieveArquivoData = (pageInfo: PageInfo) => new Promise<ArquivoData<PageTimestamp>>((resolve) => {
+const retrieveArquivoArticle = (url: string, loadingId?: number) => new Promise<{article: ArquivoArticle, loadingId?: number}>((resolve) => {
+    chrome.runtime.sendMessage({ type: retrieveArquivoArticleMessage, content: { url } }, (response: ArquivoArticle) => {
+        resolve({ article: response, loadingId });
+    });
+});
+
+const retrieveOriginalArquivoArticle = () => new Promise<void>((resolve) => {
+    retrievingArquivoArticle = true;
+    retrieveArquivoArticle(pageInfo.url)
+        .then((data: { article: ArquivoArticle }) => {
+            originalArquivoArticle = data.article
+            retrievingArquivoArticle = false;
+            console.log("Received original arquivo article info.", data.article);
+            resolve();
+        });
+});
+
+const retrieveArquivoCDXData = () => new Promise<ArquivoCDXData<PageTimestamp>>((resolve) => {
     retrievingPageData = true
-    chrome.runtime.sendMessage({ type: retrievePageDataMessage, content: pageInfo }, (data: ArquivoData<PageTimestamp>) => { 
+    chrome.runtime.sendMessage({ type: retrieveArquivoCDXDataMessage, content: pageInfo }, (data: ArquivoCDXData<PageTimestamp>) => { 
         arquivoData = data;
         retrievingPageData = false;
         resolve(data);
@@ -283,7 +297,7 @@ const retrieveArquivoData = (pageInfo: PageInfo) => new Promise<ArquivoData<Page
 getSettingsValue([ SettingsOptions.RetrieveAtLoad, SettingsOptions.Language ]).then((res: Dict) => {
     console.log("Received content script settings:", res);
     const retrieveAtLoad = SettingsOptions.RetrieveAtLoad in res ? res[SettingsOptions.RetrieveAtLoad] : true;
-    if (retrieveAtLoad === true) retrieveArquivoData(pageInfo);
+    if (retrieveAtLoad === true) retrieveArquivoCDXData();
 
     if (SettingsOptions.Language in res) updateLanguage(res[SettingsOptions.Language]);
 })
@@ -295,7 +309,7 @@ const updateLanguageFromStorage = () => new Promise<void>((resolve) => {
     })
 })
 
-const buildPageData = (arquivoData: ArquivoData<PageTimestamp>): PageData<PageTimestamp> => {
+const buildPageData = (arquivoData: ArquivoCDXData<PageTimestamp>): PageData<PageTimestamp> => {
     return {
         arquivoData,
         state: pageState
@@ -317,21 +331,32 @@ const openSideBySideViewing = (url: string, timestamp: string, feedback: boolean
 const openTextDiffViewing = (url: string, timestamp: string, feedback: boolean) => {
     if (abortLoading()) showFeedback(textContent.cancelledTaskMessage);
     updateLanguageFromStorage().then(() => {
-        
-        retrieveArquivoArticle(url, showLoading())
-            .then((data: {article: ArquivoArticle, loadingId?: number}) => {
-                const { article, loadingId } = data;
-                if (loadingId != loadingState) {
-                    console.error("Finished loading but realized I as cancelled :(");
-                    return; // if it was cancelled
-                }
+        const mementoArticleAction = (data: {article: ArquivoArticle, loadingId?: number}) => {
+            const { article, loadingId } = data;
+            if (loadingId != loadingState) {
+                console.error("Finished loading but realized I was cancelled :(");
+                return; // if it was cancelled
+            }
 
-                hideLoading();
-                openTextDiff(article, timestamp);
-                showFloatingBox(url, timestamp);
+            hideLoading();
+            openTextDiff(article, timestamp);
+            showFloatingBox(url, timestamp);
 
-                if (feedback) showFeedback(textContent.openTextDiff.successMsg);
-            });
+            if (feedback) showFeedback(textContent.openTextDiff.successMsg);
+        }
+
+        const mementoArticlePromise = retrieveArquivoArticle(url, showLoading());
+
+        if (originalArquivoArticle == null) {
+            const originalArticlePromise = retrieveOriginalArquivoArticle();
+            Promise.all([originalArticlePromise, mementoArticlePromise])
+                .then(([_original, mementoArticleData]: [void, {article: ArquivoArticle, loadingId?: number}]) => {
+                    mementoArticleAction(mementoArticleData);
+                });
+        } else {
+            mementoArticlePromise.then(mementoArticleAction);
+        }
+
     });
 }
 
@@ -346,15 +371,16 @@ const abortLoading = (): boolean => {
 
 chrome.runtime.onMessage.addListener((message: Message, sender, sendResponse) => {
     logReceived(message, sender);
-    if (message.type === getPageDataMessage) {
+    if (message.type === getArquivoCDXDataMessage) {
         if (arquivoData) sendResponse(buildPageData(arquivoData));
         else if (!retrievingPageData) {
-            retrieveArquivoData(pageInfo)
-                .then((arquivoData: ArquivoData<PageTimestamp>) => { sendResponse(buildPageData(arquivoData)) });
+            retrieveArquivoCDXData()
+                .then((arquivoData: ArquivoCDXData<PageTimestamp>) => { sendResponse(buildPageData(arquivoData)) });
         }
     } else if (message.type === viewSideBySideMessage) {
         openSideBySideViewing(message.content.url, message.content.timestamp, false);
     } else if (message.type === viewTextDiffMessage) {
+
         openTextDiffViewing(message.content.url, message.content.timestamp, false);
     } else if (message.type === closeViewingMessage) {
         closeViewing();

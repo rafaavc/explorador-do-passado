@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { getContentData, getDevData } from "../utils/DataGetter";
+import { getArquivoCDXData, getDevData } from "../utils/DataGetter";
 import { PageState, PageStateId } from "../utils/Page";
 import { DataState, RootState, ThunkState } from "./storeInterfaces";
 
@@ -8,13 +8,13 @@ const initialState: DataState = {
         id: PageStateId.START,
         data: null
     },
-    arquivoData: null,
+    arquivoCDXData: null,
     status: ThunkState.Idle,
     error: null    
 }
 
 export const fetchData = createAsyncThunk('data/fetchData', async () => {
-    return process.env.NODE_ENV == "production" ? await getContentData() : await getDevData();
+    return process.env.NODE_ENV == "production" ? await getArquivoCDXData() : await getDevData();
 })
 
 export const dataSlice = createSlice({
@@ -33,7 +33,7 @@ export const dataSlice = createSlice({
             .addCase(fetchData.fulfilled, (state, action: { payload: any }) => {
                 state.status = ThunkState.Success;
                 state.pageState = action.payload.pageState;
-                state.arquivoData = action.payload.arquivoData;
+                state.arquivoCDXData = action.payload.arquivoData;
             })
             .addCase(fetchData.rejected, (state, action) => {
                 state.status = ThunkState.Failed;
@@ -44,7 +44,7 @@ export const dataSlice = createSlice({
 
 export const { updateState } = dataSlice.actions;
 
-export const selectArquivoData = (state: RootState) => state.data.arquivoData;
+export const selectArquivoCDXData = (state: RootState) => state.data.arquivoCDXData;
 
 export const selectPageState = (state: RootState) => state.data.pageState;
 

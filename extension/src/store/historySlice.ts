@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import { getHistory, writeHistory, deleteHistoryStorage } from '../chrome/storage';
-import { MementoHistoryEntry } from '../utils/ArquivoData';
+import { MementoHistoryEntry } from '../utils/ArquivoInterfaces';
 import { HistoryState, RootState, ThunkState } from './storeInterfaces';
 
 

@@ -1,4 +1,4 @@
-import { MementoHistoryEntry } from '../utils/ArquivoData'
+import { MementoHistoryEntry } from '../utils/ArquivoInterfaces'
 import { logError } from '../utils/Logger'
 import { SettingsOptions } from '../utils/SettingsOptions'
 

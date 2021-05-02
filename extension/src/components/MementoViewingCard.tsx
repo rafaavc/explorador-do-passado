@@ -4,12 +4,12 @@ import OpenInNewIcon from '@material-ui/icons/OpenInNew'
 import { closeMementoViewing, copyMementoURLToClipboard, openMemento, openSideBySide, openTextDiff } from '../utils/ContentActions'
 import { useDispatch, useSelector } from 'react-redux'
 import { arquivoDateToDate, getHumanReadableDate } from '../utils/ArquivoDate'
-import { selectArquivoData, selectPageState } from '../store/dataSlice'
+import { selectArquivoCDXData, selectPageState } from '../store/dataSlice'
 import { PageStateId } from '../utils/Page'
 import { setFeedbackMessageAndOpen } from '../store/feedbackSlice'
 import { selectHistory } from '../store/historySlice'
 import { selectHistoryMax, selectLanguageText } from '../store/settingsSlice'
-import { getFaviconURL } from '../utils/URL'
+import { Error } from './Error'
 
 interface MementoViewingCardProps {
     timestamp: string
@@ -38,20 +38,23 @@ const useStyles = makeStyles((theme) => {
 export const MementoViewingCard = (props: MementoViewingCardProps) => {
     const classes = useStyles();
     const state = useSelector(selectPageState);
-    const arquivoData = useSelector(selectArquivoData);
     const history = useSelector(selectHistory);
     const dispatch = useDispatch();
     const contentText = useSelector(selectLanguageText);
     const maxHistoryEntries = useSelector(selectHistoryMax);
 
+    const tmp = useSelector(selectArquivoCDXData);
+    if (tmp == null) return <Error msg="ERROR in MementoViewingCard"/>;
+    const arquivoCDXData = tmp;
+
     const toggleMementoViewingMode = () => {
         if (state.id == PageStateId.SHOWING_SIDE_BY_SIDE) 
         {
-            openTextDiff(contentText, history, maxHistoryEntries, arquivoData?.url, state.data, arquivoData?.article, dispatch);
+            openTextDiff(contentText, history, maxHistoryEntries, arquivoCDXData?.url, state.data, arquivoCDXData?.title, dispatch);
         } 
         else if (state.id == PageStateId.SHOWING_TEXT_DIFF)
         {
-            openSideBySide(contentText, history, maxHistoryEntries, arquivoData?.url, state.data, arquivoData?.article, dispatch);
+            openSideBySide(contentText, history, maxHistoryEntries, arquivoCDXData?.url, state.data, arquivoCDXData?.title, dispatch);
             dispatch(setFeedbackMessageAndOpen(contentText.mementoList.entryActions.sideBySide.successMsg));
         }
     }
@@ -67,7 +70,7 @@ export const MementoViewingCard = (props: MementoViewingCardProps) => {
         </CardContent>
         <CardActions disableSpacing>
             <Tooltip title={contentText.mementoList.viewingMementoCard.actions.newTab}>
-                <IconButton aria-label={contentText.mementoList.viewingMementoCard.actions.newTab} className={classes.button} onClick={() => openMemento(history, maxHistoryEntries, arquivoData?.article, arquivoData?.url, state.data, dispatch)}>
+                <IconButton aria-label={contentText.mementoList.viewingMementoCard.actions.newTab} className={classes.button} onClick={() => openMemento(history, maxHistoryEntries, arquivoCDXData?.title, arquivoCDXData?.url, state.data, dispatch)}>
                     <OpenInNewIcon />
                 </IconButton>
             </Tooltip>
@@ -77,7 +80,7 @@ export const MementoViewingCard = (props: MementoViewingCardProps) => {
                 </IconButton>
             </Tooltip>
             <Tooltip title={contentText.mementoList.viewingMementoCard.actions.copy}>
-                <IconButton aria-label={contentText.mementoList.viewingMementoCard.actions.copy} className={classes.button} onClick={() => copyMementoURLToClipboard(contentText, history, maxHistoryEntries, arquivoData?.article, arquivoData?.url, state.data, dispatch)}>
+                <IconButton aria-label={contentText.mementoList.viewingMementoCard.actions.copy} className={classes.button} onClick={() => copyMementoURLToClipboard(contentText, history, maxHistoryEntries, arquivoCDXData?.title, arquivoCDXData?.url, state.data, dispatch)}>
                     <span className="material-icons">content_copy</span>
                 </IconButton>
             </Tooltip>
