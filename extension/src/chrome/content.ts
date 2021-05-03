@@ -29,6 +29,8 @@ const pageInfo: PageInfo = {
     title: document.title
 }
 
+console.log("Stored outer html:", document.documentElement.outerHTML);
+
 const loadExtraCSS = () => {
     const font = document.createElement('link');
     font.rel = "stylesheet";
@@ -171,18 +173,27 @@ let pageState: PageState = {
 }
 
 let retrievingPageData: boolean = false;
-let retrievingArquivoArticle: boolean = false;
 
-let saved: string | null = null;
+let savedInnerHTML: string = document.documentElement.innerHTML;
+
+const arquivoFix = () => {
+    setTimeout(() => {
+        const iframe: HTMLIFrameElement | null = document.querySelector('#ah-iframe1');
+        const logo: HTMLElement | null | undefined = iframe?.contentWindow?.document.body.querySelector('#arquivoLogo')?.parentElement;
+        logo?.click();
+    }, 600);
+}
 
 const openSideBySide = (url: string, timestamp: string) => {
     const iframe1 = document.createElement('iframe')
-    iframe1.srcdoc = pageState.id != PageStateId.START && saved ? saved : document.documentElement.innerHTML
+    iframe1.srcdoc = pageInfo.html;
     iframe1.style.width = "50%"
     iframe1.style.position = "absolute"
     iframe1.style.left = "0"
     iframe1.style.height = window.innerHeight + "px"
     iframe1.style.border = 'none'
+    iframe1.id = "ah-iframe1"
+
     
     const iframe2 = document.createElement('iframe')
     iframe2.src = url
@@ -195,7 +206,7 @@ const openSideBySide = (url: string, timestamp: string) => {
     const newDoc = document.createElement('html')
     const head = document.createElement('head')
     const title = document.createElement('title')
-    title.innerText = document.title;
+    title.innerText = pageInfo.title;
     head.appendChild(title)
     newDoc.appendChild(head)
     const body = document.createElement('body')
@@ -204,12 +215,14 @@ const openSideBySide = (url: string, timestamp: string) => {
     body.appendChild(iframe2)
     newDoc.appendChild(body)
 
-    saved = pageState.id != PageStateId.START ? saved : document.documentElement.innerHTML
-    document.documentElement.innerHTML = newDoc.innerHTML
+    document.documentElement.innerHTML = newDoc.innerHTML;
+
+    if (url.includes("arquivo.pt")) arquivoFix();
 
     pageState.id = PageStateId.SHOWING_SIDE_BY_SIDE
     pageState.data = timestamp
 }
+
 
 const openTextDiff = (data: ArquivoArticle, timestamp: string) => {
     const diff = new diff_match_patch();
@@ -250,7 +263,6 @@ const openTextDiff = (data: ArquivoArticle, timestamp: string) => {
     body.appendChild(container);
     newDoc.appendChild(body);
 
-    saved = pageState.id != PageStateId.START ? saved : document.documentElement.innerHTML;
     document.documentElement.innerHTML = newDoc.innerHTML;
 
     pageState.id = PageStateId.SHOWING_TEXT_DIFF
@@ -260,8 +272,8 @@ const openTextDiff = (data: ArquivoArticle, timestamp: string) => {
 const closeViewing = () => {
     const aborted = abortLoading();
     hideFloatingBox();
-    if (pageState.id != PageStateId.START && saved) {
-        document.documentElement.innerHTML = saved;
+    if (pageState.id != PageStateId.START) {
+        document.documentElement.innerHTML = savedInnerHTML;
         pageState.id = PageStateId.START;
         pageState.data = null;
     }
@@ -275,11 +287,9 @@ const retrieveArquivoArticle = (url: string, loadingId?: number) => new Promise<
 });
 
 const retrieveOriginalArquivoArticle = () => new Promise<void>((resolve) => {
-    retrievingArquivoArticle = true;
     retrieveArquivoArticle(pageInfo.url)
         .then((data: { article: ArquivoArticle }) => {
             originalArquivoArticle = data.article
-            retrievingArquivoArticle = false;
             console.log("Received original arquivo article info.", data.article);
             resolve();
         });
