@@ -18,15 +18,26 @@ Após a execução destes passos a extensão deve estar instalada no navegador.
 
 <img src="website/src/images/extensionWithExplorerDevTrueAnnotated.png" width="700">
 
-## Vista lado a lado
+## Ações do memento
+
+Após encontrar um memento existem quatro opções:
+- Abrir em vista lado a lado (com a página atual)
+- Abrir em vista de diferenças de testo (com a página atual)
+- Abrir num novo separador
+- Copiar o seu URL
+### Vista lado a lado
 
 A vista lado a lado permite comparar visualmente o memento com a página atual.
 
+A vista lado a lado apresenta também um cartão flutuante no canto inferior direito que permite executar todas as outras ações possíveis do memento, bem como fechar a sua visualização, sem precisar de abrir a extensão.
+
 <img src="website/src/images/publico_sidebyside_showcase.gif" width="700">
 
-## Vista de diferenças de texto
+### Vista de diferenças de texto
 
 A vista de diferenças de texto permite comparar ver que alterações foram efetuadas ao texto desde o memento.
+
+A vista de diferenças de texto apresenta também um cartão flutuante no canto inferior direito que permite executar todas as outras ações possíveis do memento, bem como fechar a sua visualização, sem precisar de abrir a extensão.
 
 <img src="website/src/images/publico_textdiff_showcase.gif" width="700">
 

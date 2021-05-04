@@ -96,18 +96,37 @@ export const IndexContent = () => {
             <img src={installationImage} className={classes.cover + " " + classes.stepsImage} />
 
             <Typography variant="h5" className={globalHeadingClasses.heading}>
+                Ações do memento
+            </Typography>
+            <Typography variant="body1">
+                Após encontrar um memento existem quatro opções:
+                <ul>
+                    <li>Abrir em vista lado a lado (com a página atual)</li>
+                    <li>Abrir em vista de diferenças de testo (com a página atual)</li>
+                    <li>Abrir num novo separador</li>
+                    <li>Copiar o seu URL</li>
+                </ul>
+            </Typography>
+
+            <Typography variant="h6" className={globalHeadingClasses.heading}>
                 Vista lado a lado
             </Typography>
             <Typography variant="body1">
                 A vista lado a lado permite comparar visualmente o memento com a página atual.
             </Typography>
+            <Typography variant="body1">
+                A vista lado a lado apresenta também um cartão flutuante no canto inferior direito que permite executar todas as outras ações possíveis do memento, bem como fechar a sua visualização, sem precisar de abrir a extensão.
+            </Typography>
             <img src={publicoSideBySideShowcase} className={classes.cover} />
 
-            <Typography variant="h5" className={globalHeadingClasses.heading}>
+            <Typography variant="h6" className={globalHeadingClasses.heading}>
                 Vista de diferenças de texto
             </Typography>
             <Typography variant="body1">
                 A vista de diferenças de texto permite comparar ver que alterações foram efetuadas ao texto desde o memento.
+            </Typography>
+            <Typography variant="body1">
+                A vista de diferenças de texto apresenta também um cartão flutuante no canto inferior direito que permite executar todas as outras ações possíveis do memento, bem como fechar a sua visualização, sem precisar de abrir a extensão.
             </Typography>
             <img src={publicoTextDiffShowcase} className={classes.cover} />
 
