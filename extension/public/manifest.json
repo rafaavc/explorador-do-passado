@@ -1,7 +1,7 @@
 
 {
   "name": "Explorador do Passado",
-  "description": "Base Level Extension",
+  "description": "Extensão que permite explorar e comparar versões antigas de páginas da web portuguesa.",
   "version": "1.0",
   "manifest_version": 3,
   "permissions": [
